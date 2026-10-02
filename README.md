@@ -123,11 +123,19 @@ aprende de los motivos de entrada.
 
 ### 7. Dev y "TikTok dev 🔥"
 - Wallet creadora: campo `creator` de pump.fun; para coins vistas solo en DexScreener se consulta
-  `frontend-api-v3.pump.fun/coins-v2/<CA>` (máx. 15 por pasada, caché por CA).
-- Cuenta de coins TikTok por dev en los últimos `dev_hot.window_days` (7) días = historial propio del radar
-  (`state.json → dev_history`) + coins creadas por ese dev en pump.fun (`/coins-v2/user-created-coins/<dev>`,
-  máx. 8 devs por pasada, cada uno se re-mira cada 60 min) que cumplen la misma regla TikTok.
-- Si llega a `dev_hot.min_coins` (3, contando la actual) sale **TikTok dev 🔥 (N)**. Solo informativo, **no bloquea**.
+  `frontend-api-v3.pump.fun/coins-v2/<CA>` (con caché por CA).
+- Regla (estricta, desde 02/10/2026): un dev sale como **TikTok dev 🔥 (N)** solo si en los últimos
+  `dev_hot.window_days` (7) días:
+  1. tiene **≥ `min_coins` (3) coins TikTok con nombre distinto** (clones y relanzamientos con el mismo nombre cuentan 1).
+     Solo cuentan señales fuertes: link de TikTok o tiktok/fyp/douyin en nombre/ticker; nunca solo descripción ni solo categoría;
+  2. **≥ `min_share` (50 %)** de todas las coins que creó en esos días son TikTok;
+  3. su lista completa de pump.fun se puede leer: **< `max_created` (250) coins** en total. Si tiene más, es un
+     lanzador masivo y no se marca (no se puede saber su proporción).
+- Fuente: `/coins-v2/user-created-coins/<dev>` (hasta `scan_max_pages` = 5 páginas de 50, cada dev se re-mira cada
+  60 min, máx. 8 devs por pasada) + coins TikTok del propio radar que no salgan en esa lista.
+- Motivo del cambio: con la regla antigua (≥ 3 coins TikTok, sin mirar el total) salían bots que lanzan cientos de coins
+  y copian todo lo viral (p. ej. 5 TikTok de 873 coins = 2 %). Con datos reales del 02/10: de 10 devs marcados quedaron 4.
+- Solo informativo, **no bloquea**. El badge dice al pasar por encima cuántas coins TikTok distintas y qué % del total.
 
 ### 8. Buscador (pestaña "Buscador") — sin IA, sin login de TikTok
 Escribes una palabra (o `#hashtag`) y en ~5-10 s sale: nº de vídeos y views del hashtag, recientes vs antiguos,

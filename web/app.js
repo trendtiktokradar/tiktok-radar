@@ -41,6 +41,8 @@
     el.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), ms || (action ? 6000 : 1600));
   };
   const athTitle = (c) => "MC máximo: " + (c.ath_src === "pump.fun" ? "dato de pump.fun (ath_market_cap)" : "el más alto visto por el radar (cada 5 min)");
+  const devTitle = (c) => `El dev ha creado ${c.dev_count} coins TikTok distintas en ${DATA.dev_hot_window_days || 7} días` +
+    (c.dev_created7 ? ` (${Math.round((c.dev_share || 0) * 100)}% de las ${c.dev_created7} coins que creó)` : "");
   const shortAddr = (a) => a ? a.slice(0, 4) + "…" + a.slice(-4) : "";
   const normName = (s) => String(s || "").toLowerCase().replace(/[^0-9a-z\u00c0-\uffff]/g, "");
 
@@ -172,7 +174,7 @@
     else if (c.dex_status === "processing" || c.dex_status === "on-hold") badges.push(`<span class="b pending" title="Pedido de perfil en DexScreener aún sin aprobar">DEX en revisión</span>`);
     if (c.dev_hot) {
       const others = (c.dev_coins || []).map((x) => (x.name || "?") + " ($" + (x.symbol || "?") + ")").join(", ");
-      badges.push(`<span class="b devhot" data-devca="${esc(c.ca)}" title="El dev ha creado ${esc(c.dev_count)} coins TikTok en ${esc(DATA.dev_hot_window_days || 7)} días (contando esta): ${esc(others)}">TikTok dev 🔥 (${esc(c.dev_count)})</span>`);
+      badges.push(`<span class="b devhot" data-devca="${esc(c.ca)}" title="${esc(devTitle(c))}: ${esc(others)}">TikTok dev 🔥 (${esc(c.dev_count)})</span>`);
     }
     if (c.boosts_active) badges.push(`<span class="b boost" title="Boosts activos en DexScreener">⚡ ${esc(c.boosts_active)} boosts</span>`);
     for (const r of [...c.reasons].sort((a, b) => (b.q ? 1 : 0) - (a.q ? 1 : 0))) badges.push(`<span class="b ${reasonCls(r)}" title="${esc(r.d)}${r.q ? "" : " (solo info, no cuenta para entrar)"}">${esc(reasonShort(r))}</span>`);
@@ -185,7 +187,7 @@
     const tts = (L.tiktok || []).map((u, i) => link(u, "TikTok" + (L.tiktok.length > 1 ? " " + (i + 1) : ""), "tt")).join("");
     const clones = g.clones.length ? `<div class="clonebox"${open ? "" : " hidden"}>${g.clones.map((x) => {
       const xb = (x.dex_paid ? `<span class="b paid sm"><img src="img/dexscreener.png" alt="" width="11" height="11">DEX PAID</span>` : "") +
-        (x.dev_hot ? `<span class="b devhot sm" title="El dev ha creado ${esc(x.dev_count)} coins TikTok">dev 🔥 ${esc(x.dev_count)}</span>` : "") +
+        (x.dev_hot ? `<span class="b devhot sm" title="${esc(devTitle(x))}">dev 🔥 ${esc(x.dev_count)}</span>` : "") +
         (prevVisit && x.first_seen > prevVisit ? `<span class="b new sm">NUEVA</span>` : "");
       return `<div class="crow${x.dex_paid ? " paid" : ""}${x.inactive ? " inactive" : ""}">
         <div class="ctop"><span class="cnm"><b>${esc(x.name || "?")}</b> <span class="note">$${esc(x.symbol || "?")}</span></span><span class="cmeta">MC <b>${money(x.metrics?.mc)}</b> · <span title="${esc(athTitle(x))}">ATH <b class="ath">${money(x.ath)}</b></span> · ${ago(x.created || x.first_seen)}</span></div>
@@ -334,12 +336,12 @@
     const markedGroups = groupBy(marked, (m) => m.g || m.ca);
     const markedHtml = marked.length ? markedGroups.map((ms) => { const m = ms[0]; return `<div class="lrow"><span><b>${esc(m.name || shortAddr(m.ca))}</b> ${m.symbol ? "$" + esc(m.symbol) : ""}${ms.length > 1 ? ` (+${ms.length - 1} clones)` : ""} <span class="note">· ${esc(keyTxt(m.keys))} · ${m.ts ? esc(fmtTime(m.ts)) : ""}</span></span><button class="link" data-unntt="${esc(ms.map((x) => x.ca).join(","))}">Sí es TikTok</button></div>`; }).join("") : `<p class="note">Todavía no has marcado ninguna coin.</p>`;
     const blocked = (L.blocked_now || []).length ? `<h3>Quitadas ahora por reglas aprendidas (${L.blocked_now.length})</h3>` + L.blocked_now.map((b) => `<div class="lrow"><span>${esc(b.name || shortAddr(b.ca))} ${b.symbol ? "$" + esc(b.symbol) : ""} <span class="note">· ${esc(keyTxt(b.keys))}</span></span><a href="https://dexscreener.com/solana/${esc(b.ca)}" target="_blank" rel="noopener">ver</a></div>`).join("") : "";
-    const devs = (DATA.dev_hot || []).length ? DATA.dev_hot.map((d) => `<div class="lrow"><span><b>${esc(shortAddr(d.dev))}</b> · ${d.count} coins TikTok <span class="note">· ${esc(d.coins.map((x) => x.name || x.symbol).join(", "))}</span></span><span><a href="https://gmgn.ai/sol/address/${esc(d.dev)}" target="_blank" rel="noopener">GMGN</a> · <a href="https://pump.fun/profile/${esc(d.dev)}" target="_blank" rel="noopener">pump.fun</a></span></div>`).join("") : `<p class="note">Ningún dev llega todavía a ${esc(DATA.dev_hot_min || 3)} coins TikTok.</p>`;
+    const devs = (DATA.dev_hot || []).length ? DATA.dev_hot.map((d) => `<div class="lrow"><span><b>${esc(shortAddr(d.dev))}</b> · ${d.count} coins TikTok distintas · ${Math.round((d.share || 0) * 100)}% de ${d.created7} <span class="note">· ${esc(d.coins.map((x) => x.name || x.symbol).join(", "))}</span></span><span><a href="https://gmgn.ai/sol/address/${esc(d.dev)}" target="_blank" rel="noopener">GMGN</a> · <a href="https://pump.fun/profile/${esc(d.dev)}" target="_blank" rel="noopener">pump.fun</a></span></div>`).join("") : `<p class="note">Ningún dev cumple ahora mismo la regla.</p>`;
     $("#learned").innerHTML = st +
       `<p class="note">Cada vez que pulsas <b>🚫 No es TikTok</b> la coin (y sus clones) desaparece para siempre en todos tus dispositivos. Además el filtro cuenta <b>por qué entró</b>: si un motivo junta <b>${esc(L.min_marks)}</b> marcas de coins que entraron <b>solo</b> por ese motivo, deja de aceptar coins que entren únicamente por él. Las reglas protegidas (p. ej. "tiktok" en el nombre) nunca se bloquean solas.</p>
       <h3>Reglas aprendidas</h3>${rules ? `<table><thead><tr><th>Motivo de entrada</th><th class="num">Marcas</th><th>Estado</th><th></th></tr></thead><tbody>${rules}</tbody></table>` : `<p class="note">Aún no hay marcas.</p>`}
       ${blocked}${pendHtml}<h3>Marcadas "No es TikTok" (${markedGroups.length})</h3>${markedHtml}
-      <h3>TikTok devs 🔥 (≥ ${esc(DATA.dev_hot_min || 3)} coins TikTok en ${esc(DATA.dev_hot_window_days || 7)} días)</h3>${devs}
+      <h3>TikTok devs 🔥 (≥ ${esc(DATA.dev_hot_min || 3)} coins TikTok distintas en ${esc(DATA.dev_hot_window_days || 7)} días y ≥ ${Math.round((DATA.dev_hot_min_share ?? 0.5) * 100)}% de lo que crea)</h3>${devs}
       <p class="note" style="margin-top:16px"><button class="link" id="forgetPin">Cambiar el PIN de este dispositivo</button></p>`;
     const fp = $("#forgetPin"); if (fp) fp.onclick = () => { localStorage.removeItem(LS_PIN); toast("PIN olvidado: se pedirá la próxima vez"); };
   }

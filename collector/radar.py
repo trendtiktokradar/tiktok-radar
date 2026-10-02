@@ -681,58 +681,110 @@ def resolve_devs(coins, state, cfg, ts):
     for ca in [ca for ca, e in cache.items() if ca not in coins and ts - e.get("checked", 0) > 2 * 86_400_000]:
         cache.pop(ca, None)
 
+def dev_tiktok_keys(rs):
+    """Para 'TikTok dev 🔥' solo cuentan señales fuertes: link de TikTok o tiktok/fyp/douyin en nombre/ticker.
+    Nunca solo descripción ni solo categoría."""
+    return [k for k in qkeys(rs) if k == "link_tiktok" or k.startswith("kw_name")]
+
 def update_dev_history(coins, state, cfg, ts, M, learner):
-    """Cuántas coins TikTok ha creado cada dev en los últimos N días: historial propio del radar +
-    las coins creadas por ese dev en pump.fun que cumplen la regla TikTok. Solo informativo, NO bloquea."""
+    """'TikTok dev 🔥' (solo informativo, NO bloquea). Un dev se marca si en los últimos window_days días:
+      - tiene >= min_coins coins TikTok con NOMBRE DISTINTO (clones/relanzamientos cuentan 1),
+      - >= min_share de TODAS las coins que creó en esos días son TikTok,
+      - y su lista completa de pump.fun se puede leer (< max_created coins; si no, es un lanzador masivo).
+    Fuente: pump.fun /coins-v2/user-created-coins/<dev> (hasta 5 páginas de 50, caché scan_refresh_minutes)
+    + coins del propio radar que no salgan en esa lista."""
     D = cfg.get("dev_hot") or {}
     win = D.get("window_days", 7) * 86_400_000
     th = D.get("min_coins", 3)
-    hist = state.setdefault("dev_history", {})  # dev -> {ca: {n, s, t}}
+    min_share = D.get("min_share", 0.5)
+    max_created = D.get("max_created", 250)
+    hist = state.setdefault("dev_history", {})  # dev -> {ca: {n, s, t}} (coins TikTok vistas por el radar)
     for c in coins.values():
-        if c.get("dev"):
+        if c.get("dev") and dev_tiktok_keys(c.get("reasons")):
             hist.setdefault(c["dev"], {})[c["ca"]] = {"n": c.get("name"), "s": c.get("symbol"),
                                                        "t": c.get("created") or c["first_seen"]}
-    scan = state.setdefault("dev_scan", {})  # dev -> última vez que se miraron sus coins en pump.fun
-    if D.get("scan_pump_created", True):
-        refresh = D.get("scan_refresh_minutes", 60) * 60_000
-        devs = sorted({c["dev"] for c in coins.values() if c.get("dev")}, key=lambda d: scan.get(d, 0))
-        n = 0
-        for dev in [d for d in devs if ts - scan.get(d, 0) > refresh][:D.get("scan_max_devs_per_run", 8)]:
-            d = http(f"{PUMP}/coins-v2/user-created-coins/{dev}?offset=0&limit=50&includeNsfw=true",
+    prof = state.setdefault("dev_profile", {})  # dev -> {checked, complete, total, all7: {ca: t}, tt7: {ca: {n,s,t}}}
+    state.pop("dev_scan", None)  # formato antiguo
+    refresh = D.get("scan_refresh_minutes", 60) * 60_000
+    devs = sorted({c["dev"] for c in coins.values() if c.get("dev")}, key=lambda d: (prof.get(d) or {}).get("checked", 0))
+    n = 0
+    for dev in [d for d in devs if ts - (prof.get(d) or {}).get("checked", 0) > refresh][:D.get("scan_max_devs_per_run", 8)]:
+        got, total, ok = [], None, True
+        for page in range(D.get("scan_max_pages", 5)):
+            d = http(f"{PUMP}/coins-v2/user-created-coins/{dev}?offset={page * 50}&limit=50&includeNsfw=true",
                      "pumpfun_dev_coins", headers=pump_headers(), retries=2)
-            scan[dev] = ts
-            if isinstance(d, dict):
-                n += 1
-                for x in d.get("coins") or []:
-                    mint, t = x.get("mint") or "", x.get("created_timestamp") or 0
-                    if not SOL_ADDR.match(mint) or ts - t > win:
-                        continue
-                    rs, _ = M.match(x.get("name"), x.get("symbol"), x.get("description") or "",
-                                    [x.get("website") or "", x.get("twitter") or ""])
-                    if qualifies(rs) and not learner.blocks(mint, rs):
-                        hist.setdefault(dev, {})[mint] = {"n": x.get("name"), "s": x.get("symbol"), "t": t}
-            time.sleep(1.0)
-        SRC.mark("pumpfun_dev_coins", True, n)
+            if not isinstance(d, dict):
+                ok = False; break
+            total = d.get("count") if isinstance(d.get("count"), int) else total
+            got += d.get("coins") or []
+            time.sleep(0.8)
+            if total is not None and total >= max_created:
+                break  # lanzador masivo: no hace falta leer más
+            if len(d.get("coins") or []) < 50 or (total is not None and len(got) >= total):
+                break
+        if not ok and not got:
+            continue  # pump.fun falló: se reintenta en la próxima pasada
+        n += 1
+        complete = ok and total is not None and total < max_created and len(got) >= total
+        all7, tt7 = {}, {}
+        for x in got:
+            mint, t = x.get("mint") or "", x.get("created_timestamp") or 0
+            if not SOL_ADDR.match(mint) or ts - t > win:
+                continue
+            all7[mint] = t
+            rs, _ = M.match(x.get("name"), x.get("symbol"), x.get("description") or "",
+                            [x.get("website") or "", x.get("twitter") or ""])
+            if dev_tiktok_keys(rs) and not learner.blocks(mint, rs):
+                tt7[mint] = {"n": x.get("name"), "s": x.get("symbol"), "t": t}
+        prof[dev] = {"checked": ts, "complete": complete, "total": total, "all7": all7, "tt7": tt7}
+    SRC.mark("pumpfun_dev_coins", True, n)
+    # limpieza
     for dev in list(hist):
         for ca in [ca for ca, e in hist[dev].items() if ts - (e.get("t") or 0) > win or ca in learner.marked]:
             del hist[dev][ca]
         if not hist[dev]:
             del hist[dev]
-    for dev in [d for d, t in scan.items() if d not in hist and ts - t > win]:
-        scan.pop(dev, None)
+    for dev in [d for d, p in prof.items() if ts - p.get("checked", 0) > win]:
+        prof.pop(dev, None)
+
+    def evaluate(dev):
+        p = prof.get(dev)
+        if not p or not p.get("complete"):
+            return None
+        all7 = {ca: t for ca, t in p["all7"].items() if ts - t <= win}
+        tt = {ca: e for ca, e in p["tt7"].items() if ts - e["t"] <= win and ca not in learner.marked}
+        for ca, e in (hist.get(dev) or {}).items():  # coins del radar que no salen en la lista de pump.fun
+            if ca not in all7:
+                all7[ca] = e["t"]
+            tt.setdefault(ca, e)
+        names = {}
+        for ca, e in sorted(tt.items(), key=lambda kv: -(kv[1].get("t") or 0)):
+            names.setdefault(norm(e.get("n")) or norm(e.get("s")) or ca, dict(e, ca=ca))
+        share = len(tt) / len(all7) if all7 else 0
+        return {"dev": dev, "count": len(names), "tiktok_coins": len(tt), "created7": len(all7),
+                "share": round(share, 3), "hot": len(names) >= th and share >= min_share,
+                "coins": [{"ca": e["ca"], "name": e.get("n"), "symbol": e.get("s"), "t": e.get("t")} for e in names.values()]}
+
+    res = {}
     for c in coins.values():
-        h = hist.get(c.get("dev")) or {}
-        c["dev_count"] = len(h)
-        c["dev_hot"] = bool(c.get("dev")) and len(h) >= th
+        dev = c.get("dev")
+        if dev and dev not in res:
+            res[dev] = evaluate(dev)
+        r = res.get(dev) if dev else None
+        c["dev_hot"] = bool(r and r["hot"])
+        c["dev_count"] = r["count"] if r else 0
+        if r:
+            c["dev_share"], c["dev_created7"] = r["share"], r["created7"]
+            c["dev_mass"] = False
+        else:
+            c.pop("dev_share", None); c.pop("dev_created7", None)
+            p = prof.get(dev) if dev else None
+            c["dev_mass"] = bool(p and (p.get("total") or 0) >= max_created)
         if c["dev_hot"]:
-            c["dev_coins"] = [{"ca": ca, "name": e.get("n"), "symbol": e.get("s"), "t": e.get("t")}
-                              for ca, e in sorted(h.items(), key=lambda kv: -(kv[1].get("t") or 0)) if ca != c["ca"]][:12]
+            c["dev_coins"] = [x for x in r["coins"] if x["ca"] != c["ca"] and norm(x["name"]) != norm(c.get("name"))][:12]
         else:
             c.pop("dev_coins", None)
-    hot = sorted(({"dev": d, "count": len(h),
-                   "coins": [{"ca": ca, "name": e.get("n"), "symbol": e.get("s"), "t": e.get("t")}
-                             for ca, e in sorted(h.items(), key=lambda kv: -(kv[1].get("t") or 0))][:12]}
-                  for d, h in hist.items() if len(h) >= th), key=lambda x: -x["count"])
+    hot = sorted((dict(r, coins=r["coins"][:12]) for r in res.values() if r and r["hot"]), key=lambda x: -x["count"])
     return hot[:50]
 
 # ---------------------------------------------------------------- main
@@ -833,6 +885,7 @@ def run(no_trends=False):
         "learned": learner.summary(),
         "dev_hot_min": (cfg.get("dev_hot") or {}).get("min_coins", 3),
         "dev_hot_window_days": (cfg.get("dev_hot") or {}).get("window_days", 7),
+        "dev_hot_min_share": (cfg.get("dev_hot") or {}).get("min_share", 0.5),
         "dev_hot": dev_hot,
         "coins": lst,
     }
