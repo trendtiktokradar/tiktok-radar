@@ -1,1 +1,26 @@
-{"v":1,"updated":0,"marks":{},"rules_off":[],"log":[]}
+{
+ "v": 1,
+ "updated": 1790940356557,
+ "marks": {
+  "9qQzEDrBiJQyaWwu5EqrA9oXKspsF5PppZRHU3w2SEsc": {
+   "ts": 1790940356557,
+   "g": "1790940356557-9qQzED",
+   "name": "Pumpfun Intern",
+   "symbol": "INTERN",
+   "keys": [
+    "kw_desc:tiktok"
+   ],
+   "dev": null
+  }
+ },
+ "rules_off": [],
+ "log": [
+  {
+   "ts": 1790940356557,
+   "action": "mark",
+   "cas": [
+    "9qQzEDrBiJQyaWwu5EqrA9oXKspsF5PppZRHU3w2SEsc"
+   ]
+  }
+ ]
+}
