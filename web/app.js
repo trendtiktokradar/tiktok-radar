@@ -15,6 +15,7 @@
   const SERVER = { configured: null, cas: new Set(), rules_off: [] };
   const isNotTT = (ca) => !!NTT[ca] || SERVER.cas.has(ca);
   let BYCA = new Map();
+  const OPEN = new Set();  // grupos de clones con la lista abierta (se mantiene al recargar datos)
   let DATA = null, trendFilter = null;
   // "última visita" = momento en que abriste el panel la vez anterior
   const prevVisit = Number(localStorage.getItem(LS_VISIT) || 0);
@@ -134,7 +135,8 @@
       return true;
     });
     // agrupar clones: mismo nombre normalizado o mismo ticker+nombre → se queda la de más MC
-    let groups = out.map((c) => ({ main: c, clones: [] }));
+    // (las ocultas ya se han quitado arriba: si se oculta la principal, el siguiente clon pasa a ser la principal)
+    let groups = out.map((c) => ({ main: c, clones: [], key: c.ca }));
     if (f.group) {
       const byKey = new Map();
       for (const c of out) {
@@ -144,7 +146,7 @@
       }
       groups = [...byKey.values()].map((arr) => {
         arr.sort((a, b) => (b.metrics?.mc || 0) - (a.metrics?.mc || 0));
-        return { main: arr[0], clones: arr.slice(1) };
+        return { main: arr[0], clones: arr.slice(1), key: "g:" + (normName(arr[0].name) || normName(arr[0].symbol) || arr[0].ca) };
       });
     }
     const key = sortKey[f.sort] || sortKey.young;
@@ -175,11 +177,20 @@
     if ((c.flags || []).includes("mc_sospechoso")) badges.push(`<span class="b warn" title="MC muy alto con liquidez casi nula">MC dudoso</span>`);
     if ((c.flags || []).includes("bonding_curve")) badges.push(`<span class="b" title="Aún en la bonding curve de pump.fun">Bonding curve</span>`);
     if (c.pump?.complete) badges.push(`<span class="b" title="Graduada de pump.fun">Graduada</span>`);
-    if (g.clones.length) badges.push(`<span class="b clones" data-ca="${esc(c.ca)}">+${g.clones.length} clones</span>`);
+    const open = g.clones.length && OPEN.has(g.key);
+    if (g.clones.length) badges.push(`<span class="b clones" data-gk="${esc(g.key)}">+${g.clones.length} clones</span>`);
     const link = (u, t, cls = "") => safeUrl(u) ? `<a class="${cls}" href="${safeUrl(u)}" target="_blank" rel="noopener noreferrer">${t}</a>` : "";
     const tts = (L.tiktok || []).map((u, i) => link(u, "TikTok" + (L.tiktok.length > 1 ? " " + (i + 1) : ""), "tt")).join("");
-    const clones = g.clones.length ? `<div class="clist" id="cl-${esc(c.ca)}" hidden>${g.clones.map((x) =>
-      `<div><span>${esc(x.symbol)} · ${money(x.metrics?.mc)} · hace ${ago(x.created || x.first_seen)}</span><span><a href="${safeUrl(x.links?.gmgn) || "#"}" target="_blank" rel="noopener">GMGN</a> · <a href="#" data-copy="${esc(x.ca)}">copiar CA</a></span></div>`).join("")}</div>` : "";
+    const clones = g.clones.length ? `<div class="clonebox"${open ? "" : " hidden"}>${g.clones.map((x) => {
+      const xb = (x.dex_paid ? `<span class="b paid sm"><img src="img/dexscreener.png" alt="" width="11" height="11">DEX PAID</span>` : "") +
+        (x.dev_hot ? `<span class="b devhot sm" title="El dev ha creado ${esc(x.dev_count)} coins TikTok">dev 🔥 ${esc(x.dev_count)}</span>` : "") +
+        (prevVisit && x.first_seen > prevVisit ? `<span class="b new sm">NUEVA</span>` : "");
+      return `<div class="crow${x.inactive ? " inactive" : ""}">
+        <div class="ctop"><span class="cnm"><b>${esc(x.name || "?")}</b> <span class="note">$${esc(x.symbol || "?")}</span></span><span class="cmeta">MC <b>${money(x.metrics?.mc)}</b> · ${ago(x.created || x.first_seen)}</span></div>
+        ${xb ? `<div class="badges">${xb}</div>` : ""}
+        <div class="cbot"><span class="clinks">${link(x.links?.dexscreener, "DexScreener")}${link(x.links?.pumpfun, "pump.fun")}${link(x.links?.gmgn, "GMGN")}<a href="#" data-copy="${esc(x.ca)}">Copiar CA</a></span><button class="hidebtn" data-hide="${esc(x.ca)}">${HIDDEN[x.ca] ? "Mostrar de nuevo" : "Ocultar"}</button></div>
+      </div>`; }).join("")}</div>` : "";
+    const cloneBtn = g.clones.length ? `<button class="clonebtn" data-gk="${esc(g.key)}">${open ? "▲ Ocultar lista" : `👥 Ver ${g.clones.length} clon${g.clones.length > 1 ? "es" : ""}`}</button>` : "";
     const devList = c.dev_hot ? `<div class="clist devlist" id="dv-${esc(c.ca)}" hidden><div><span>Otras coins TikTok de este dev (${esc(shortAddr(c.dev))}):</span><span>${link("https://gmgn.ai/sol/address/" + c.dev, "GMGN dev")} · ${link("https://pump.fun/profile/" + c.dev, "pump.fun")}</span></div>${(c.dev_coins || []).map((x) =>
       `<div><span>${esc(x.name || "?")} ($${esc(x.symbol || "?")}) · hace ${ago(x.t)}</span><span><a href="https://gmgn.ai/sol/token/${esc(x.ca)}" target="_blank" rel="noopener">GMGN</a> · <a href="#" data-copy="${esc(x.ca)}">copiar CA</a></span></div>`).join("")}</div>` : "";
     const groupCas = esc([c.ca, ...g.clones.map((x) => x.ca)].join(","));
@@ -200,8 +211,8 @@
       ${c.desc ? `<div class="desc">${esc(c.desc)}</div>` : ""}
       <div class="ca"><code>${esc(c.ca)}</code><button data-copy="${esc(c.ca)}">Copiar CA</button></div>
       <div class="links">${link(L.gmgn, "GMGN")}${link(L.dexscreener, "DexScreener")}${link(L.pumpfun, "pump.fun")}${link(L.x, "X")}${tts}${link(L.website, "Web")}${link(L.telegram, "TG")}${c.dev ? link("https://pump.fun/profile/" + c.dev, "Dev " + esc(shortAddr(c.dev))) : ""}</div>
-      ${clones}${devList}
-      <div class="cardbar"><button class="nttbtn" data-ntt="${groupCas}" title="Quitar del radar en todos tus dispositivos y enseñar al filtro">🚫 No es TikTok${g.clones.length ? ` (+${g.clones.length})` : ""}</button><button class="hidebtn" data-hide="${groupCas}">${HIDDEN[c.ca] ? "Mostrar de nuevo" : "Ocultar" + (g.clones.length ? ` (+${g.clones.length} clones)` : "")}</button></div>
+      ${cloneBtn}${clones}${devList}
+      <div class="cardbar"><button class="nttbtn" data-ntt="${groupCas}" title="Quitar del radar en todos tus dispositivos y enseñar al filtro">🚫 No es TikTok${g.clones.length ? ` (+${g.clones.length})` : ""}</button><button class="hidebtn" data-hide="${esc(c.ca)}" title="Oculta solo esta coin (sus clones siguen)">${HIDDEN[c.ca] ? "Mostrar de nuevo" : "Ocultar"}</button></div>
     </article>`;
   }
 
@@ -359,8 +370,8 @@
       for (const ca of cas) { if (unhide) delete HIDDEN[ca]; else HIDDEN[ca] = Date.now(); }
       saveHidden(); renderCoins(); toast(unhide ? "Vuelve a mostrarse ✓" : "Oculta ✓ (míralas en 'Ver ocultas')"); return;
     }
-    const cl = e.target.closest(".b.clones");
-    if (cl) { const el = document.getElementById("cl-" + cl.dataset.ca); if (el) el.hidden = !el.hidden; return; }
+    const cl = e.target.closest(".b.clones, .clonebtn");
+    if (cl) { const k = cl.dataset.gk; if (OPEN.has(k)) OPEN.delete(k); else OPEN.add(k); renderCoins(); return; }
     const tr = e.target.closest("[data-trend]");
     if (tr) { trendFilter = tr.dataset.trend; $("#hideInactive").checked = false; switchTab("coins"); renderCoins(); return; }
     const tb = e.target.closest(".tabs button");

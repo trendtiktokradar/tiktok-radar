@@ -136,3 +136,17 @@ button.primary:disabled{opacity:.5}
 .warnline{color:var(--warn)}
 #tab-search h3{font-size:15px;margin:18px 0 6px}
 @media (max-width:520px){.tabs button{font-size:13px;padding:9px 2px}.sq{font-size:19px}.verdict{font-size:13px;padding:4px 9px}}
+.clonebtn{align-self:flex-start;background:rgba(37,244,238,.08);border:1px solid var(--acc);color:var(--acc);border-radius:8px;padding:6px 11px;font-size:13px;font-weight:600;cursor:pointer}
+.clonebtn:hover{background:rgba(37,244,238,.18)}
+.clonebox{display:flex;flex-direction:column;gap:6px;border-top:1px dashed var(--line);padding-top:8px}
+.crow{background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:7px 8px;display:flex;flex-direction:column;gap:5px;font-size:12px}
+.crow.inactive{opacity:.6}
+.crow .ctop,.crow .cbot{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.crow .cnm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.crow .cmeta{white-space:nowrap;color:var(--mut)}
+.crow .cmeta b{color:var(--txt)}
+.crow .clinks{display:flex;flex-wrap:wrap;gap:4px 10px}
+.crow .clinks a{color:var(--acc)}
+.b.sm{font-size:10px;padding:1px 6px}
+.b.paid.sm img{width:11px;height:11px}
+.clonebox[hidden]{display:none}
