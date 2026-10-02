@@ -1,6 +1,6 @@
 {
  "v": 1,
- "updated": 1790940356557,
+ "updated": 1790940358130,
  "marks": {
   "9qQzEDrBiJQyaWwu5EqrA9oXKspsF5PppZRHU3w2SEsc": {
    "ts": 1790940356557,
@@ -13,7 +13,9 @@
    "dev": null
   }
  },
- "rules_off": [],
+ "rules_off": [
+  "link_tiktok"
+ ],
  "log": [
   {
    "ts": 1790940356557,
@@ -21,6 +23,11 @@
    "cas": [
     "9qQzEDrBiJQyaWwu5EqrA9oXKspsF5PppZRHU3w2SEsc"
    ]
+  },
+  {
+   "ts": 1790940358130,
+   "action": "rule_off",
+   "key": "link_tiktok"
   }
  ]
 }
