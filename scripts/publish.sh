@@ -54,6 +54,10 @@ PY
     cp "$ROOT/web/data.json" "$PUB/data.json"
     cp "$ROOT/state/state.json" "$PUB/state.json"
     printf '# Rama de datos de TikTok Radar\nLa escribe el programa automáticamente. No editar a mano.\n' > "$PUB/README.md"
+    # Vercel lee vercel.json de la propia rama (Root Directory = web): así NO despliega esta rama de datos
+    mkdir -p "$PUB/web"
+    echo '{"git":{"deploymentEnabled":false}}' > "$PUB/web/vercel.json"
+    cp "$PUB/web/vercel.json" "$PUB/vercel.json"
     G symbolic-ref HEAD "refs/heads/$BRANCH"
     G add -A
     if G rev-parse -q --verify HEAD >/dev/null; then

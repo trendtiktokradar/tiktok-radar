@@ -48,6 +48,9 @@ jobs:
           cp ../web/data.json data.json
           cp ../state/state.json state.json
           printf '# Rama de datos de TikTok Radar\nLa escribe el programa automáticamente. No editar a mano.\n' > README.md
+          mkdir -p web
+          echo '{"git":{"deploymentEnabled":false}}' > web/vercel.json
+          cp web/vercel.json vercel.json
           git symbolic-ref HEAD refs/heads/data
           git add -A
           git -c user.name="tiktok-radar-bot" -c user.email="tiktok-radar-bot@users.noreply.github.com" commit -q -m "data $(date -u +%FT%TZ) (github actions)"
