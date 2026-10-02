@@ -2,7 +2,11 @@
   "use strict";
   const CFG = Object.assign({ dataUrl: "data.json", refreshSeconds: 120 }, window.RADAR_CONFIG || {});
   const $ = (s) => document.querySelector(s);
-  const LS_VISIT = "ttr_last_visit", LS_FILTERS = "ttr_filters";
+  const LS_VISIT = "ttr_last_visit", LS_FILTERS = "ttr_filters_v2", LS_HIDDEN = "ttr_hidden";
+  // coins ocultadas a mano: { CA: timestamp } guardado en este navegador
+  let HIDDEN = {};
+  try { HIDDEN = JSON.parse(localStorage.getItem(LS_HIDDEN) || "{}") || {}; } catch (_) { HIDDEN = {}; }
+  const saveHidden = () => localStorage.setItem(LS_HIDDEN, JSON.stringify(HIDDEN));
   let DATA = null, trendFilter = null;
   // "última visita" = momento en que abriste el panel la vez anterior
   const prevVisit = Number(localStorage.getItem(LS_VISIT) || 0);
@@ -24,7 +28,8 @@
   const toast = (t) => { const el = $("#toast"); el.textContent = t; el.classList.add("show"); setTimeout(() => el.classList.remove("show"), 1400); };
   const normName = (s) => String(s || "").toLowerCase().replace(/[^0-9a-z\u00c0-\uffff]/g, "");
 
-  const reasonCls = (t) => ["kw_name", "kw_desc", "link_tiktok", "meta_tiktok"].includes(t) ? "direct" : t === "trend" || t === "manual" ? "trend" : t === "meta_brainrot" ? "brainrot" : "other";
+  // motivos que hacen entrar una coin (regla estricta) vs. badges solo informativos
+  const reasonCls = (r) => r.q ? "direct" : "info";
   const reasonShort = (r) => ({ kw_name: "TikTok en nombre", kw_desc: "TikTok en descripción", link_tiktok: "Link TikTok", meta_tiktok: "Cat. TikTok (DexS)", meta_brainrot: "Brainrot (DexS)", phrase: "Frase viral" }[r.t] || (r.t === "trend" ? (r.d.match(/#\S+/) || ["Trend"])[0] : r.t === "manual" ? "Trend manual" : r.t));
 
   // ---------- carga de datos
@@ -52,7 +57,7 @@
     const g = DATA.generated_ms || Date.parse(DATA.generated_at);
     const mins = (Date.now() - g) / 60000;
     const newSince = prevVisit ? DATA.coins.filter((c) => c.first_seen > prevVisit).length : 0;
-    $("#meta").innerHTML = `Última actualización: <b>${fmtTime(g)}</b> <span class="${mins > 30 ? "stale" : ""}">(hace ${ago(g)})</span> · ${DATA.total} coins (${DATA.active} vivas)` +
+    $("#meta").innerHTML = `Última actualización: <b>${fmtTime(g)}</b> <span class="${mins > 30 ? "stale" : ""}">(hace ${ago(g)})</span> · ${DATA.total} coins TikTok &lt; ${DATA.max_age_hours || 24} h · ${DATA.dex_paid ?? 0} DEX PAID` +
       (prevVisit ? ` · <b>${newSince}</b> nuevas desde tu última visita` : "");
   }
 
@@ -62,17 +67,17 @@
     mcmin: parseFloat($("#mcmin").value) || 0, mcmax: parseFloat($("#mcmax").value) || Infinity,
     agemax: parseFloat($("#agemax").value) || Infinity, liqmin: parseFloat($("#liqmin").value) || 0,
     hideInactive: $("#hideInactive").checked, group: $("#groupClones").checked, onlyNew: $("#onlyNew").checked,
-    reasons: [...document.querySelectorAll("#reasonChips input:checked")].map((i) => i.value),
+    onlyPaid: $("#onlyPaid").checked, showHidden: $("#showHidden").checked,
   });
   const saveFilters = () => { const f = F(); delete f.q; localStorage.setItem(LS_FILTERS, JSON.stringify(f)); };
   function restoreFilters() {
     try {
       const f = JSON.parse(localStorage.getItem(LS_FILTERS) || "null"); if (!f) return;
-      $("#sort").value = f.sort || "new";
+      $("#sort").value = f.sort || "young";
       if (f.mcmin) $("#mcmin").value = f.mcmin; if (f.mcmax !== null && isFinite(f.mcmax)) $("#mcmax").value = f.mcmax;
       if (f.agemax !== null && isFinite(f.agemax)) $("#agemax").value = f.agemax; if (f.liqmin) $("#liqmin").value = f.liqmin;
       $("#hideInactive").checked = f.hideInactive !== false; $("#groupClones").checked = f.group !== false; $("#onlyNew").checked = !!f.onlyNew;
-      document.querySelectorAll("#reasonChips input").forEach((i) => (i.checked = !f.reasons || f.reasons.includes(i.value)));
+      $("#onlyPaid").checked = !!f.onlyPaid;
     } catch (_) {}
   }
 
@@ -85,13 +90,14 @@
     const f = F(), now = Date.now();
     let out = DATA.coins.filter((c) => {
       const m = c.metrics || {}, mc = m.mc || 0;
-      if (f.hideInactive && (c.inactive || c.dead)) return false;
+      if (f.showHidden ? !HIDDEN[c.ca] : !!HIDDEN[c.ca]) return false;
+      if (f.onlyPaid && !c.dex_paid) return false;
+      if (f.hideInactive && !f.showHidden && (c.inactive || c.dead)) return false;
       if (f.onlyNew && !(prevVisit && c.first_seen > prevVisit)) return false;
       if (mc < f.mcmin || mc > f.mcmax) return false;
       if ((m.liq || 0) < f.liqmin) return false;
       const created = c.created || c.first_seen;
       if ((now - created) / 3.6e6 > f.agemax) return false;
-      if (!c.reasons.some((r) => f.reasons.includes(reasonCls(r.t)))) return false;
       if (trendFilter && !c.reasons.some((r) => r.t === "trend" && r.d.includes("#" + trendFilter + " "))) return false;
       if (f.q) {
         const hay = [c.name, c.symbol, c.ca, c.desc, ...c.reasons.map((r) => r.d)].join(" ").toLowerCase();
@@ -113,10 +119,11 @@
         return { main: arr[0], clones: arr.slice(1) };
       });
     }
-    const key = sortKey[f.sort] || sortKey.new;
+    const key = sortKey[f.sort] || sortKey.young;
     groups.sort((a, b) => {
-      const ka = f.sort === "new" ? Math.max(key(a.main), ...a.clones.map(key)) : key(a.main);
-      const kb = f.sort === "new" ? Math.max(key(b.main), ...b.clones.map(key)) : key(b.main);
+      const newest = f.sort === "new" || f.sort === "young";
+      const ka = newest ? Math.max(key(a.main), ...a.clones.map(key)) : key(a.main);
+      const kb = newest ? Math.max(key(b.main), ...b.clones.map(key)) : key(b.main);
       return kb - ka;
     });
     return groups;
@@ -129,7 +136,10 @@
     const img = safeUrl(c.image) ? `<img loading="lazy" src="${safeUrl(c.image)}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'ph'}))">` : `<div class="ph"></div>`;
     const badges = [];
     if (isNew) badges.push(`<span class="b new">NUEVA</span>`);
-    for (const r of c.reasons) badges.push(`<span class="b ${reasonCls(r.t)}" title="${esc(r.d)}">${esc(reasonShort(r))}</span>`);
+    if (c.dex_paid) badges.push(`<span class="b paid" title="Perfil de DexScreener pagado${c.dex_paid_at ? " · " + esc(fmtTime(c.dex_paid_at)) : ""}">DEX PAID</span>`);
+    else if (c.dex_status === "processing" || c.dex_status === "on-hold") badges.push(`<span class="b pending" title="Pedido de perfil en DexScreener aún sin aprobar">DEX en revisión</span>`);
+    if (c.boosts_active) badges.push(`<span class="b boost" title="Boosts activos en DexScreener">⚡ ${esc(c.boosts_active)} boosts</span>`);
+    for (const r of [...c.reasons].sort((a, b) => (b.q ? 1 : 0) - (a.q ? 1 : 0))) badges.push(`<span class="b ${reasonCls(r)}" title="${esc(r.d)}${r.q ? "" : " (solo info, no cuenta para entrar)"}">${esc(reasonShort(r))}</span>`);
     if ((c.flags || []).includes("mc_sospechoso")) badges.push(`<span class="b warn" title="MC muy alto con liquidez casi nula">MC dudoso</span>`);
     if ((c.flags || []).includes("bonding_curve")) badges.push(`<span class="b" title="Aún en la bonding curve de pump.fun">Bonding curve</span>`);
     if (c.pump?.complete) badges.push(`<span class="b" title="Graduada de pump.fun">Graduada</span>`);
@@ -156,13 +166,16 @@
       <div class="ca"><code>${esc(c.ca)}</code><button data-copy="${esc(c.ca)}">Copiar CA</button></div>
       <div class="links">${link(L.gmgn, "GMGN")}${link(L.dexscreener, "DexScreener")}${link(L.pumpfun, "pump.fun")}${link(L.x, "X")}${tts}${link(L.website, "Web")}${link(L.telegram, "TG")}</div>
       ${clones}
+      <div class="cardbar"><button class="hidebtn" data-hide="${esc([c.ca, ...g.clones.map((x) => x.ca)].join(","))}">${HIDDEN[c.ca] ? "Mostrar de nuevo" : "Ocultar" + (g.clones.length ? ` (+${g.clones.length} clones)` : "")}</button></div>
     </article>`;
   }
 
   function renderCoins() {
     const groups = filtered();
     const n = groups.reduce((a, g) => a + 1 + g.clones.length, 0);
-    $("#summary").innerHTML = `${groups.length} resultados (${n} coins)` + (trendFilter ? ` · filtrando trend <b>#${esc(trendFilter)}</b> <button class="link" id="clearTrend">quitar</button>` : "");
+    const nh = Object.keys(HIDDEN).length;
+    $("#hiddenCount").textContent = nh ? `(${nh})` : "";
+    $("#summary").innerHTML = (F().showHidden ? "Viendo coins OCULTAS · " : "") + `${groups.length} resultados (${n} coins) · solo coins creadas en las últimas ${DATA.max_age_hours || 24} h` + (trendFilter ? ` · filtrando trend <b>#${esc(trendFilter)}</b> <button class="link" id="clearTrend">quitar</button>` : "");
     $("#list").innerHTML = groups.length ? groups.slice(0, 400).map(card).join("") : `<div class="empty">No hay coins con estos filtros.</div>`;
     const ct = $("#clearTrend"); if (ct) ct.onclick = () => { trendFilter = null; renderCoins(); };
   }
@@ -186,7 +199,7 @@
   }
 
   function renderSources() {
-    const names = { tiktok_creative_center: "TikTok Creative Center (hashtags)", dexscreener_meta_tiktok: "DexScreener · categoría TikTok", dexscreener_meta_brainrot: "DexScreener · categoría Brainrot", dexscreener_search: "DexScreener · búsqueda", dexscreener_profiles: "DexScreener · perfiles nuevos", dexscreener_boosts: "DexScreener · boosts", dexscreener_boosts_top: "DexScreener · top boosts", dexscreener_cto: "DexScreener · CTOs", dexscreener_tokens: "DexScreener · métricas", pumpfun_new: "pump.fun · coins nuevas", pumpfun_active: "pump.fun · coins activas" };
+    const names = { tiktok_creative_center: "TikTok Creative Center (hashtags)", dexscreener_meta_tiktok: "DexScreener · categoría TikTok", dexscreener_meta_brainrot: "DexScreener · categoría Brainrot", dexscreener_search: "DexScreener · búsqueda", dexscreener_profiles: "DexScreener · perfiles nuevos", dexscreener_boosts: "DexScreener · boosts", dexscreener_boosts_top: "DexScreener · top boosts", dexscreener_cto: "DexScreener · CTOs", dexscreener_tokens: "DexScreener · métricas", dexscreener_orders: "DexScreener · DEX PAID (orders)", pumpfun_new: "pump.fun · coins nuevas", pumpfun_active: "pump.fun · coins activas" };
     const s = DATA.sources || {};
     $("#sources").innerHTML = `<table><thead><tr><th>Fuente</th><th>Estado</th><th class="num">Items</th><th class="hide-m">Error</th></tr></thead><tbody>${Object.entries(s).map(([k, v]) =>
       `<tr><td>${esc(names[k] || k)}</td><td>${v.ok && !v.fail ? "🟢 OK" : v.ok ? "🟡 parcial" : "🔴 falla"}</td><td class="num">${v.items}</td><td class="hide-m note">${esc(v.last_error || "")}</td></tr>`).join("")}</tbody></table>
@@ -206,6 +219,13 @@
       }
       toast("CA copiado ✓"); return;
     }
+    const hb = e.target.closest("[data-hide]");
+    if (hb) {
+      const cas = hb.dataset.hide.split(",").filter(Boolean);
+      const unhide = !!HIDDEN[cas[0]];
+      for (const ca of cas) { if (unhide) delete HIDDEN[ca]; else HIDDEN[ca] = Date.now(); }
+      saveHidden(); renderCoins(); toast(unhide ? "Vuelve a mostrarse ✓" : "Oculta ✓ (míralas en 'Ver ocultas')"); return;
+    }
     const cl = e.target.closest(".b.clones");
     if (cl) { const el = document.getElementById("cl-" + cl.dataset.ca); if (el) el.hidden = !el.hidden; return; }
     const tr = e.target.closest("[data-trend]");
@@ -217,10 +237,9 @@
     document.querySelectorAll(".tabs button").forEach((b) => b.classList.toggle("active", b.dataset.tab === t));
     ["coins", "trends", "sources"].forEach((x) => ($("#tab-" + x).hidden = x !== t));
   }
-  ["#q", "#sort", "#mcmin", "#mcmax", "#agemax", "#liqmin", "#hideInactive", "#groupClones", "#onlyNew"].forEach((s) =>
+  ["#q", "#sort", "#mcmin", "#mcmax", "#agemax", "#liqmin", "#hideInactive", "#groupClones", "#onlyNew", "#onlyPaid", "#showHidden"].forEach((s) =>
     $(s).addEventListener("input", () => { saveFilters(); DATA && renderCoins(); }));
-  $("#reasonChips").addEventListener("change", () => { saveFilters(); DATA && renderCoins(); });
-  $("#resetF").onclick = () => { ["#mcmin", "#mcmax", "#agemax", "#liqmin"].forEach((s) => ($(s).value = "")); document.querySelectorAll("#reasonChips input").forEach((i) => (i.checked = true)); saveFilters(); renderCoins(); };
+  $("#resetF").onclick = () => { ["#mcmin", "#mcmax", "#agemax", "#liqmin"].forEach((s) => ($(s).value = "")); saveFilters(); renderCoins(); };
   $("#reload").onclick = () => { load(); toast("Recargando…"); };
 
   restoreFilters();

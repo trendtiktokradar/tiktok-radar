@@ -24,47 +24,55 @@ arreglar algo si una fuente cambia).
 | Fuente | Qué aporta | Estado (probado 02/10/2026) |
 |---|---|---|
 | DexScreener · categoría **TikTok** (`/metas/meta/v1/tiktok`) | Lista curada por DexScreener de coins TikTok ("If it trends, it trades") | ✅ funciona |
-| DexScreener · categoría **Brainrot** | Memes brainrot (nacidos casi siempre en TikTok) | ✅ funciona |
-| DexScreener · búsqueda (`/latest/dex/search`) | Busca "tiktok", "fyp", "douyin"… + trends manuales + hashtags de Creative Center | ✅ funciona |
+| DexScreener · categoría **Brainrot** | Solo badge informativo | ✅ funciona |
+| DexScreener · `/orders/v1/solana/<CA>` | DEX PAID (perfil pagado) y boosts | ✅ funciona |
+| DexScreener · búsqueda (`/latest/dex/search`) | Busca "tiktok", "tik tok", "fyp", "douyin"… + trends manuales | ✅ funciona (límite de peticiones estricto) |
 | DexScreener · perfiles, boosts, CTOs recientes | Coins nuevas con links (detecta links a tiktok.com) | ✅ funciona |
 | DexScreener · `/tokens/v1/solana/...` | Refresca MC, liquidez, volumen, cambios de precio de todas las coins seguidas | ✅ funciona |
 | pump.fun (`frontend-api-v3.pump.fun/coins`) | Todas las coins nuevas desde la última pasada (~25/min) + las que más tradean | ✅ funciona (tiene límite de peticiones; el programa reintenta) |
-| TikTok Creative Center (`CreativeOne/KnowledgeAPI/GetHashtagList`) | Hashtags en tendencia por país | ⚠️ parcial: sin login solo da el **top 3 por país**; se cruzan 13 países × 7 y 30 días ≈ 60 hashtags. Canciones/vídeos piden login → no se usan |
+| TikTok Creative Center (`CreativeOne/KnowledgeAPI/GetHashtagList`) | Hashtags en tendencia por país (solo informativo) | ⚠️ parcial: sin login solo da el **top 3 por país**; se cruzan 13 países × 7 y 30 días ≈ 60 hashtags. Canciones/vídeos piden login → no se usan |
 | GMGN | – | ❌ bloqueado por Cloudflare, no se consulta (los links a GMGN del panel sí funcionan) |
 
 Si una fuente falla, el programa sigue con las demás y lo marca en la pestaña **Fuentes** del panel.
 
-### 2. Reglas para decidir si una coin "es de TikTok" (score)
+### 2. Regla para que una coin entre (ESTRICTA, solo TikTok)
 
-| Motivo | Puntos |
-|---|---|
-| `tiktok` / `tik tok` / `fyp` / `foryou` / `douyin` / `抖音` en nombre o ticker | 3 |
-| Link a `tiktok.com` en sus redes, web o descripción | 3 |
-| Está en la categoría TikTok de DexScreener | 3 |
-| Está en la categoría Brainrot de DexScreener | 2 |
-| Menciona TikTok/fyp/douyin en la descripción | 2 |
-| Nombre/ticker igual a un hashtag en tendencia de Creative Center | 2 |
-| Nombre/ticker igual a un **trend manual** (`manual_trends`) | 2 |
-| Frases tipo "went viral", "viral video", "trending sound" en la descripción | 1 (2 si hay varias) |
+Una coin sale en el radar **solo si cumple al menos una** de estas tres condiciones:
 
-Se guarda la coin si suma **≥ 2** (`min_score` en `collector/config.json`).
+1. Tiene un **link a tiktok.com** (vm.tiktok.com, vt.tiktok.com…) en sus redes, web o descripción.
+2. **`tiktok` / `tik tok` / `fyp` / `douyin` (抖音)** aparece en el nombre, el ticker o la descripción.
+3. Está en la **categoría TikTok de DexScreener**.
 
-### 3. Histórico
-- Todo se guarda en `state/state.json`: las coins que salieron mientras no mirabas **siguen ahí**.
-- En cada pasada se refrescan las métricas de todas las coins seguidas.
-- Coin **muerta** = más de 48 h de vida, MC < $8K y volumen 24 h < $200. Las muertas se borran a los 7 días.
-- Máximo 1.500 coins guardadas.
+Badges **solo informativos** (se muestran punteados, NUNCA bastan para entrar): hashtag de Creative Center,
+categoría Brainrot de DexScreener, frases tipo "went viral"/"viral video", trends manuales.
 
-### 4. El panel (`web/`)
+Las reglas se vuelven a aplicar en cada pasada a todo lo guardado, así que si se cambian, el histórico se re-filtra solo.
+
+### 3. Solo coins de menos de 24 horas
+- Edad = creación del par más antiguo en DexScreener o `created_timestamp` de pump.fun (lo que sea anterior).
+- Todo lo que tenga más de 24 h (`max_age_hours` en `config.json`) se borra del histórico y de `data.json`.
+- Si no se conoce la fecha de creación en 15 min, también se descarta (no se puede garantizar < 24 h).
+- Las coins que salieron mientras no mirabas siguen ahí hasta cumplir 24 h.
+
+### 4. DEX PAID
+- Por cada coin se consulta `https://api.dexscreener.com/orders/v1/solana/<CA>`.
+  Respuesta real: `{"orders":[{"type":"tokenProfile","status":"approved","paymentTimestamp":…}],"boosts":[…]}`.
+- **DEX PAID** = hay un pedido `tokenProfile` con estado `approved`. Si está `processing` sale "DEX en revisión".
+- Caché por CA en `state.json`: una vez pagado ya no se vuelve a consultar; las no pagadas se re-consultan cada
+  10 min (máx. 40 consultas por pasada; el límite de DexScreener es 60/min).
+- Badge ⚡ = boosts activos ahora mismo en DexScreener.
+
+### 5. El panel (`web/`)
 - Lista de coins con: nombre, ticker, **botón Copiar CA**, MC, liquidez, volumen 1h/24h, cambio 5m/1h/24h,
-  momentum, edad, motivo (badge) y links a **GMGN, DexScreener, pump.fun, X, TikTok, web, Telegram**.
-- Orden: recién detectadas, más jóvenes, MC, volumen 1h, volumen 24h, momentum, cambio 1h, score.
-- Filtros: MC mín/máx, edad máx, liquidez mín, tipo de motivo, búsqueda libre.
-- **Agrupar clones**: junta las coins con el mismo nombre (p. ej. 30 "Cornell") y muestra la de más MC con "+N clones".
-- **Ocultar sin actividad** (activado por defecto): esconde clones con volumen casi cero.
-- **NUEVA** / "Solo nuevas desde mi última visita": marca lo que apareció desde que abriste el panel la vez anterior.
-- Pestaña **Trends TikTok**: hashtags de Creative Center con views, posts, gráfica de 7 días, si sube o baja y
-  cuántas coins hay ya de ese trend (botón "ver").
+  momentum, edad, motivo (badge), **DEX PAID** y links a **GMGN, DexScreener, pump.fun, X, TikTok, web, Telegram**.
+- Orden por defecto: **más nuevas (creación)**. También: recién detectadas, MC, volumen 1h/24h, momentum, cambio 1h, score.
+- Filtros: MC mín/máx, edad máx, liquidez mín, búsqueda libre, **Solo DEX PAID**.
+- **Ocultar**: botón en cada coin (si está agrupada, oculta también sus clones). Se guarda en el navegador
+  (localStorage, cada dispositivo por separado). "Ver ocultas" muestra las ocultas con el botón "Mostrar de nuevo".
+- **Agrupar clones**: junta las coins con el mismo nombre y muestra la de más MC con "+N clones".
+- **Ocultar sin actividad** (activado por defecto): esconde coins con más de 1 h de vida, volumen 24 h < $200 y MC < $8K.
+- **NUEVA** / "Solo nuevas desde mi última visita": lo que apareció desde que abriste el panel la vez anterior.
+- Pestaña **Trends TikTok** (solo informativa) y pestaña **Fuentes** (estado de cada fuente).
 - Se recarga sola cada 2 min. Funciona en el móvil.
 
 **Momentum** = % del MC que se ha movido en volumen en la última hora + 0,3 × cambio de precio 1h.
@@ -80,9 +88,11 @@ python3 -m http.server 8765 -d web          # abrir http://localhost:8765
 ```
 
 Afinar sin tocar código → `collector/config.json`:
-- `manual_trends`: memes que veas en TikTok (`["tung tung", "67", "pibble"]`); se buscan y se marcan.
-- `search_terms`, `strong_patterns`, `desc_phrases`, `trend_stopwords`, `trend_countries`.
-- `dexscreener_metas`: categorías de DexScreener que cuentan (p. ej. añadir `internet-animals`).
+- `max_age_hours`: edad máxima (24).
+- `strong_patterns`: las palabras que hacen entrar una coin (tiktok, fyp, douyin).
+- `dexscreener_metas`: categorías de DexScreener; `"qualifies": true` = cuenta para entrar (solo TikTok).
+- `manual_trends`: memes que veas en TikTok; se buscan y salen como badge (no bastan para entrar).
+- `search_terms`, `desc_phrases`, `trend_countries`, `dexpaid_recheck_minutes`, `dexpaid_max_checks_per_run`.
 
 Captura de pantalla: `.venv/bin/python scripts/screenshot.py` (necesita `pip install playwright`).
 

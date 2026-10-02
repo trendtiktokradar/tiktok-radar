@@ -123,14 +123,14 @@ class Matcher:
         desc = desc or ""
         for rx, label in self.strong:
             if rx.search(text_ns):
-                reasons.append({"t": "kw_name", "d": f"'{label}' en nombre/ticker", "w": 3}); break
+                reasons.append({"t": "kw_name", "d": f"'{label}' en nombre/ticker", "w": 3, "q": True}); break
         else:
             for rx, label in self.strong:
                 if rx.search(desc):
-                    reasons.append({"t": "kw_desc", "d": f"Menciona '{label}' en la descripción", "w": 2}); break
+                    reasons.append({"t": "kw_desc", "d": f"Menciona '{label}' en la descripción", "w": 2, "q": True}); break
         tiktok_links = sorted({u.rstrip(".,") for u in TIKTOK_URL.findall(" ".join(links) + " " + desc)})
         if tiktok_links:
-            reasons.append({"t": "link_tiktok", "d": "Link de TikTok en sus redes/descripción", "w": 3})
+            reasons.append({"t": "link_tiktok", "d": "Link de TikTok en sus redes/descripción", "w": 3, "q": True})
         dl = desc.lower()
         ph = [p for p in self.phrases if p in dl]
         if ph and not any(r["t"] in ("kw_desc",) for r in reasons):
@@ -168,22 +168,29 @@ def ds_pair_to_info(p):
             "buys_h1": (tx.get("h1") or {}).get("buys"), "sells_h1": (tx.get("h1") or {}).get("sells"),
             "buys_h24": (tx.get("h24") or {}).get("buys"), "sells_h24": (tx.get("h24") or {}).get("sells"),
         },
-        "pair": p.get("pairAddress"), "dex": p.get("dexId"), "pair_created": p.get("pairCreatedAt"),
+        "pair": p.get("pairAddress"), "dex": p.get("dexId"),
+        "pair_created": p.get("_oldest_pair") or p.get("pairCreatedAt"),
+        "boosts_active": (p.get("boosts") or {}).get("active") or 0,
     }
 
 def best_pairs(pairs):
     """Para cada token, el par con más liquidez (solo Solana, token como base)."""
-    best = {}
+    best, oldest = {}, {}
     for p in pairs or []:
         if p.get("chainId") != "solana":
             continue
         ca = (p.get("baseToken") or {}).get("address")
         if not ca or ca in QUOTE_MINTS:
             continue
+        pc = p.get("pairCreatedAt")
+        if pc and (ca not in oldest or pc < oldest[ca]):
+            oldest[ca] = pc
         liq = fnum((p.get("liquidity") or {}).get("usd")) or 0
         cur = best.get(ca)
         if cur is None or liq > (fnum((cur.get("liquidity") or {}).get("usd")) or 0):
             best[ca] = p
+    for ca, p in best.items():
+        p["_oldest_pair"] = oldest.get(ca)
     return best
 
 def ds_tokens(addrs):
@@ -208,7 +215,8 @@ def src_ds_metas(cfg):
         pairs = best_pairs(d.get("pairs"))
         SRC.mark(f"dexscreener_meta_{slug}", True, len(pairs))
         for p in pairs.values():
-            res.append((ds_pair_to_info(p), {"t": f"meta_{slug}", "d": m["label"], "w": m["weight"]}))
+            res.append((ds_pair_to_info(p), {"t": f"meta_{slug}", "d": m["label"], "w": m["weight"],
+                                             "q": bool(m.get("qualifies"))}))
         time.sleep(0.3)
     return res
 
@@ -363,7 +371,7 @@ def upsert(coins, info, reasons, tiktok_links, source, ts):
     if info.get("desc"):
         c["desc"] = info["desc"][:300]
     if info.get("created"):
-        c["created"] = info["created"]
+        c["created"] = min(c.get("created") or info["created"], info["created"])
     known = {r["t"] for r in c["reasons"]}
     for r in reasons:
         if r["t"] not in known:
@@ -395,6 +403,7 @@ def apply_metrics(c, info, ts):
     if m.get("mc"):
         c["ath_seen"] = max(c.get("ath_seen") or 0, m["mc"])
     c["updated"] = ts
+    c["boosts_active"] = info.get("boosts_active") or 0
     if info.get("image") and not c.get("image"):
         c["image"] = info["image"]
     soc = info.get("socials") or {}
@@ -414,7 +423,7 @@ def finalize(c, cfg, ts):
     c["momentum"] = momentum(m)
     liq, mc = m.get("liq"), m.get("mc")
     c["flags"] = []
-    if liq is not None and mc and liq < 1000 and mc > 1_000_000:
+    if mc and ((liq or 0) < 1000 and mc > 1_000_000 or (liq or 0) < 20000 and mc > 1_000_000_000):
         c["flags"].append("mc_sospechoso")  # MC enorme con liquidez ridícula
     if c.get("pump") and not c["pump"].get("complete") and not m.get("liq"):
         c["flags"].append("bonding_curve")
@@ -423,19 +432,77 @@ def finalize(c, cfg, ts):
     vol24 = (m.get("vol") or {}).get("h24") or 0
     c["dead"] = bool(age_h > dr["min_age_hours"] and (mc or 0) < dr["max_mc"] and vol24 < dr["max_vol24"])
     # sin actividad: casi sin volumen y MC de recién lanzada (clones muertos al nacer)
-    c["inactive"] = bool(vol24 < dr["max_vol24"] and (mc or 0) < dr["max_mc"])
+    c["inactive"] = bool(age_h > 1 and vol24 < dr["max_vol24"] and (mc or 0) < dr["max_mc"])
+
+def qualifies(reasons):
+    """Regla estricta: solo cuenta link de TikTok, tiktok/fyp/douyin en nombre-ticker-descripción
+    o la categoría TikTok de DexScreener. Trends, Brainrot y frases 'viral' son solo info extra."""
+    return any(r.get("q") for r in reasons)
+
+def too_old(c, cfg, ts):
+    created = c.get("created")
+    if not created:  # sin fecha de creación conocida: no podemos garantizar < 24 h
+        return ts - c["first_seen"] > 15 * 60_000
+    return ts - created > cfg["max_age_hours"] * 3_600_000
 
 def prune(coins, cfg, ts):
     keep = {}
     limit_ms = cfg["prune_after_days_dead"] * 86_400_000
     for ca, c in coins.items():
-        if c["dead"] and ts - c["first_seen"] > limit_ms and ts - c.get("last_match", 0) > limit_ms:
+        if too_old(c, cfg, ts) or not qualifies(c["reasons"]):
+            continue
+        if c.get("dead") and ts - c["first_seen"] > limit_ms and ts - c.get("last_match", 0) > limit_ms:
             continue
         keep[ca] = c
     if len(keep) > cfg["max_coins"]:
-        ranked = sorted(keep.values(), key=lambda c: (not c["dead"], (c.get("metrics") or {}).get("mc") or 0), reverse=True)
+        ranked = sorted(keep.values(), key=lambda c: (not c.get("dead"), (c.get("metrics") or {}).get("mc") or 0), reverse=True)
         keep = {c["ca"]: c for c in ranked[:cfg["max_coins"]]}
     return keep
+
+def check_dex_paid(coins, state, cfg, ts):
+    """DEX PAID = DexScreener tiene un pedido 'tokenProfile' aprobado para la coin
+    (GET /orders/v1/solana/<CA>). Se cachea por CA: si está pagado, ya no se vuelve a consultar."""
+    cache = state.setdefault("dexpaid", {})
+    recheck = cfg.get("dexpaid_recheck_minutes", 10) * 60_000
+    todo = [ca for ca, c in coins.items()
+            if not (cache.get(ca) or {}).get("paid") and ts - (cache.get(ca) or {}).get("checked", 0) > recheck]
+    todo.sort(key=lambda ca: (cache.get(ca) or {}).get("checked", 0))  # nunca comprobadas primero
+    n = 0
+    for ca in todo[:cfg.get("dexpaid_max_checks_per_run", 40)]:
+        d = http(f"{DS}/orders/v1/solana/{ca}", "dexscreener_orders", retries=2)
+        if not isinstance(d, dict):
+            continue
+        orders = d.get("orders") if isinstance(d.get("orders"), list) else (d if isinstance(d, list) else [])
+        prof = [o for o in orders if o.get("type") == "tokenProfile"]
+        paid = [o for o in prof if o.get("status") == "approved"]
+        e = {"checked": ts, "paid": bool(paid),
+             "status": "approved" if paid else (prof[0].get("status") if prof else None)}
+        if paid:
+            e["paid_at"] = min(o.get("paymentTimestamp") or ts for o in paid)
+        boosts = d.get("boosts") if isinstance(d.get("boosts"), list) else []
+        e["boost_total"] = sum(b.get("amount") or 0 for b in boosts)
+        cache[ca] = e
+        n += 1
+        time.sleep(0.4)  # límite de DexScreener para /orders: 60 por minuto
+    SRC.mark("dexscreener_orders", True, n)
+    for ca, c in coins.items():
+        e = cache.get(ca) or {}
+        c["dex_paid"] = bool(e.get("paid"))
+        c["dex_status"] = e.get("status")
+        if e.get("paid_at"): c["dex_paid_at"] = e["paid_at"]
+        c["boost_total"] = e.get("boost_total") or 0
+    # limpiar caché de coins que ya no seguimos (más de 3 días)
+    for ca in [ca for ca, e in cache.items() if ca not in coins and ts - e.get("checked", 0) > 3 * 86_400_000]:
+        cache.pop(ca, None)
+
+def rematch(coins, M):
+    """Re-aplica las reglas actuales a lo ya guardado (por si cambian las reglas)."""
+    for c in coins.values():
+        L = c.get("links") or {}
+        links = list(L.get("tiktok") or []) + [L.get("website") or "", L.get("x") or ""]
+        rs, _ = M.match(c.get("name"), c.get("symbol"), c.get("desc"), links)
+        metas = [dict(r, q=(r["t"] == "meta_tiktok")) for r in c["reasons"] if r["t"].startswith("meta_")]
+        c["reasons"] = metas + rs
 
 # ---------------------------------------------------------------- main
 def run(no_trends=False):
@@ -455,18 +522,18 @@ def run(no_trends=False):
     # 1) categorías curadas de DexScreener (TikTok / Brainrot)
     for info, extra in src_ds_metas(cfg):
         rs, tl = M.match(info["name"], info["symbol"], "", info["links"])
-        new_count += upsert(coins, info, [extra] + rs, tl, "dexscreener_meta", ts)
+        if qualifies([extra] + rs):
+            new_count += upsert(coins, info, [extra] + rs, tl, "dexscreener_meta", ts)
+        elif info["ca"] in coins:  # p.ej. Brainrot: solo añade el badge a coins que ya califican
+            upsert(coins, info, [extra], tl, "dexscreener_meta", ts)
     log("metas ok")
 
     # 2) búsquedas en DexScreener: palabras clave + trends manuales + hashtags de Creative Center
+    # (los hashtags de Creative Center ya no se buscan: solo dan badge informativo, no incluyen coins)
     terms = list(cfg["search_terms"]) + list(cfg.get("manual_trends", []))
-    # los hashtags cambian poco: se buscan como mucho cada 30 min (DexScreener limita la búsqueda)
-    if ts - state.get("last_trend_search", 0) > 30 * 60_000:
-        terms += [t["name"] for t in trends if norm(t["name"]) in M.trend_tags]
-        state["last_trend_search"] = ts
     for info in src_ds_search(list(dict.fromkeys(terms))):
         rs, tl = M.match(info["name"], info["symbol"], "", info["links"])
-        if sum(r["w"] for r in rs) >= cfg["min_score"]:
+        if qualifies(rs):
             new_count += upsert(coins, info, rs, tl, "dexscreener_search", ts)
     log("search ok")
 
@@ -479,18 +546,21 @@ def run(no_trends=False):
         info["links"] = list(info.get("links") or []) + cd["links"]
         info["desc"] = cd["desc"]
         rs, tl = M.match(info.get("name"), info.get("symbol"), cd["desc"], info["links"])
-        if sum(r["w"] for r in rs) >= cfg["min_score"]:
+        if qualifies(rs):
             new_count += upsert(coins, info, rs, tl, "dexscreener_profiles", ts)
     log("profiles ok")
 
     # 4) pump.fun (nuevas + activas)
     for info in src_pump(state, cfg):
         rs, tl = M.match(info["name"], info["symbol"], info["desc"], info["links"])
-        if sum(r["w"] for r in rs) >= cfg["min_score"]:
+        if qualifies(rs):
             new_count += upsert(coins, info, rs, tl, "pumpfun", ts)
     log("pump ok")
 
-    # 5) refrescar métricas de TODAS las coins seguidas
+    # 5) reglas actuales sobre todo lo guardado + fuera lo que tenga > 24 h
+    rematch(coins, M)
+    coins = {ca: c for ca, c in coins.items() if not (c.get("created") and too_old(c, cfg, ts))}
+    # 6) refrescar métricas de TODAS las coins seguidas
     fresh = ds_tokens(list(coins))
     for ca, p in fresh.items():
         if ca in coins:
@@ -498,6 +568,8 @@ def run(no_trends=False):
     for c in coins.values():
         finalize(c, cfg, ts)
     coins = prune(coins, cfg, ts)
+    # 7) DEX PAID (con caché por CA)
+    check_dex_paid(coins, state, cfg, ts)
     state["coins"] = coins
     state["last_run"] = ts
     save_json(STATE_PATH, state)
@@ -512,16 +584,18 @@ def run(no_trends=False):
     for t in sorted(trends, key=lambda t: (-t["views"])):
         lbl = f"#{t['name']} ({t['country']})"
         out_trends.append(dict(t, coins_matched=tag_hits.get(f"Coincide con trend TikTok {lbl}", 0)))
-    lst = sorted(coins.values(), key=lambda c: c["first_seen"], reverse=True)
+    lst = sorted(coins.values(), key=lambda c: c.get("created") or c["first_seen"], reverse=True)
     data = {
         "generated_at": iso(), "generated_ms": now_ms(), "run_seconds": round(time.time() - t0, 1),
-        "new_this_run": new_count, "total": len(lst), "active": sum(1 for c in lst if not c["dead"]),
+        "new_this_run": new_count, "total": len(lst), "max_age_hours": cfg["max_age_hours"],
+        "dex_paid": sum(1 for c in lst if c.get("dex_paid")), "active": sum(1 for c in lst if not c["dead"]),
         "sources": SRC.status, "trends": out_trends,
         "manual_trends": cfg.get("manual_trends", []),
         "coins": lst,
     }
     save_json(DATA_PATH, data, compact=True)
-    log(f"OK: {len(lst)} coins ({data['active']} activas, {new_count} nuevas) en {data['run_seconds']}s")
+    data["new_this_run"] = sum(1 for c in lst if c["first_seen"] == ts)
+    log(f"OK: {len(lst)} coins ({data['active']} activas, {data['new_this_run']} nuevas) en {data['run_seconds']}s")
     for k, v in SRC.status.items():
         log(f"  {k}: ok={v['ok']} fail={v['fail']} items={v['items']} {v.get('last_error') or ''}")
     return data

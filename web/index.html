@@ -27,8 +27,8 @@
   <div class="controls">
     <input id="q" type="search" placeholder="Buscar nombre, ticker, CA o motivo…">
     <select id="sort">
-      <option value="new">Recién detectadas</option>
-      <option value="young">Más jóvenes (edad)</option>
+      <option value="young">Más nuevas (creación)</option>
+      <option value="new">Recién detectadas por el radar</option>
       <option value="mc">Market cap</option>
       <option value="vol1">Volumen 1h</option>
       <option value="vol24">Volumen 24h</option>
@@ -41,21 +41,17 @@
       <div class="grid">
         <label>MC mín ($)<input id="mcmin" type="number" inputmode="numeric" placeholder="0"></label>
         <label>MC máx ($)<input id="mcmax" type="number" inputmode="numeric" placeholder="∞"></label>
-        <label>Edad máx (horas)<input id="agemax" type="number" inputmode="numeric" placeholder="∞"></label>
+        <label>Edad máx (horas)<input id="agemax" type="number" inputmode="numeric" placeholder="24"></label>
         <label>Liquidez mín ($)<input id="liqmin" type="number" inputmode="numeric" placeholder="0"></label>
-      </div>
-      <div class="chips" id="reasonChips">
-        <label><input type="checkbox" value="direct" checked> TikTok directo</label>
-        <label><input type="checkbox" value="trend" checked> Trend/hashtag</label>
-        <label><input type="checkbox" value="brainrot" checked> Brainrot</label>
-        <label><input type="checkbox" value="other" checked> Otros</label>
       </div>
       <button id="resetF" class="link">Quitar filtros</button>
     </details>
     <div class="toggles">
       <label><input id="hideInactive" type="checkbox" checked> Ocultar sin actividad</label>
       <label><input id="groupClones" type="checkbox" checked> Agrupar clones</label>
+      <label><input id="onlyPaid" type="checkbox"> Solo DEX PAID</label>
       <label><input id="onlyNew" type="checkbox"> Solo nuevas desde mi última visita</label>
+      <label><input id="showHidden" type="checkbox"> Ver ocultas <span id="hiddenCount"></span></label>
     </div>
   </div>
   <div id="summary" class="summary"></div>
@@ -63,10 +59,10 @@
 </section>
 
 <section id="tab-trends" hidden>
-  <p class="note">Hashtags en tendencia de <a href="https://ads.tiktok.com/business/creativecenter/inspiration/popular/hashtag/pc/en" target="_blank" rel="noopener">TikTok Creative Center</a> (sin login TikTok solo muestra el top 3 por país, así que cruzamos varios países). Pulsa “ver coins” para filtrar las coins que coinciden con ese trend.</p>
+  <p class="note"><b>Solo informativo:</b> coincidir con un hashtag NO basta para que una coin salga en el radar (hace falta link de TikTok, "tiktok/fyp/douyin" en nombre-ticker-descripción o la categoría TikTok de DexScreener). Hashtags en tendencia de <a href="https://ads.tiktok.com/business/creativecenter/inspiration/popular/hashtag/pc/en" target="_blank" rel="noopener">TikTok Creative Center</a> (sin login TikTok solo muestra el top 3 por país, así que cruzamos varios países). Pulsa “ver coins” para filtrar las coins que coinciden con ese trend.</p>
   <div id="trends"></div>
   <h3>Trends manuales</h3>
-  <p class="note">Palabras que añadimos a mano en <code>collector/config.json → manual_trends</code> (memes que ves en TikTok y quieres vigilar).</p>
+  <p class="note">Palabras que añadimos a mano en <code>collector/config.json → manual_trends</code>: se buscan y salen como badge, pero la coin solo entra si además cumple la regla TikTok.</p>
   <div id="manual"></div>
 </section>
 

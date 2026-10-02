@@ -69,3 +69,10 @@ td.num{text-align:right;white-space:nowrap}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--acc);color:#000;padding:8px 14px;border-radius:9px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none}
 #toast.show{opacity:1}
 @media (max-width:520px){.list{grid-template-columns:1fr}.stat .v{font-size:12px}main{padding:8px}th.hide-m,td.hide-m{display:none}}
+.b.paid{background:#16a34a;border-color:#16a34a;color:#fff;font-weight:700}
+.b.pending{border-color:#16a34a;color:#4ade80}
+.b.boost{border-color:#facc15;color:#facc15}
+.b.info{color:var(--mut);border-style:dotted}
+.cardbar{display:flex;justify-content:flex-end;gap:6px}
+.hidebtn{background:none;border:1px solid var(--line);color:var(--mut);border-radius:7px;padding:4px 9px;font-size:12px;cursor:pointer}
+.hidebtn:hover{color:var(--txt);border-color:var(--mut)}
