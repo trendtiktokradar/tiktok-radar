@@ -1,6 +1,6 @@
 {
  "v": 1,
- "updated": 1790940358130,
+ "updated": 1790940359264,
  "marks": {
   "9qQzEDrBiJQyaWwu5EqrA9oXKspsF5PppZRHU3w2SEsc": {
    "ts": 1790940356557,
@@ -13,9 +13,7 @@
    "dev": null
   }
  },
- "rules_off": [
-  "link_tiktok"
- ],
+ "rules_off": [],
  "log": [
   {
    "ts": 1790940356557,
@@ -27,6 +25,11 @@
   {
    "ts": 1790940358130,
    "action": "rule_off",
+   "key": "link_tiktok"
+  },
+  {
+   "ts": 1790940359264,
+   "action": "rule_on",
    "key": "link_tiktok"
   }
  ]
