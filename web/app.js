@@ -197,12 +197,12 @@
       `<div><span>${esc(x.name || "?")} ($${esc(x.symbol || "?")}) · hace ${ago(x.t)}</span><span><a href="https://gmgn.ai/sol/token/${esc(x.ca)}" target="_blank" rel="noopener">GMGN</a> · <a href="#" data-copy="${esc(x.ca)}">copiar CA</a></span></div>`).join("")}</div>` : "";
     const groupCas = esc([c.ca, ...g.clones.map((x) => x.ca)].join(","));
     return `<article class="card${isNew ? " new" : ""}${c.inactive ? " inactive" : ""}">
-      <div class="head">${img}<div class="ttl"><div class="nm">${esc(c.name || "?")}</div><div class="sym">$${esc(c.symbol || "?")} · <span title="${esc(athTitle(c))}">ATH <b class="ath">${money(c.ath)}</b></span> · score ${c.score}</div></div>
+      <div class="head">${img}<div class="ttl"><div class="nm">${esc(c.name || "?")}</div><div class="sym">$${esc(c.symbol || "?")} · <span title="Liquidez">liq ${money(m.liq)}</span> · score ${c.score}</div></div>
         <div class="age">edad ${ago(c.created || c.first_seen)}<br><span title="Primera vez visto por el radar">visto hace ${ago(c.first_seen)}</span></div></div>
       <div class="badges">${badges.join("")}</div>
       <div class="stats">
         <div class="stat"><div class="k">MC</div><div class="v">${money(m.mc)}</div></div>
-        <div class="stat"><div class="k">Liq</div><div class="v">${money(m.liq)}</div></div>
+        <div class="stat" title="${esc(athTitle(c))}"><div class="k">ATH</div><div class="v ath">${money(c.ath)}</div></div>
         <div class="stat"><div class="k">Vol 1h</div><div class="v">${money(v.h1)}</div></div>
         <div class="stat"><div class="k">Vol 24h</div><div class="v">${money(v.h24)}</div></div>
         <div class="stat"><div class="k">Δ 5m</div><div class="v">${pct(ch.m5)}</div></div>
