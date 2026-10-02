@@ -1,2 +1,5 @@
-# Solo para capturas de pantalla (scripts/screenshot.py). El collector NO necesita nada: Python 3 stdlib.
+# Collector: NO necesita nada (Python 3 stdlib).
+# Capturas (scripts/screenshot*.py) y servicio del Buscador (collector/buscador.py):
 playwright
+aiohttp
+pytrends

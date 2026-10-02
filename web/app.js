@@ -368,7 +368,7 @@
   });
   function switchTab(t) {
     document.querySelectorAll(".tabs button").forEach((b) => b.classList.toggle("active", b.dataset.tab === t));
-    ["coins", "trends", "learned", "sources"].forEach((x) => ($("#tab-" + x).hidden = x !== t));
+    ["coins", "search", "trends", "learned", "sources"].forEach((x) => ($("#tab-" + x).hidden = x !== t));
   }
   ["#q", "#sort", "#mcmin", "#mcmax", "#agemax", "#liqmin", "#hideInactive", "#groupClones", "#onlyNew", "#onlyPaid", "#onlyDevHot", "#showHidden"].forEach((s) =>
     $(s).addEventListener("input", () => { saveFilters(); DATA && renderCoins(); }));

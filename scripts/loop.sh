@@ -8,6 +8,8 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 mkdir -p "$ROOT/logs"
 while true; do
   { echo "=== $(date '+%F %T')"; "$ROOT/scripts/run_once.sh"; } >> "$ROOT/logs/radar.log" 2>&1
+  # vigilante del Buscador: si el servicio está caído, lo vuelve a arrancar (BUSCADOR=0 lo desactiva)
+  [ "${BUSCADOR:-1}" = "1" ] && "$ROOT/scripts/buscador.sh" ensure >> "$ROOT/logs/radar.log" 2>&1
   # el log no crece sin límite
   if [ "$(wc -c < "$ROOT/logs/radar.log")" -gt 5000000 ]; then tail -n 2000 "$ROOT/logs/radar.log" > "$ROOT/logs/radar.log.1" && mv "$ROOT/logs/radar.log.1" "$ROOT/logs/radar.log"; fi
   sleep "${RADAR_INTERVAL:-300}"

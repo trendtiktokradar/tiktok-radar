@@ -17,6 +17,7 @@
   <div id="meta" class="meta">Cargando…</div>
   <nav class="tabs">
     <button data-tab="coins" class="active">Coins</button>
+    <button data-tab="search">Buscador</button>
     <button data-tab="trends">Trends</button>
     <button data-tab="learned">Aprendido</button>
     <button data-tab="sources">Fuentes</button>
@@ -60,6 +61,18 @@
   <div id="list" class="list"></div>
 </section>
 
+<section id="tab-search" hidden>
+  <form id="sform" class="controls" autocomplete="off">
+    <input id="sq" type="search" placeholder="Palabra o #hashtag (p. ej. capybara)" maxlength="60" enterkeyhint="search">
+    <button type="submit" id="sbtn" class="primary">Buscar</button>
+  </form>
+  <div id="sstatus" class="note sstatus">Comprobando el box…</div>
+  <div id="srecent" class="chips"></div>
+  <div id="sresult"><p class="note">Escribe una palabra y te digo cuántos vídeos hay en TikTok, cuántas views, si son recientes o antiguos, si sube o baja (Google Trends) y los vídeos más vistos. Lo hace el box en el momento, sin IA.</p></div>
+  <h3>⭐ Palabras que sigues</h3>
+  <div id="swatch"></div>
+</section>
+
 <section id="tab-trends" hidden>
   <p class="note"><b>Solo informativo:</b> coincidir con un hashtag NO basta para que una coin salga en el radar (hace falta link de TikTok, "tiktok/fyp/douyin" en nombre-ticker-descripción o la categoría TikTok de DexScreener). Hashtags en tendencia de <a href="https://ads.tiktok.com/business/creativecenter/inspiration/popular/hashtag/pc/en" target="_blank" rel="noopener">TikTok Creative Center</a> (sin login TikTok solo muestra el top 3 por país, así que cruzamos varios países). Pulsa “ver coins” para filtrar las coins que coinciden con ese trend.</p>
   <div id="trends"></div>
@@ -80,5 +93,6 @@
 <div id="toast"></div>
 <script src="config.js"></script>
 <script src="app.js"></script>
+<script src="buscador.js"></script>
 </body>
 </html>

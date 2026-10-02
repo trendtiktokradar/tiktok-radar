@@ -81,6 +81,7 @@ aprende de los motivos de entrada.
 - **Agrupar clones**: junta las coins con el mismo nombre y muestra la de más MC con "+N clones".
 - **Ocultar sin actividad** (activado por defecto): esconde coins con más de 1 h de vida, volumen 24 h < $200 y MC < $8K.
 - **NUEVA** / "Solo nuevas desde mi última visita": lo que apareció desde que abriste el panel la vez anterior.
+- Pestaña **Buscador** (sección 8): escribes una palabra y el box te dice cuántos vídeos de TikTok hay, views, recientes vs antiguos, si sube o baja y los vídeos top.
 - Pestaña **Trends** (solo informativa), pestaña **Aprendido** (reglas aprendidas, coins marcadas, TikTok devs 🔥)
   y pestaña **Fuentes** (estado de cada fuente).
 - Se recarga sola cada 2 min. Funciona en el móvil.
@@ -118,6 +119,63 @@ aprende de los motivos de entrada.
   máx. 8 devs por pasada, cada uno se re-mira cada 60 min) que cumplen la misma regla TikTok.
 - Si llega a `dev_hot.min_coins` (3, contando la actual) sale **TikTok dev 🔥 (N)**. Solo informativo, **no bloquea**.
 
+### 8. Buscador (pestaña "Buscador") — sin IA, sin login de TikTok
+Escribes una palabra (o `#hashtag`) y en ~5-10 s sale: nº de vídeos y views del hashtag, recientes vs antiguos,
+views/likes típicos y máximos, si sube o baja (Google Trends), vídeos top con link, hashtags relacionados y un
+veredicto **🔥 HOT / 📈 sube / 📉 baja / 💤 flojo**.
+
+```
+ navegador ──POST {pin,q}──▶ /api/search (Vercel) ──X-Radar-Pin──▶ quick tunnel Cloudflare ──▶ collector/buscador.py (box)
+                                   │  lee la URL del box de                                         │  Chrome headless propio (sin login)
+                                   └─ box.json (rama "feedback") ◀── la publica el box al arrancar ─┘  + Google Trends + tikwm
+```
+**Fuentes (probadas 02/10/2026):**
+| Fuente | Qué da | Notas |
+|---|---|---|
+| TikTok `/api/challenge/detail` | Vídeos y views totales del hashtag (`statsV2`) | TikTok firma las peticiones (X-Bogus/X-Gnarly) con su JS: por eso se piden con `fetch()` desde una pestaña de tiktok.com abierta en Chrome headless. Con curl/Vercel devuelve vacío |
+| TikTok `/api/challenge/item_list` | 3 páginas × 30 vídeos del hashtag (fecha, views, likes, comentarios, shares) | Ordenados por **popularidad**, no por fecha |
+| TikTok `/api/search/general/full` | 2 páginas (~24) de la búsqueda normal | Solo cuentan los que mencionan la palabra (la búsqueda es difusa). La pestaña "Vídeos" con filtros de fecha pide login (403) |
+| Google Trends (`pytrends`) | Curva diaria 90 días, web y YouTube (0-100) | No hay TikTok en Trends; Google limita si se abusa (caché 6 h por palabra) |
+| tikwm.com `/api/challenge/search` | Hashtags parecidos con nº de vídeos; respaldo del detalle | No oficial, puede caer; su búsqueda de vídeos está bloqueada por Cloudflare |
+
+**Veredicto (reglas fijas, `verdict()` en `collector/buscador.py`).** Puntos:
+- % de la muestra publicado en los últimos 7 días: ≥ 25 % → **+2**; ≥ 10 % → **+1**.
+- ≥ 3 vídeos de las últimas 24 h en la muestra → **+1**.
+- El vídeo más visto de los últimos 7 días: ≥ 1M views → **+2**; ≥ 100K → **+1**.
+- Google Trends (el mejor de web/YouTube; media últimos 7 días ÷ media de las 4 semanas anteriores): ≥ ×2 → **+2**;
+  ≥ ×1,3 → **+1**; ≤ ×0,77 → **−1**. Si casi nadie lo busca (media < 5) no cuenta (sería ruido).
+- Watchlist: el hashtag crece ≥ 2 % de vídeos al día → **+1**.
+
+**≥ 5 = 🔥 HOT · 3-4 = 📈 sube** · si Trends baja, o < 10 % de la muestra es de esta semana (y Trends no sube) = **📉 baja** ·
+resto = **💤 flojo** · sin hashtag ni vídeos = **❔ sin datos**.
+
+**Watchlist (⭐ Seguir):** el box guarda una foto al día de cada palabra seguida (vídeos, views del hashtag, nº de
+vídeos de la semana) en `state/buscador.json` y en el resultado sale la curva y el % de crecimiento por día
+(máx. 25 palabras). Lo hace el propio servicio (revisa cada 15 min si a alguna le toca foto; 1 petición ligera
+a TikTok por palabra y día). Sin IA.
+
+**Límites y protección:** caché 45 min por palabra (↻ Actualizar fuerza una búsqueda nueva), como mucho 1 búsqueda
+nueva cada 4 s y 3 en cola, 40 s máximo por búsqueda (si una fuente falla, sale el resto y se avisa).
+Cada petición lleva el PIN: Vercel lo comprueba y el box lo vuelve a comprobar preguntando a `/api/search`
+(`action: "check"`), así que el box **no guarda el PIN** (solo un hash en memoria 1 h). 10 PIN malos en 1 h → bloqueo.
+La URL del box está en `box.json` (repo público), pero sin PIN no responde nada salvo `/health`.
+
+**Por qué quick tunnel + box.json:** el box no tiene IP pública. `cloudflared tunnel --url` es gratis y sin cuenta,
+pero su URL `*.trycloudflare.com` cambia en cada arranque. El servicio la publica en `box.json` de la rama
+`feedback` (que no despliega) con la API de GitHub y `GITHUB_TOKEN_TIKTOK_RADAR`; `/api/search` la lee con la
+API de GitHub (sin caché; con `RADAR_GH_TOKEN` si está) y la guarda 60 s. Si el túnel deja de responder desde
+fuera 3 veces seguidas, el servicio lo reinicia y publica la URL nueva. Un túnel con nombre fijo necesitaría
+cuenta de Cloudflare y un dominio propio.
+
+**Limitaciones honestas:** los totales son del **hashtag** (`#palabra` sin espacios); para frases solo hay la muestra.
+"Recientes vs antiguos" se mide sobre ~100 vídeos (los más populares + búsqueda), no sobre todos. No hay likes
+totales del hashtag. TikTok no da su gráfica de tendencia sin login → se usa Google Trends + la watchlist.
+Si TikTok endurece el anti-bot o cambia su API, la parte TikTok puede fallar (sale el resto).
+Depende de que el box esté encendido.
+
+**Activar (una vez):** en Vercel basta `RADAR_PIN` (el mismo que "No es TikTok") y Redeploy. Sin él la pestaña
+avisa "Falta configurar el PIN en Vercel".
+
 ---
 
 ## Uso en local
@@ -141,6 +199,15 @@ Probar el collector sin tocar los datos reales: `RADAR_STATE=/tmp/s.json RADAR_D
 (con `RADAR_FEEDBACK_FILE=/ruta/feedback.json` usa un feedback local en vez del de GitHub).
 
 Captura de pantalla: `.venv/bin/python scripts/screenshot.py` (necesita `pip install playwright`).
+
+Buscador en local (sin túnel ni GitHub):
+```bash
+.venv/bin/pip install -r requirements-dev.txt          # playwright, aiohttp, pytrends (usa /usr/bin/google-chrome)
+BUSCADOR_TUNNEL=0 BUSCADOR_PUBLISH=0 BUSCADOR_PORT=18791 BUSCADOR_LOCAL_PIN=prueba .venv/bin/python collector/buscador.py
+curl -H 'X-Radar-Pin: prueba' 'http://127.0.0.1:18791/search?q=capybara'
+RADAR_PIN=prueba RADAR_BOX_URL=http://127.0.0.1:18791 node scripts/dev_server.js 8766   # panel + /api en http://127.0.0.1:8766
+RADAR_TEST_PIN=prueba .venv/bin/python scripts/screenshot_buscador.py http://127.0.0.1:8766/ capybara
+```
 
 ---
 
@@ -176,6 +243,21 @@ pkill -f tiktok-radar/scripts/loop.sh                  # parar
 tail -f logs/radar.log                                  # ver qué hace
 ```
 Si el box se reinicia, el bucle se para: hay que volver a lanzarlo (mientras, la Action de respaldo mantiene los datos).
+
+### Arrancar / parar el Buscador en el box
+```bash
+cd /workspace/tiktok-radar
+scripts/buscador.sh start      # nohup setsid: Chrome headless + cloudflared; publica box.json (necesita GITHUB_TOKEN_TIKTOK_RADAR)
+scripts/buscador.sh status     # en marcha / health / último túnel
+scripts/buscador.sh stop       # para servicio, túnel y Chrome
+tail -f logs/buscador.log
+```
+- `scripts/loop.sh` llama a `scripts/buscador.sh ensure` en cada vuelta (5 min): si el servicio está caído o no
+  responde, lo arranca. Así, tras reiniciar el box **basta con relanzar el bucle** (comando de arriba) y el Buscador
+  vuelve solo en ≤ 5 min con una URL nueva que publica en `box.json`.
+- Perfil de Chrome propio y sin login en `~/.tiktok-radar-chrome` (fuera del repo). cloudflared en `~/.local/bin/cloudflared`
+  (descarga: `curl -L -o ~/.local/bin/cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 && chmod +x ~/.local/bin/cloudflared`).
+- Puerto local 18790 (los 8790/8791 los usa el propio box).
 
 ### Conectar Vercel (una sola vez)
 1. Abrir https://vercel.com/new/import?s=https://github.com/trendtiktokradar/tiktok-radar
