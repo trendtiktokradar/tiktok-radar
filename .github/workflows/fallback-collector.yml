@@ -1,0 +1,54 @@
+# Respaldo: si el box deja de publicar (data.json con más de 20 min), GitHub ejecuta el collector.
+# Gratis en repos públicos. El cron de GitHub no es puntual (puede retrasarse 5-30 min), por eso
+# es solo respaldo y no la fuente principal. Sin IA, sin tokens.
+name: fallback-collector
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Ejecutar aunque los datos sean recientes"
+        type: boolean
+        default: false
+permissions:
+  contents: write
+concurrency:
+  group: collector
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Traer rama data (estado anterior)
+        id: age
+        run: |
+          mkdir -p state pub
+          if git fetch --depth 1 origin data 2>/dev/null; then
+            git show FETCH_HEAD:state.json > state/state.json || true
+            git show FETCH_HEAD:data.json > pub_data.json || true
+          fi
+          AGE=$(python3 -c "import json,time;print(int((time.time()*1000-json.load(open('pub_data.json'))['generated_ms'])/60000))" 2>/dev/null || echo 9999)
+          echo "minutos desde la última actualización: $AGE"
+          echo "age=$AGE" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        if: steps.age.outputs.age > 20 || inputs.force
+        with:
+          python-version: "3.12"
+      - name: Ejecutar collector
+        if: steps.age.outputs.age > 20 || inputs.force
+        run: python3 collector/radar.py
+      - name: Publicar en rama data
+        if: steps.age.outputs.age > 20 || inputs.force
+        run: |
+          cd pub
+          git init -q
+          cp ../web/data.json data.json
+          cp ../state/state.json state.json
+          printf '# Rama de datos de TikTok Radar\nLa escribe el programa automáticamente. No editar a mano.\n' > README.md
+          git symbolic-ref HEAD refs/heads/data
+          git add -A
+          git -c user.name="tiktok-radar-bot" -c user.email="tiktok-radar-bot@users.noreply.github.com" commit -q -m "data $(date -u +%FT%TZ) (github actions)"
+          git push -q --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:refs/heads/data

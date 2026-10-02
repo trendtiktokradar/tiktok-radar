@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d12">
+<title>TikTok Radar · Solana</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="top">
+    <h1>📡 TikTok Radar <span class="chain">Solana</span></h1>
+    <button id="reload" title="Recargar datos">↻</button>
+  </div>
+  <div id="meta" class="meta">Cargando…</div>
+  <nav class="tabs">
+    <button data-tab="coins" class="active">Coins</button>
+    <button data-tab="trends">Trends TikTok</button>
+    <button data-tab="sources">Fuentes</button>
+  </nav>
+</header>
+
+<main>
+<section id="tab-coins">
+  <div class="controls">
+    <input id="q" type="search" placeholder="Buscar nombre, ticker, CA o motivo…">
+    <select id="sort">
+      <option value="new">Recién detectadas</option>
+      <option value="young">Más jóvenes (edad)</option>
+      <option value="mc">Market cap</option>
+      <option value="vol1">Volumen 1h</option>
+      <option value="vol24">Volumen 24h</option>
+      <option value="mom">Momentum</option>
+      <option value="chg1">Cambio 1h</option>
+      <option value="score">Relación TikTok (score)</option>
+    </select>
+    <details class="filters">
+      <summary>Filtros</summary>
+      <div class="grid">
+        <label>MC mín ($)<input id="mcmin" type="number" inputmode="numeric" placeholder="0"></label>
+        <label>MC máx ($)<input id="mcmax" type="number" inputmode="numeric" placeholder="∞"></label>
+        <label>Edad máx (horas)<input id="agemax" type="number" inputmode="numeric" placeholder="∞"></label>
+        <label>Liquidez mín ($)<input id="liqmin" type="number" inputmode="numeric" placeholder="0"></label>
+      </div>
+      <div class="chips" id="reasonChips">
+        <label><input type="checkbox" value="direct" checked> TikTok directo</label>
+        <label><input type="checkbox" value="trend" checked> Trend/hashtag</label>
+        <label><input type="checkbox" value="brainrot" checked> Brainrot</label>
+        <label><input type="checkbox" value="other" checked> Otros</label>
+      </div>
+      <button id="resetF" class="link">Quitar filtros</button>
+    </details>
+    <div class="toggles">
+      <label><input id="hideInactive" type="checkbox" checked> Ocultar sin actividad</label>
+      <label><input id="groupClones" type="checkbox" checked> Agrupar clones</label>
+      <label><input id="onlyNew" type="checkbox"> Solo nuevas desde mi última visita</label>
+    </div>
+  </div>
+  <div id="summary" class="summary"></div>
+  <div id="list" class="list"></div>
+</section>
+
+<section id="tab-trends" hidden>
+  <p class="note">Hashtags en tendencia de <a href="https://ads.tiktok.com/business/creativecenter/inspiration/popular/hashtag/pc/en" target="_blank" rel="noopener">TikTok Creative Center</a> (sin login TikTok solo muestra el top 3 por país, así que cruzamos varios países). Pulsa “ver coins” para filtrar las coins que coinciden con ese trend.</p>
+  <div id="trends"></div>
+  <h3>Trends manuales</h3>
+  <p class="note">Palabras que añadimos a mano en <code>collector/config.json → manual_trends</code> (memes que ves en TikTok y quieres vigilar).</p>
+  <div id="manual"></div>
+</section>
+
+<section id="tab-sources" hidden>
+  <p class="note">Estado de cada fuente en la última pasada del programa.</p>
+  <div id="sources"></div>
+</section>
+</main>
+<div id="toast"></div>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

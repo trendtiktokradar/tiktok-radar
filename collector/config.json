@@ -1,0 +1,37 @@
+{
+  "_comment": "Configuración del TikTok Radar. Se puede editar a mano (o pedírselo al agente). No usa IA.",
+  "min_score": 2,
+  "max_coins": 1500,
+  "prune_after_days_dead": 7,
+  "dead_rules": {"min_age_hours": 48, "max_mc": 8000, "max_vol24": 200},
+  "trends_refresh_minutes": 60,
+  "dexscreener_metas": {
+    "tiktok": {"weight": 3, "label": "Categoría TikTok (DexScreener)"},
+    "brainrot": {"weight": 2, "label": "Categoría Brainrot (DexScreener)"}
+  },
+  "search_terms": ["tiktok", "tik tok", "fyp", "foryou", "douyin", "tiktoker", "viral tiktok", "brainrot"],
+  "strong_patterns": [
+    ["tik[\\s\\-_.]?tok", "tiktok"],
+    ["tiktoker", "tiktoker"],
+    ["(^|[^a-z])fyp([^a-z]|$)", "fyp"],
+    ["for\\s?you\\s?page", "for you page"],
+    ["(^|[^a-z])foryou([^a-z]|$)", "foryou"],
+    ["douyin|抖音", "douyin"]
+  ],
+  "desc_phrases": [
+    "went viral", "goes viral", "going viral", "viral video", "viral sound", "trending sound",
+    "viral on tiktok", "viral meme", "trending on", "million views", "millions of views", "viral clip",
+    "viral trend", "internet sensation", "brainrot"
+  ],
+  "manual_trends": [],
+  "trend_countries": ["US", "GB", "ES", "MX", "BR", "FR", "DE", "IT", "CA", "AU", "PH", "ID", "AR"],
+  "trend_time_ranges": [7, 30],
+  "trend_stopwords": [
+    "fyp", "foryou", "foryoupage", "viral", "trending", "trend", "love", "funny", "music", "dance", "food",
+    "fashion", "beauty", "fitness", "travel", "art", "october", "november", "december", "september", "payday",
+    "familyday", "live", "liveiseasy", "zerotohero", "livewithlowfollowers", "tiktok", "comedy", "football", "soccer",
+    "news", "movie", "drama", "anime", "game", "gaming", "memes", "meme", "cat", "dog", "west", "knights", "bets"
+  ],
+  "pump_new_max_pages": 8,
+  "pump_active_pages": 3
+}

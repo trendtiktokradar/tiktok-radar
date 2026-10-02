@@ -1,0 +1,2 @@
+# Alternativa a loop.sh si la máquina tiene cron (el box actual NO tiene cron instalado):
+*/5 * * * * cd /workspace/tiktok-radar && RADAR_PUBLISH=1 RADAR_REMOTE=git@github.com:USUARIO/tiktok-radar.git RADAR_SSH_KEY=$HOME/.ssh/tiktok_radar_deploy scripts/run_once.sh >> logs/radar.log 2>&1
