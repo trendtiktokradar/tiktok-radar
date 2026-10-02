@@ -152,8 +152,9 @@
     const r = await api({ action: "search", q, fresh: !!fresh });
     busy = false; $("#sbtn").disabled = false;
     if (r.error) {
-      $("#sresult").innerHTML = `<p class="warnbox">⚠️ ${esc(errText(r.error))}</p>`;
-      if (["box_offline", "not_configured", "noapi"].includes(r.error)) checkStatus();
+      const st = ["box_offline", "not_configured", "noapi"].includes(r.error);
+      $("#sresult").innerHTML = st ? "" : `<p class="warnbox">⚠️ ${esc(errText(r.error))}</p>`;
+      if (st) { $("#sstatus").innerHTML = `<span class="warnbox inline">⚠️ ${esc(errText(r.error))}</span>`; checkStatus(); }
       return;
     }
     recent(q); render(r);
