@@ -718,14 +718,19 @@ def update_dev_history(coins, state, cfg, ts, M, learner):
             total = d.get("count") if isinstance(d.get("count"), int) else total
             got += d.get("coins") or []
             time.sleep(0.8)
-            if total is not None and total >= max_created:
-                break  # lanzador masivo: no hace falta leer más
             if len(d.get("coins") or []) < 50 or (total is not None and len(got) >= total):
                 break
         if not ok and not got:
             continue  # pump.fun falló: se reintenta en la próxima pasada
         n += 1
-        complete = ok and total is not None and total < max_created and len(got) >= total
+        got = list({x.get("mint"): x for x in got if x.get("mint")}.values())
+        # pump.fun solo deja ver ~250 coins por dev (y en orden no cronológico). Con menos de max_created se ve todo.
+        # Con más: se evalúa con las visibles SOLO si entre ellas hay coins de antes de la ventana (la ventana de
+        # 7 días queda cubierta); si todas las visibles son de los últimos 7 días, lanza >250/semana = masivo.
+        full = ok and total is not None and len(got) >= total and total < max_created
+        covered = ok and total is not None and total >= max_created and \
+            any(ts - (x.get("created_timestamp") or ts) > win for x in got)
+        complete = bool(full or covered)
         all7, tt7 = {}, {}
         for x in got:
             mint, t = x.get("mint") or "", x.get("created_timestamp") or 0
@@ -736,7 +741,8 @@ def update_dev_history(coins, state, cfg, ts, M, learner):
                             [x.get("website") or "", x.get("twitter") or ""])
             if dev_tiktok_keys(rs) and not learner.blocks(mint, rs):
                 tt7[mint] = {"n": x.get("name"), "s": x.get("symbol"), "t": t}
-        prof[dev] = {"checked": ts, "complete": complete, "total": total, "all7": all7, "tt7": tt7}
+        prof[dev] = {"checked": ts, "complete": complete, "partial": bool(covered and not full), "total": total,
+                     "visible": len(got), "all7": all7, "tt7": tt7}
     SRC.mark("pumpfun_dev_coins", True, n)
     # limpieza
     for dev in list(hist):
@@ -761,8 +767,14 @@ def update_dev_history(coins, state, cfg, ts, M, learner):
         for ca, e in sorted(tt.items(), key=lambda kv: -(kv[1].get("t") or 0)):
             names.setdefault(norm(e.get("n")) or norm(e.get("s")) or ca, dict(e, ca=ca))
         share = len(tt) / len(all7) if all7 else 0
+        # la lista de pump.fun NO viene en orden cronológico: las coins que no se ven podrían ser de esta semana.
+        # Peor caso: todas las ocultas son de los últimos 7 días y no son TikTok. Tiene que seguir llegando a min_share.
+        hidden = max(0, (p.get("total") or 0) - (p.get("visible") or 0)) if p.get("partial") else 0
+        share_worst = len(tt) / (len(all7) + hidden) if all7 else 0
         return {"dev": dev, "count": len(names), "tiktok_coins": len(tt), "created7": len(all7),
-                "share": round(share, 3), "hot": len(names) >= th and share >= min_share,
+                "share": round(share, 3), "share_worst": round(share_worst, 3), "hidden": hidden,
+                "hot": len(names) >= th and share >= min_share and share_worst >= min_share,
+                "partial": bool(p.get("partial")), "total": p.get("total"), "visible": p.get("visible"),
                 "coins": [{"ca": e["ca"], "name": e.get("n"), "symbol": e.get("s"), "t": e.get("t")} for e in names.values()]}
 
     res = {}
@@ -779,7 +791,7 @@ def update_dev_history(coins, state, cfg, ts, M, learner):
         else:
             c.pop("dev_share", None); c.pop("dev_created7", None)
             p = prof.get(dev) if dev else None
-            c["dev_mass"] = bool(p and (p.get("total") or 0) >= max_created)
+            c["dev_mass"] = bool(p and not p.get("complete") and (p.get("total") or 0) >= max_created)
         if c["dev_hot"]:
             c["dev_coins"] = [x for x in r["coins"] if x["ca"] != c["ca"] and norm(x["name"]) != norm(c.get("name"))][:12]
         else:

@@ -145,7 +145,7 @@
     "feedback_path": "feedback.json"
   },
   "dev_hot": {
-    "_comment": "Badge 'TikTok dev 🔥 (N)': en los últimos window_days días el dev tiene >= min_coins coins TikTok con nombre distinto (link de TikTok o tiktok/fyp/douyin en nombre-ticker; nunca solo descripción/categoría), >= min_share de todas las coins que creó en esos días son TikTok, y su lista de pump.fun es legible entera (< max_created coins; si no, lanzador masivo). Solo informativo, NO bloquea.",
+    "_comment": "Badge 'TikTok dev 🔥 (N)': en los últimos window_days días el dev tiene >= min_coins coins TikTok con nombre distinto (link de TikTok o tiktok/fyp/douyin en nombre-ticker; nunca solo descripción/categoría), >= min_share de todas las coins que creó en esos días son TikTok, y su lista de pump.fun cubre la semana (< max_created coins, o con más: hay coins visibles de antes de la ventana y el peor caso contando las ocultas sigue >= min_share; si no, lanzador masivo). Solo informativo, NO bloquea.",
     "min_coins": 3,
     "window_days": 7,
     "lookup_max_per_run": 15,

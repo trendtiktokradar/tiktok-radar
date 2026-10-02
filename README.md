@@ -129,8 +129,13 @@ aprende de los motivos de entrada.
   1. tiene **≥ `min_coins` (3) coins TikTok con nombre distinto** (clones y relanzamientos con el mismo nombre cuentan 1).
      Solo cuentan señales fuertes: link de TikTok o tiktok/fyp/douyin en nombre/ticker; nunca solo descripción ni solo categoría;
   2. **≥ `min_share` (50 %)** de todas las coins que creó en esos días son TikTok;
-  3. su lista completa de pump.fun se puede leer: **< `max_created` (250) coins** en total. Si tiene más, es un
-     lanzador masivo y no se marca (no se puede saber su proporción).
+  3. su lista de pump.fun cubre la semana. pump.fun solo enseña ~250 coins por dev y **no en orden cronológico**:
+     - con **< `max_created` (250)** coins en total se ve todo;
+     - con más, se evalúa con las 250 visibles si entre ellas hay coins de antes de los 7 días (si todas las visibles
+       son de esta semana, lanza > 250/semana = **lanzador masivo**, no se marca). Como las ocultas podrían ser de
+       esta semana, además se exige el **peor caso**: TikTok ÷ (coins de 7 días visibles + todas las ocultas) ≥ 50 %.
+       Ej.: 9VhX… (253 coins, 3 ocultas): 40 de 43 = 93 %, peor caso 40 de 46 = 87 % → sí. Un dev con 932 coins
+       y 2 TikTok de 3 visibles esta semana: peor caso 0,3 % → no.
 - Fuente: `/coins-v2/user-created-coins/<dev>` (hasta `scan_max_pages` = 5 páginas de 50, cada dev se re-mira cada
   60 min, máx. 8 devs por pasada) + coins TikTok del propio radar que no salgan en esa lista.
 - Motivo del cambio: con la regla antigua (≥ 3 coins TikTok, sin mirar el total) salían bots que lanzan cientos de coins
