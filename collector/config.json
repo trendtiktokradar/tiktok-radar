@@ -130,5 +130,28 @@
   "_rules": "Regla estricta: una coin entra SOLO si tiene link de tiktok.com, o tiktok/tik tok/fyp/douyin en nombre-ticker-descripción, o está en la categoría TikTok de DexScreener. Trends, Brainrot, frases 'viral' y trends manuales son solo badges informativos.",
   "max_age_hours": 24,
   "dexpaid_recheck_minutes": 10,
-  "dexpaid_max_checks_per_run": 40
+  "dexpaid_max_checks_per_run": 40,
+  "learning": {
+    "_comment": "Botón 'No es TikTok': las coins marcadas se quitan siempre. Si un motivo de entrada junta min_marks marcas de coins que entraron SOLO por ese motivo, deja de aceptar coins que entren solo por él. protected_keys nunca se bloquean solas: 'tiktok' en el nombre y el link de TikTok son la base del radar (bloquearlos vaciaría casi todo); se pueden quitar de la lista si se quiere.",
+    "enabled": true,
+    "min_marks": 3,
+    "protected_keys": [
+      "kw_name:tiktok",
+      "kw_name:douyin",
+      "link_tiktok"
+    ],
+    "feedback_repo": "trendtiktokradar/tiktok-radar",
+    "feedback_branch": "feedback",
+    "feedback_path": "feedback.json"
+  },
+  "dev_hot": {
+    "_comment": "Badge 'TikTok dev 🔥 (N)': el dev ha creado >= min_coins coins TikTok (contando la actual) en los últimos window_days días. Solo informativo, NO bloquea.",
+    "min_coins": 3,
+    "window_days": 7,
+    "lookup_max_per_run": 15,
+    "lookup_retry_minutes": 180,
+    "scan_pump_created": true,
+    "scan_max_devs_per_run": 8,
+    "scan_refresh_minutes": 60
+  }
 }

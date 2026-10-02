@@ -47,7 +47,7 @@ class Source:
 
 SRC = Source()
 
-def http(url, source, data=None, headers=None, retries=3, timeout=25):
+def http(url, source, data=None, headers=None, retries=3, timeout=25, soft404=False):
     h = {"User-Agent": UA, "Accept": "application/json, text/plain, */*"}
     if headers:
         h.update(headers)
@@ -72,6 +72,8 @@ def http(url, source, data=None, headers=None, retries=3, timeout=25):
         except Exception as e:  # timeout, DNS, JSON...
             last = repr(e)
             time.sleep(1 + attempt)
+    if soft404 and last == "HTTP 404":
+        return None  # "no existe" es una respuesta normal para esta fuente: no cuenta como fallo
     SRC.mark(source, False, err=f"{last} {url[:120]}")
     return None
 
@@ -123,11 +125,11 @@ class Matcher:
         desc = desc or ""
         for rx, label in self.strong:
             if rx.search(text_ns):
-                reasons.append({"t": "kw_name", "d": f"'{label}' en nombre/ticker", "w": 3, "q": True}); break
+                reasons.append({"t": "kw_name", "k": f"kw_name:{label}", "d": f"'{label}' en nombre/ticker", "w": 3, "q": True}); break
         else:
             for rx, label in self.strong:
                 if rx.search(desc):
-                    reasons.append({"t": "kw_desc", "d": f"Menciona '{label}' en la descripción", "w": 2, "q": True}); break
+                    reasons.append({"t": "kw_desc", "k": f"kw_desc:{label}", "d": f"Menciona '{label}' en la descripción", "w": 2, "q": True}); break
         tiktok_links = sorted({u.rstrip(".,") for u in TIKTOK_URL.findall(" ".join(links) + " " + desc)})
         if tiktok_links:
             reasons.append({"t": "link_tiktok", "d": "Link de TikTok en sus redes/descripción", "w": 3, "q": True})
@@ -268,6 +270,7 @@ def pump_to_info(c):
         "links": [l for l in links if l], "socials": socials, "website": c.get("website"),
         "created": c.get("created_timestamp"), "pump_mc": fnum(c.get("usd_market_cap")),
         "pump_complete": bool(c.get("complete")), "pump_ath": fnum(c.get("ath_market_cap")),
+        "dev": c.get("creator"),
     }
 
 def src_pump(state, cfg):
@@ -372,6 +375,8 @@ def upsert(coins, info, reasons, tiktok_links, source, ts):
         c["desc"] = info["desc"][:300]
     if info.get("created"):
         c["created"] = min(c.get("created") or info["created"], info["created"])
+    if info.get("dev") and SOL_ADDR.match(info["dev"]):
+        c["dev"] = info["dev"]  # wallet creadora (pump.fun da "creator")
     known = {r["t"] for r in c["reasons"]}
     for r in reasons:
         if r["t"] not in known:
@@ -504,6 +509,185 @@ def rematch(coins, M):
         metas = [dict(r, q=(r["t"] == "meta_tiktok")) for r in c["reasons"] if r["t"].startswith("meta_")]
         c["reasons"] = metas + rs
 
+# ---------------------------------------------------------------- "No es TikTok" (feedback de Alex) + aprendizaje
+def qkeys(reasons):
+    """Motivos que hacen entrar la coin (los que cuentan para la regla), como claves estables.
+    p.ej. kw_name:tiktok, kw_desc:tiktok, link_tiktok, meta_tiktok."""
+    return sorted({r.get("k") or r["t"] for r in reasons or [] if r.get("q")})
+
+def key_label(k):
+    if k.startswith("kw_name:"):
+        return f"'{k.split(':', 1)[1]}' en nombre/ticker"
+    if k.startswith("kw_desc:"):
+        return f"'{k.split(':', 1)[1]}' solo en la descripción"
+    return {"kw_name": "Palabra TikTok en nombre/ticker", "kw_desc": "Palabra TikTok solo en la descripción",
+            "link_tiktok": "Link de TikTok en redes/descripción",
+            "meta_tiktok": "Categoría TikTok de DexScreener"}.get(k, k)
+
+def load_feedback(cfg, state):
+    """Lee feedback.json de la rama 'feedback' (lo escribe la función de Vercel /api/not-tiktok).
+    Si GitHub falla se usa la última copia buena guardada en el estado."""
+    L = cfg.get("learning") or {}
+    local = os.environ.get("RADAR_FEEDBACK_FILE")  # para pruebas en local
+    if local:
+        return load_json(local, {}) or {}
+    repo = L.get("feedback_repo", "trendtiktokradar/tiktok-radar")
+    url = (f"https://api.github.com/repos/{repo}/contents/{L.get('feedback_path', 'feedback.json')}"
+           f"?ref={L.get('feedback_branch', 'feedback')}")
+    h = {"Accept": "application/vnd.github.raw+json", "X-GitHub-Api-Version": "2022-11-28"}
+    tok = os.environ.get("GITHUB_TOKEN_TIKTOK_RADAR") or os.environ.get("GITHUB_TOKEN")
+    if tok:
+        h["Authorization"] = "Bearer " + tok  # solo cabecera; nunca se imprime
+    d = http(url, "github_feedback", headers=h, retries=2, timeout=15)
+    if isinstance(d, dict):
+        SRC.mark("github_feedback", True, len(d.get("marks") or {}))
+        state["feedback_cache"] = d
+        return d
+    return state.get("feedback_cache") or {}
+
+class Learner:
+    """Coins marcadas 'No es TikTok' (se quitan siempre) + reglas aprendidas:
+    si un motivo de entrada acumula >= min_marks marcas de coins que entraron SOLO por ese motivo,
+    deja de aceptarse una coin que entre únicamente por él. Nada de IA: solo contar."""
+    def __init__(self, fb, cfg):
+        L = cfg.get("learning") or {}
+        self.enabled = L.get("enabled", True)
+        self.min_marks = int(L.get("min_marks", 3))
+        self.protected = set(L.get("protected_keys", []))
+        self.rules_off = set(fb.get("rules_off") or [])
+        self.marked = {ca: m for ca, m in (fb.get("marks") or {}).items()
+                       if isinstance(m, dict) and SOL_ADDR.match(ca)}
+        self.updated = fb.get("updated")
+        groups, seen = {}, {}
+        for ca, m in self.marked.items():
+            ks = sorted(set(m.get("keys") or []))
+            for k in ks:
+                seen.setdefault(k, set()).add(m.get("g") or ca)
+            if len(ks) == 1:  # solo cuenta como prueba si entró ÚNICAMENTE por ese motivo
+                groups.setdefault(ks[0], set()).add(m.get("g") or ca)
+        self.counts = {k: len(v) for k, v in groups.items()}
+        self.seen = {k: len(v) for k, v in seen.items()}
+        self.active = {k for k, n in self.counts.items()
+                       if self.enabled and n >= self.min_marks and k not in self.protected and k not in self.rules_off}
+        self.blocked = {}        # ca -> info de coins quitadas por regla aprendida en esta pasada
+        self.removed_marked = 0  # coins marcadas que han vuelto a aparecer y se han quitado
+
+    def blocks(self, ca, reasons):
+        if ca in self.marked:
+            return "marked"
+        ks = qkeys(reasons)
+        if ks and all(k in self.active for k in ks):
+            return ks
+        return None
+
+    def filter(self, coins):
+        out = {}
+        for ca, c in coins.items():
+            b = self.blocks(ca, c.get("reasons"))
+            if b == "marked":
+                self.removed_marked += 1
+            elif b:
+                self.blocked[ca] = {"ca": ca, "name": c.get("name"), "symbol": c.get("symbol"), "keys": b}
+            else:
+                out[ca] = c
+        return out
+
+    def summary(self):
+        keys = set(self.seen) | set(self.counts)
+        rules = []
+        for k in sorted(keys, key=lambda k: (-self.counts.get(k, 0), -self.seen.get(k, 0), k)):
+            rules.append({"key": k, "label": key_label(k), "count": self.counts.get(k, 0),
+                          "seen": self.seen.get(k, 0), "active": k in self.active,
+                          "protected": k in self.protected, "off": k in self.rules_off,
+                          "blocked_now": sum(1 for b in self.blocked.values() if k in b["keys"])})
+        marked = sorted(({"ca": ca, "name": m.get("name"), "symbol": m.get("symbol"), "keys": m.get("keys") or [],
+                          "dev": m.get("dev"), "ts": m.get("ts"), "g": m.get("g")} for ca, m in self.marked.items()),
+                        key=lambda x: -(x["ts"] or 0))
+        return {"enabled": self.enabled, "min_marks": self.min_marks, "marks_total": len(self.marked),
+                "groups_total": len({m.get("g") or ca for ca, m in self.marked.items()}),
+                "updated": self.updated, "rules": rules, "marked": marked[:300],
+                "blocked_now": list(self.blocked.values())[:100], "removed_marked_now": self.removed_marked,
+                "protected_keys": sorted(self.protected)}
+
+# ---------------------------------------------------------------- dev (wallet creadora) y "TikTok dev 🔥"
+def resolve_devs(coins, state, cfg, ts):
+    """La wallet creadora viene en las coins de pump.fun; para las demás se pregunta a pump.fun
+    /coins-v2/<CA> (también conoce muchas de Meteora/otras). Caché por CA, máx. N consultas por pasada."""
+    D = cfg.get("dev_hot") or {}
+    cache = state.setdefault("dev_lookup", {})
+    for ca, c in coins.items():
+        if not c.get("dev") and (cache.get(ca) or {}).get("dev"):
+            c["dev"] = cache[ca]["dev"]
+    retry = D.get("lookup_retry_minutes", 180) * 60_000
+    todo = [ca for ca, c in coins.items() if not c.get("dev") and ts - (cache.get(ca) or {}).get("checked", 0) > retry]
+    todo.sort(key=lambda ca: -(coins[ca].get("created") or 0))  # las más nuevas primero
+    n = 0
+    for ca in todo[:D.get("lookup_max_per_run", 15)]:
+        d = http(f"{PUMP}/coins-v2/{ca}", "pumpfun_dev", headers=pump_headers(), retries=2, soft404=True)
+        dev = d.get("creator") if isinstance(d, dict) else None
+        dev = dev if dev and SOL_ADDR.match(dev) else None
+        cache[ca] = {"dev": dev, "checked": ts}
+        if dev:
+            coins[ca]["dev"] = dev; n += 1
+        time.sleep(1.0)
+    SRC.mark("pumpfun_dev", True, n)
+    for ca in [ca for ca, e in cache.items() if ca not in coins and ts - e.get("checked", 0) > 2 * 86_400_000]:
+        cache.pop(ca, None)
+
+def update_dev_history(coins, state, cfg, ts, M, learner):
+    """Cuántas coins TikTok ha creado cada dev en los últimos N días: historial propio del radar +
+    las coins creadas por ese dev en pump.fun que cumplen la regla TikTok. Solo informativo, NO bloquea."""
+    D = cfg.get("dev_hot") or {}
+    win = D.get("window_days", 7) * 86_400_000
+    th = D.get("min_coins", 3)
+    hist = state.setdefault("dev_history", {})  # dev -> {ca: {n, s, t}}
+    for c in coins.values():
+        if c.get("dev"):
+            hist.setdefault(c["dev"], {})[c["ca"]] = {"n": c.get("name"), "s": c.get("symbol"),
+                                                       "t": c.get("created") or c["first_seen"]}
+    scan = state.setdefault("dev_scan", {})  # dev -> última vez que se miraron sus coins en pump.fun
+    if D.get("scan_pump_created", True):
+        refresh = D.get("scan_refresh_minutes", 60) * 60_000
+        devs = sorted({c["dev"] for c in coins.values() if c.get("dev")}, key=lambda d: scan.get(d, 0))
+        n = 0
+        for dev in [d for d in devs if ts - scan.get(d, 0) > refresh][:D.get("scan_max_devs_per_run", 8)]:
+            d = http(f"{PUMP}/coins-v2/user-created-coins/{dev}?offset=0&limit=50&includeNsfw=true",
+                     "pumpfun_dev_coins", headers=pump_headers(), retries=2)
+            scan[dev] = ts
+            if isinstance(d, dict):
+                n += 1
+                for x in d.get("coins") or []:
+                    mint, t = x.get("mint") or "", x.get("created_timestamp") or 0
+                    if not SOL_ADDR.match(mint) or ts - t > win:
+                        continue
+                    rs, _ = M.match(x.get("name"), x.get("symbol"), x.get("description") or "",
+                                    [x.get("website") or "", x.get("twitter") or ""])
+                    if qualifies(rs) and not learner.blocks(mint, rs):
+                        hist.setdefault(dev, {})[mint] = {"n": x.get("name"), "s": x.get("symbol"), "t": t}
+            time.sleep(1.0)
+        SRC.mark("pumpfun_dev_coins", True, n)
+    for dev in list(hist):
+        for ca in [ca for ca, e in hist[dev].items() if ts - (e.get("t") or 0) > win or ca in learner.marked]:
+            del hist[dev][ca]
+        if not hist[dev]:
+            del hist[dev]
+    for dev in [d for d, t in scan.items() if d not in hist and ts - t > win]:
+        scan.pop(dev, None)
+    for c in coins.values():
+        h = hist.get(c.get("dev")) or {}
+        c["dev_count"] = len(h)
+        c["dev_hot"] = bool(c.get("dev")) and len(h) >= th
+        if c["dev_hot"]:
+            c["dev_coins"] = [{"ca": ca, "name": e.get("n"), "symbol": e.get("s"), "t": e.get("t")}
+                              for ca, e in sorted(h.items(), key=lambda kv: -(kv[1].get("t") or 0)) if ca != c["ca"]][:12]
+        else:
+            c.pop("dev_coins", None)
+    hot = sorted(({"dev": d, "count": len(h),
+                   "coins": [{"ca": ca, "name": e.get("n"), "symbol": e.get("s"), "t": e.get("t")}
+                             for ca, e in sorted(h.items(), key=lambda kv: -(kv[1].get("t") or 0))][:12]}
+                  for d, h in hist.items() if len(h) >= th), key=lambda x: -x["count"])
+    return hot[:50]
+
 # ---------------------------------------------------------------- main
 def run(no_trends=False):
     t0 = time.time()
@@ -517,6 +701,8 @@ def run(no_trends=False):
     trends = [] if no_trends else src_trends(cfg, state)
     log(f"trends: {len(trends)}")
     M = Matcher(cfg, trends)
+    learner = Learner(load_feedback(cfg, state), cfg)
+    log(f"feedback: {len(learner.marked)} marcadas 'No es TikTok', reglas activas: {sorted(learner.active) or '-'}")
     new_count = 0
 
     # 1) categorías curadas de DexScreener (TikTok / Brainrot)
@@ -560,6 +746,8 @@ def run(no_trends=False):
     # 5) reglas actuales sobre todo lo guardado + fuera lo que tenga > 24 h
     rematch(coins, M)
     coins = {ca: c for ca, c in coins.items() if not (c.get("created") and too_old(c, cfg, ts))}
+    # 5b) fuera las marcadas "No es TikTok" y las que solo entran por un motivo aprendido
+    coins = learner.filter(coins)
     # 6) refrescar métricas de TODAS las coins seguidas
     fresh = ds_tokens(list(coins))
     for ca, p in fresh.items():
@@ -570,6 +758,9 @@ def run(no_trends=False):
     coins = prune(coins, cfg, ts)
     # 7) DEX PAID (con caché por CA)
     check_dex_paid(coins, state, cfg, ts)
+    # 8) dev (wallet creadora) + "TikTok dev 🔥" (solo informativo)
+    resolve_devs(coins, state, cfg, ts)
+    dev_hot = update_dev_history(coins, state, cfg, ts, M, learner)
     state["coins"] = coins
     state["last_run"] = ts
     save_json(STATE_PATH, state)
@@ -591,6 +782,10 @@ def run(no_trends=False):
         "dex_paid": sum(1 for c in lst if c.get("dex_paid")), "active": sum(1 for c in lst if not c["dead"]),
         "sources": SRC.status, "trends": out_trends,
         "manual_trends": cfg.get("manual_trends", []),
+        "learned": learner.summary(),
+        "dev_hot_min": (cfg.get("dev_hot") or {}).get("min_coins", 3),
+        "dev_hot_window_days": (cfg.get("dev_hot") or {}).get("window_days", 7),
+        "dev_hot": dev_hot,
         "coins": lst,
     }
     save_json(DATA_PATH, data, compact=True)

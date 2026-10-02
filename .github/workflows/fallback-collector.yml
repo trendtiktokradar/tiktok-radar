@@ -39,6 +39,8 @@ jobs:
           python-version: "3.12"
       - name: Ejecutar collector
         if: steps.age.outputs.age > 20 || inputs.force
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # solo para leer feedback.json sin límite de peticiones
         run: python3 collector/radar.py
       - name: Publicar en rama data
         if: steps.age.outputs.age > 20 || inputs.force
