@@ -69,10 +69,22 @@ td.num{text-align:right;white-space:nowrap}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--acc);color:#000;padding:8px 14px;border-radius:9px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none}
 #toast.show{opacity:1}
 @media (max-width:520px){.list{grid-template-columns:1fr}.stat .v{font-size:12px}main{padding:8px}th.hide-m,td.hide-m{display:none}}
-.b.paid{background:#16a34a;border-color:#16a34a;color:#fff;font-weight:700}
+.b.paid{background:#16a34a;border-color:#16a34a;color:#fff;font-weight:700;display:inline-flex;align-items:center;gap:4px}
+.b.paid img{width:13px;height:13px;border-radius:3px;display:block}
 .b.pending{border-color:#16a34a;color:#4ade80}
 .b.boost{border-color:#facc15;color:#facc15}
 .b.info{color:var(--mut);border-style:dotted}
 .cardbar{display:flex;justify-content:flex-end;gap:6px}
 .hidebtn{background:none;border:1px solid var(--line);color:var(--mut);border-radius:7px;padding:4px 9px;font-size:12px;cursor:pointer}
 .hidebtn:hover{color:var(--txt);border-color:var(--mut)}
+.b.devhot{border-color:#ff8a3d;color:#ffb07a;background:rgba(255,122,48,.12);font-weight:650;cursor:pointer}
+.nttbtn{background:rgba(255,92,60,.08);border:1px solid #ff6a3d;color:#ff8a65;border-radius:7px;padding:4px 9px;font-size:12px;cursor:pointer;font-weight:600}
+.nttbtn:hover{background:rgba(255,92,60,.2);color:#ffb199}
+#toast{width:max-content;max-width:92vw;text-align:center}
+#toast.act{pointer-events:auto;display:flex;align-items:center;gap:10px;text-align:left}
+#toast button{background:#000;color:var(--acc);border:0;border-radius:6px;padding:4px 9px;font-weight:700;cursor:pointer}
+.lrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}
+.lrow > span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.lrow button,.lrow a{white-space:nowrap}
+.warnbox{background:rgba(245,176,65,.1);border:1px solid var(--warn);color:var(--warn);border-radius:9px;padding:8px 10px;font-size:13px}
+#tab-learned h3{font-size:15px;margin:18px 0 6px}

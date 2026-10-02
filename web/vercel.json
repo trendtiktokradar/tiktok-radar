@@ -1,5 +1,5 @@
 {
-  "git": { "deploymentEnabled": { "data": false } },
+  "git": { "deploymentEnabled": { "data": false, "feedback": false } },
   "headers": [
     { "source": "/data.json", "headers": [{ "key": "Cache-Control", "value": "public, max-age=60" }] },
     { "source": "/(.*)\\.(js|css|html)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=300" }] }

@@ -17,7 +17,8 @@
   <div id="meta" class="meta">Cargando…</div>
   <nav class="tabs">
     <button data-tab="coins" class="active">Coins</button>
-    <button data-tab="trends">Trends TikTok</button>
+    <button data-tab="trends">Trends</button>
+    <button data-tab="learned">Aprendido</button>
     <button data-tab="sources">Fuentes</button>
   </nav>
 </header>
@@ -50,6 +51,7 @@
       <label><input id="hideInactive" type="checkbox" checked> Ocultar sin actividad</label>
       <label><input id="groupClones" type="checkbox" checked> Agrupar clones</label>
       <label><input id="onlyPaid" type="checkbox"> Solo DEX PAID</label>
+      <label><input id="onlyDevHot" type="checkbox"> Solo TikTok dev 🔥</label>
       <label><input id="onlyNew" type="checkbox"> Solo nuevas desde mi última visita</label>
       <label><input id="showHidden" type="checkbox"> Ver ocultas <span id="hiddenCount"></span></label>
     </div>
@@ -64,6 +66,10 @@
   <h3>Trends manuales</h3>
   <p class="note">Palabras que añadimos a mano en <code>collector/config.json → manual_trends</code>: se buscan y salen como badge, pero la coin solo entra si además cumple la regla TikTok.</p>
   <div id="manual"></div>
+</section>
+
+<section id="tab-learned" hidden>
+  <div id="learned"></div>
 </section>
 
 <section id="tab-sources" hidden>
