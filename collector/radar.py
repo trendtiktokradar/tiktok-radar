@@ -460,7 +460,10 @@ def run(no_trends=False):
 
     # 2) búsquedas en DexScreener: palabras clave + trends manuales + hashtags de Creative Center
     terms = list(cfg["search_terms"]) + list(cfg.get("manual_trends", []))
-    terms += [t["name"] for t in trends if norm(t["name"]) in M.trend_tags]
+    # los hashtags cambian poco: se buscan como mucho cada 30 min (DexScreener limita la búsqueda)
+    if ts - state.get("last_trend_search", 0) > 30 * 60_000:
+        terms += [t["name"] for t in trends if norm(t["name"]) in M.trend_tags]
+        state["last_trend_search"] = ts
     for info in src_ds_search(list(dict.fromkeys(terms))):
         rs, tl = M.match(info["name"], info["symbol"], "", info["links"])
         if sum(r["w"] for r in rs) >= cfg["min_score"]:
