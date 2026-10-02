@@ -88,6 +88,16 @@ aprende de los motivos de entrada.
 
 **Momentum** = % del MC que se ha movido en volumen en la última hora + 0,3 × cambio de precio 1h.
 
+### ATH (market cap máximo)
+- **ATH = máx(** MC más alto visto por el radar en cualquier pasada (`ath_seen`, guardado en `state.json`),
+  `ath_market_cap` de pump.fun (USD), MC actual **)**.
+- pump.fun se consulta con `/coins-v2/<CA>` rotando (config `ath`: máx. 20 coins por pasada, cada coin cada 20 min;
+  las que pump.fun no conoce se reintentan cada 6 h). Las coins que salen en los listados de pump.fun lo traen gratis.
+- Se muestra en la tarjeta (junto al ticker) y en cada fila de clon; la lista de clones va ordenada por ATH
+  (el más alto primero) y los clones con DEX PAID salen en verde. Al pasar el dedo/ratón sobre "ATH" dice la fuente.
+- Fiabilidad: con dato de pump.fun es el ATH real de pump.fun (incluye picos entre pasadas). Si solo hay dato del radar,
+  es el máximo de muestras cada 5 min desde que la coin entró: un pico corto entre pasadas o anterior a la detección no sale.
+
 ### 6. Botón "No es TikTok" + aprendizaje (sin IA)
 ```
  panel (botón) ──POST + PIN──▶ /api/not-tiktok (Vercel) ──API Contents──▶ rama "feedback": feedback.json

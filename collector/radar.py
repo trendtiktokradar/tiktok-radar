@@ -393,7 +393,9 @@ def upsert(coins, info, reasons, tiktok_links, source, ts):
     if tiktok_links:
         L["tiktok"] = sorted(set((L.get("tiktok") or []) + tiktok_links))[:5]
     if info.get("pump_mc") is not None:
-        c["pump"] = {"mc": info["pump_mc"], "complete": info.get("pump_complete"), "ath": info.get("pump_ath")}
+        prev_ath = (c.get("pump") or {}).get("ath") or 0
+        c["pump"] = {"mc": info["pump_mc"], "complete": info.get("pump_complete"),
+                     "ath": max(info.get("pump_ath") or 0, prev_ath) or None}
     if info.get("metrics"):
         apply_metrics(c, info, ts)
     c["last_match"] = ts
@@ -424,6 +426,13 @@ def finalize(c, cfg, ts):
     m = c.get("metrics") or {}
     if not m.get("mc") and c.get("pump", {}).get("mc"):
         m = c["metrics"] = dict(m, mc=c["pump"]["mc"], from_pump=True)
+    # ATH = máximo de: MC más alto visto por el radar en cualquier pasada (ath_seen, persistido en el estado),
+    # ath_market_cap de pump.fun (en USD) y el MC actual
+    if m.get("mc"):
+        c["ath_seen"] = max(c.get("ath_seen") or 0, m["mc"])
+    pump_ath = (c.get("pump") or {}).get("ath") or 0
+    c["ath"] = max(c.get("ath_seen") or 0, pump_ath, m.get("mc") or 0) or None
+    c["ath_src"] = ("pump.fun" if pump_ath and pump_ath >= (c.get("ath_seen") or 0) else "radar") if c["ath"] else None
     c["score"] = sum(r["w"] for r in c["reasons"])
     c["momentum"] = momentum(m)
     liq, mc = m.get("liq"), m.get("mc")
@@ -609,6 +618,44 @@ class Learner:
                 "blocked_now": list(self.blocked.values())[:100], "removed_marked_now": self.removed_marked,
                 "protected_keys": sorted(self.protected)}
 
+# ---------------------------------------------------------------- ATH (pump.fun) 
+def refresh_pump_ath(coins, state, cfg, ts):
+    """ath_market_cap (USD) de pump.fun /coins-v2/<CA> para todas las coins seguidas, rotando:
+    máx. N consultas por pasada, cada coin se refresca cada X min. De paso guarda el dev si faltaba.
+    Las CAs que pump.fun no conoce (404) se reintentan pocas veces."""
+    A = cfg.get("ath") or {}
+    cache = state.setdefault("ath_lookup", {})  # ca -> {"checked": ts, "nopump": bool}
+    every = A.get("refresh_minutes", 20) * 60_000
+    nopump_every = A.get("nopump_retry_minutes", 360) * 60_000
+    def due(ca):
+        e = cache.get(ca) or {}
+        return ts - e.get("checked", 0) > (nopump_every if e.get("nopump") else every)
+    todo = sorted((ca for ca in coins if due(ca)), key=lambda ca: (cache.get(ca) or {}).get("checked", 0))
+    n = 0
+    for ca in todo[:A.get("max_per_run", 20)]:
+        d = http(f"{PUMP}/coins-v2/{ca}", "pumpfun_ath", headers=pump_headers(), retries=2, soft404=True)
+        ok = isinstance(d, dict) and d.get("mint") == ca
+        cache[ca] = {"checked": ts, "nopump": not ok}
+        if ok:
+            c = coins[ca]
+            p = c.setdefault("pump", {})
+            ath, mc = fnum(d.get("ath_market_cap")), fnum(d.get("usd_market_cap"))
+            if ath:
+                p["ath"] = max(p.get("ath") or 0, ath)
+            if mc:
+                p["mc"] = mc
+            if "complete" in p or ca.endswith("pump"):  # pump.fun también indexa coins de otros launchpads
+                p["complete"] = bool(d.get("complete"))
+            dev = d.get("creator")
+            if dev and SOL_ADDR.match(dev) and not c.get("dev"):
+                c["dev"] = dev
+                state.setdefault("dev_lookup", {})[ca] = {"dev": dev, "checked": ts}
+            n += 1
+        time.sleep(0.8)
+    SRC.mark("pumpfun_ath", True, n)
+    for ca in [ca for ca, e in cache.items() if ca not in coins and ts - e.get("checked", 0) > 2 * 86_400_000]:
+        cache.pop(ca, None)
+
 # ---------------------------------------------------------------- dev (wallet creadora) y "TikTok dev 🔥"
 def resolve_devs(coins, state, cfg, ts):
     """La wallet creadora viene en las coins de pump.fun; para las demás se pregunta a pump.fun
@@ -753,6 +800,7 @@ def run(no_trends=False):
     for ca, p in fresh.items():
         if ca in coins:
             apply_metrics(coins[ca], ds_pair_to_info(p), ts)
+    refresh_pump_ath(coins, state, cfg, ts)  # ATH real de pump.fun (rotando, con caché)
     for c in coins.values():
         finalize(c, cfg, ts)
     coins = prune(coins, cfg, ts)

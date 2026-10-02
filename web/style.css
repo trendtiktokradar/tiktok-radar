@@ -150,3 +150,7 @@ button.primary:disabled{opacity:.5}
 .b.sm{font-size:10px;padding:1px 6px}
 .b.paid.sm img{width:11px;height:11px}
 .clonebox[hidden]{display:none}
+.crow.paid{border-color:#16a34a;background:rgba(22,163,74,.13);box-shadow:inset 3px 0 0 #16a34a}
+b.ath{color:#facc15}
+.crow .cmeta{font-size:11.5px}
+.crow .ctop{flex-wrap:wrap;row-gap:2px}

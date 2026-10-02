@@ -40,6 +40,7 @@
     if (action) { const b = document.createElement("button"); b.textContent = action.label; b.onclick = () => { el.classList.remove("show"); action.fn(); }; el.appendChild(b); }
     el.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), ms || (action ? 6000 : 1600));
   };
+  const athTitle = (c) => "MC máximo: " + (c.ath_src === "pump.fun" ? "dato de pump.fun (ath_market_cap)" : "el más alto visto por el radar (cada 5 min)");
   const shortAddr = (a) => a ? a.slice(0, 4) + "…" + a.slice(-4) : "";
   const normName = (s) => String(s || "").toLowerCase().replace(/[^0-9a-z\u00c0-\uffff]/g, "");
 
@@ -146,7 +147,8 @@
       }
       groups = [...byKey.values()].map((arr) => {
         arr.sort((a, b) => (b.metrics?.mc || 0) - (a.metrics?.mc || 0));
-        return { main: arr[0], clones: arr.slice(1), key: "g:" + (normName(arr[0].name) || normName(arr[0].symbol) || arr[0].ca) };
+        const clones = arr.slice(1).sort((a, b) => (b.ath || b.metrics?.mc || 0) - (a.ath || a.metrics?.mc || 0));  // clones por ATH, el más alto primero
+        return { main: arr[0], clones, key: "g:" + (normName(arr[0].name) || normName(arr[0].symbol) || arr[0].ca) };
       });
     }
     const key = sortKey[f.sort] || sortKey.young;
@@ -185,8 +187,8 @@
       const xb = (x.dex_paid ? `<span class="b paid sm"><img src="img/dexscreener.png" alt="" width="11" height="11">DEX PAID</span>` : "") +
         (x.dev_hot ? `<span class="b devhot sm" title="El dev ha creado ${esc(x.dev_count)} coins TikTok">dev 🔥 ${esc(x.dev_count)}</span>` : "") +
         (prevVisit && x.first_seen > prevVisit ? `<span class="b new sm">NUEVA</span>` : "");
-      return `<div class="crow${x.inactive ? " inactive" : ""}">
-        <div class="ctop"><span class="cnm"><b>${esc(x.name || "?")}</b> <span class="note">$${esc(x.symbol || "?")}</span></span><span class="cmeta">MC <b>${money(x.metrics?.mc)}</b> · ${ago(x.created || x.first_seen)}</span></div>
+      return `<div class="crow${x.dex_paid ? " paid" : ""}${x.inactive ? " inactive" : ""}">
+        <div class="ctop"><span class="cnm"><b>${esc(x.name || "?")}</b> <span class="note">$${esc(x.symbol || "?")}</span></span><span class="cmeta">MC <b>${money(x.metrics?.mc)}</b> · <span title="${esc(athTitle(x))}">ATH <b class="ath">${money(x.ath)}</b></span> · ${ago(x.created || x.first_seen)}</span></div>
         ${xb ? `<div class="badges">${xb}</div>` : ""}
         <div class="cbot"><span class="clinks">${link(x.links?.dexscreener, "DexScreener")}${link(x.links?.pumpfun, "pump.fun")}${link(x.links?.gmgn, "GMGN")}<a href="#" data-copy="${esc(x.ca)}">Copiar CA</a></span><button class="hidebtn" data-hide="${esc(x.ca)}">${HIDDEN[x.ca] ? "Mostrar de nuevo" : "Ocultar"}</button></div>
       </div>`; }).join("")}</div>` : "";
@@ -195,7 +197,7 @@
       `<div><span>${esc(x.name || "?")} ($${esc(x.symbol || "?")}) · hace ${ago(x.t)}</span><span><a href="https://gmgn.ai/sol/token/${esc(x.ca)}" target="_blank" rel="noopener">GMGN</a> · <a href="#" data-copy="${esc(x.ca)}">copiar CA</a></span></div>`).join("")}</div>` : "";
     const groupCas = esc([c.ca, ...g.clones.map((x) => x.ca)].join(","));
     return `<article class="card${isNew ? " new" : ""}${c.inactive ? " inactive" : ""}">
-      <div class="head">${img}<div class="ttl"><div class="nm">${esc(c.name || "?")}</div><div class="sym">$${esc(c.symbol || "?")} · score ${c.score}</div></div>
+      <div class="head">${img}<div class="ttl"><div class="nm">${esc(c.name || "?")}</div><div class="sym">$${esc(c.symbol || "?")} · <span title="${esc(athTitle(c))}">ATH <b class="ath">${money(c.ath)}</b></span> · score ${c.score}</div></div>
         <div class="age">edad ${ago(c.created || c.first_seen)}<br><span title="Primera vez visto por el radar">visto hace ${ago(c.first_seen)}</span></div></div>
       <div class="badges">${badges.join("")}</div>
       <div class="stats">

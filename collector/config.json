@@ -153,5 +153,11 @@
     "scan_pump_created": true,
     "scan_max_devs_per_run": 8,
     "scan_refresh_minutes": 60
+  },
+  "ath": {
+    "_comment": "ATH = máx(MC más alto visto por el radar, ath_market_cap de pump.fun, MC actual). pump.fun se consulta rotando: max_per_run coins por pasada, cada coin cada refresh_minutes.",
+    "max_per_run": 20,
+    "refresh_minutes": 20,
+    "nopump_retry_minutes": 360
   }
 }
