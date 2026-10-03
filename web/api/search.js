@@ -12,7 +12,8 @@
 //
 // GET  /api/search                         -> { configured, box: "online"|"offline"|"unknown" }
 // POST /api/search {pin, action:"check"}    -> 200 si el PIN es correcto (lo usa el box para validar el PIN)
-// POST /api/search {pin, action:"search", q, fresh?} | {pin, action:"watch", q, on} | {pin, action:"watchlist"}
+// POST /api/search {pin, action:"search", q, fresh?} | {pin, action:"trends", q, period: 7|30|90}
+//                  | {pin, action:"watch", q, on} | {pin, action:"watchlist"}
 "use strict";
 const crypto = require("crypto");
 
@@ -113,6 +114,13 @@ module.exports = async function handler(req, res) {
       const q = typeof body.q === "string" ? body.q.replace(/\s+/g, " ").trim().slice(0, 60) : "";
       if (!q) return send(res, 400, { error: "bad_query" });
       const r = await callBox("/search?q=" + encodeURIComponent(q) + (body.fresh ? "&fresh=1" : ""), pin);
+      return send(res, r.status, r.body);
+    }
+    if (body.action === "trends") {
+      const q = typeof body.q === "string" ? body.q.replace(/\s+/g, " ").trim().slice(0, 60) : "";
+      const period = [7, 30, 90].includes(Number(body.period)) ? Number(body.period) : 90;
+      if (!q) return send(res, 400, { error: "bad_query" });
+      const r = await callBox("/trends?q=" + encodeURIComponent(q) + "&period=" + period, pin, {}, 40000);
       return send(res, r.status, r.body);
     }
     if (body.action === "watch") {

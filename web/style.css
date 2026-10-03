@@ -155,3 +155,18 @@ b.ath{color:#facc15}
 .crow .cmeta{font-size:11.5px}
 .crow .ctop{flex-wrap:wrap;row-gap:2px}
 .stat .v.ath{color:#facc15}
+/* Buscador v2: gráfica grande con periodos y tooltip */
+.seg{display:inline-flex;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px;margin:4px 0 10px}
+.seg button{background:none;border:0;color:var(--mut);padding:7px 14px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer}
+.seg button.on{background:var(--acc2);color:#fff}
+.tchart-wrap{position:relative;touch-action:pan-y}
+.tchart-wrap svg{width:100%;height:auto;display:block}
+.tchart-wrap text{fill:var(--mut);font-size:11px}
+.tchart-wrap .g{stroke:var(--line);stroke-width:1}
+.tchart-wrap .cur{stroke:#fff;stroke-opacity:.55;stroke-width:1;stroke-dasharray:3 3}
+.ttip{position:absolute;top:4px;z-index:3;background:rgba(11,13,18,.95);border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:12px;line-height:1.5;pointer-events:none;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+.ttip i,.legend .lg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.legend{flex-wrap:wrap;gap:6px 8px;margin-top:6px}
+.legend .lg{background:var(--card2);border:1px solid var(--line);color:var(--txt);border-radius:12px;padding:3px 9px;font-size:12px;cursor:pointer}
+.legend .lg.off{opacity:.4;text-decoration:line-through}
+.rise{font-size:13px;margin:10px 0 4px}

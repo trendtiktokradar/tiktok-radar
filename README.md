@@ -156,10 +156,28 @@ veredicto **🔥 HOT / 📈 sube / 📉 baja / 💤 flojo**.
 | Fuente | Qué da | Notas |
 |---|---|---|
 | TikTok `/api/challenge/detail` | Vídeos y views totales del hashtag (`statsV2`) | TikTok firma las peticiones (X-Bogus/X-Gnarly) con su JS: por eso se piden con `fetch()` desde una pestaña de tiktok.com abierta en Chrome headless. Con curl/Vercel devuelve vacío |
-| TikTok `/api/challenge/item_list` | 3 páginas × 30 vídeos del hashtag (fecha, views, likes, comentarios, shares) | Ordenados por **popularidad**, no por fecha |
-| TikTok `/api/search/general/full` | 2 páginas (~24) de la búsqueda normal | Solo cuentan los que mencionan la palabra (la búsqueda es difusa). La pestaña "Vídeos" con filtros de fecha pide login (403) |
+| TikTok `/api/challenge/item_list` | 6 páginas × 30 vídeos del hashtag (fecha, views, likes, comentarios, shares) | Ordenados por **popularidad**, no por fecha. Páginas 2-6 en paralelo |
+| TikTok `/api/search/general/full` | 4 páginas (~48) de la búsqueda normal | Solo cuentan los que mencionan la palabra (la búsqueda es difusa). La pestaña "Vídeos" con filtros de fecha pide login (403) |
 | Google Trends (`pytrends`) | Curva diaria 90 días, web y YouTube (0-100) | No hay TikTok en Trends; Google limita si se abusa (caché 6 h por palabra) |
 | tikwm.com `/api/challenge/search` | Hashtags parecidos con nº de vídeos; respaldo del detalle | No oficial, puede caer; su búsqueda de vídeos está bloqueada por Cloudflare |
+
+**Gráfica "Tendencia" (7 / 30 / 90 días, botones):** en la misma gráfica (0-100, toca o pasa el ratón para ver
+los números de cada día):
+- **Google web** y **YouTube** (Google Trends). 30 y 90 días salen de la misma curva diaria de 90 días (30 = recorte
+  reescalado para que el pico del periodo sea 100); 7 días se pide aparte por horas (`now 7-d`) y se muestra la
+  media de cada día en la escala de Google (100 = la hora pico de la semana). Caché 6 h por palabra y periodo;
+  la de 7 días solo se pide al pulsar "7 días".
+- **TikTok vídeos/día** (línea) y **TikTok views/día** (barras): de la **muestra** (6 páginas del hashtag + 4 de la
+  búsqueda ≈ 150-230 vídeos, páginas en paralelo, ~3-8 s), cuántos vídeos se publicaron cada día (hora de Madrid)
+  y la suma de sus views. 100 = el día con más vídeos (o más views) del periodo; el tooltip da los números reales.
+  **Es una muestra, no el total**: TikTok da los vídeos del hashtag por popularidad y la búsqueda prioriza lo
+  reciente, así que sirve para ver la forma (cuándo arranca), no para contar.
+
+**🚀 Primer vídeo viral:** el vídeo **más antiguo de la muestra con ≥ 100K views** (`BUSCADOR_VIRAL_VIEWS`), con fecha,
+views, link y "lleva X días". Si ninguno llega, sale el más visto. **Inicio de la subida:** suma móvil de 7 días de
+vídeos/día de la muestra; base = mediana de esa suma entre 120 y 35 días atrás; si hoy o ayer supera
+`max(5, 2 × base)`, se va hacia atrás mientras siga por encima y el primer día con vídeos de ese tramo es "empezó a
+subir el …". Si no, "no se ve una subida reciente". Aproximado (misma muestra).
 
 **Veredicto (reglas fijas, `verdict()` en `collector/buscador.py`).** Puntos:
 - % de la muestra publicado en los últimos 7 días: ≥ 25 % → **+2**; ≥ 10 % → **+1**.
@@ -191,7 +209,7 @@ fuera 3 veces seguidas, el servicio lo reinicia y publica la URL nueva. Un túne
 cuenta de Cloudflare y un dominio propio.
 
 **Limitaciones honestas:** los totales son del **hashtag** (`#palabra` sin espacios); para frases solo hay la muestra.
-"Recientes vs antiguos" se mide sobre ~100 vídeos (los más populares + búsqueda), no sobre todos. No hay likes
+"Recientes vs antiguos", la línea TikTok y el primer viral se miden sobre ~150-230 vídeos (los más populares + búsqueda), no sobre todos. No hay likes
 totales del hashtag. TikTok no da su gráfica de tendencia sin login → se usa Google Trends + la watchlist.
 Si TikTok endurece el anti-bot o cambia su API, la parte TikTok puede fallar (sale el resto).
 Depende de que el box esté encendido.
@@ -229,7 +247,7 @@ Buscador en local (sin túnel ni GitHub):
 BUSCADOR_TUNNEL=0 BUSCADOR_PUBLISH=0 BUSCADOR_PORT=18791 BUSCADOR_LOCAL_PIN=prueba .venv/bin/python collector/buscador.py
 curl -H 'X-Radar-Pin: prueba' 'http://127.0.0.1:18791/search?q=capybara'
 RADAR_PIN=prueba RADAR_BOX_URL=http://127.0.0.1:18791 node scripts/dev_server.js 8766   # panel + /api en http://127.0.0.1:8766
-RADAR_TEST_PIN=prueba .venv/bin/python scripts/screenshot_buscador.py http://127.0.0.1:8766/ capybara
+RADAR_TEST_PIN=prueba .venv/bin/python scripts/screenshot_buscador.py http://127.0.0.1:8766/ capybara 30   # periodo 7|30|90
 ```
 
 ---

@@ -41,12 +41,14 @@ TRENDS_TTL = 6 * 3600
 MIN_GAP = 4.0            # segundos mínimos entre búsquedas nuevas (no cacheadas)
 MAX_QUEUE = 3
 SEARCH_BUDGET = 40       # segundos máximos por búsqueda
-HASHTAG_PAGES = 3
-SEARCH_PAGES = 2
+HASHTAG_PAGES = 6       # 6 × 30 vídeos del hashtag (páginas 2-6 en paralelo)
+SEARCH_PAGES = 4        # 4 × ~12 de la búsqueda (páginas 2-4 en paralelo)
+VIRAL_VIEWS = int(os.environ.get("BUSCADOR_VIRAL_VIEWS", "100000"))   # umbral de "vídeo viral"
+TZ = os.environ.get("BUSCADOR_TZ", "Europe/Madrid")
 MAX_WATCH = 25
 SNAPSHOT_EVERY = 23 * 3600
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
-VERSION = 1
+VERSION = 2
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s", datefmt="%F %T")
 log = logging.getLogger("buscador")
@@ -161,30 +163,35 @@ class TikTok:
                 "url": "https://www.tiktok.com/tag/" + urllib.parse.quote(ch.get("title") or tag)}
 
     async def hashtag_items(self, cid, pages):
-        out, cursor = [], 0
+        """Página 1 y, si hay más, las páginas 2..N a la vez (el cursor de TikTok es 30, 60, 90…)."""
         if not self.template:
             raise RuntimeError("sin plantilla item_list")
-        for _ in range(pages):
-            q = dict(self.template, challengeID=str(cid), cursor=str(cursor), count="30")
-            d = await self.get("/api/challenge/item_list/?" + urllib.parse.urlencode(q))
-            out += d.get("itemList") or []
-            if not d.get("hasMore"):
-                break
-            cursor = d.get("cursor") or (cursor + 30)
+        page = lambda cur: self.get("/api/challenge/item_list/?" + urllib.parse.urlencode(
+            dict(self.template, challengeID=str(cid), cursor=str(cur), count="30")))
+        d = await page(0)
+        out = list(d.get("itemList") or [])
+        if d.get("hasMore") and pages > 1:
+            step = int(d.get("cursor") or 30) or 30
+            rs = await asyncio.gather(*[page(step * k) for k in range(1, pages)], return_exceptions=True)
+            for r in rs:
+                if isinstance(r, dict):
+                    out += r.get("itemList") or []
         return out
 
     async def search_items(self, kw, pages):
-        out, offset, sid = [], 0, None
-        for _ in range(pages):
-            p = f"/api/search/general/full/?{self.BASE}&keyword={urllib.parse.quote(kw)}&offset={offset}"
-            if sid:
-                p += "&search_id=" + sid
-            d = await self.get(p)
-            out += [x["item"] for x in d.get("data") or [] if x.get("type") == 1 and x.get("item")]
-            sid = (d.get("log_pb") or {}).get("impr_id") or sid
-            if not d.get("has_more"):
-                break
-            offset = d.get("cursor") or (offset + 12)
+        """Página 1 de la búsqueda y luego las siguientes a la vez (offset 12, 24, 36… con el mismo search_id)."""
+        base = f"/api/search/general/full/?{self.BASE}&keyword={urllib.parse.quote(kw)}"
+        items = lambda d: [x["item"] for x in d.get("data") or [] if x.get("type") == 1 and x.get("item")]
+        d = await self.get(base + "&offset=0")
+        out = items(d)
+        sid = (d.get("log_pb") or {}).get("impr_id")
+        if d.get("has_more") and pages > 1:
+            step = int(d.get("cursor") or 12) or 12
+            rs = await asyncio.gather(*[self.get(base + f"&offset={step * k}" + (f"&search_id={sid}" if sid else ""))
+                                        for k in range(1, pages)], return_exceptions=True)
+            for r in rs:
+                if isinstance(r, dict):
+                    out += items(r)
         return out
 
 
@@ -205,23 +212,37 @@ def video(it, src):
 
 
 # ---------------------------------------------------------------- Google Trends + tikwm
-def trends_sync(word):
-    """Curva diaria de 90 días (0-100) en Google web y YouTube. Lento-ish (~2-4 s) y con límite de Google."""
+def trends_sync(word, period=90):
+    """Google Trends web y YouTube (0-100). period 90 → diario (sirve también para 30 días, recortado en la web);
+    period 7 → por horas ("now 7-d"), que se agrupa en días (media) y se reescala a 0-100.
+    Lento-ish (~2-4 s) y con límite de Google: se cachea 6 h por palabra y periodo."""
     from pytrends.request import TrendReq
     out, errs = {}, []
     pt = TrendReq(hl="es-ES", tz=-120, timeout=(5, 12), retries=0)
     for name, gprop in (("web", ""), ("youtube", "youtube")):
         try:
-            pt.build_payload([word], timeframe="today 3-m", gprop=gprop)
+            pt.build_payload([word], timeframe="now 7-d" if period == 7 else "today 3-m", gprop=gprop)
             df = pt.interest_over_time()
             if df is None or df.empty or word not in df:
-                out[name] = {"points": [], "direction": "sin datos"}
+                out[name] = {"points": [], "days": [], "direction": "sin datos"}
                 continue
             pts = [[int(ts.timestamp()), int(v)] for ts, v in zip(df.index, df[word].tolist())]
-            out[name] = {"points": pts, **trend_direction([v for _, v in pts])}
+            byday = {}
+            for ts, v in zip(df.index, df[word].tolist()):
+                byday.setdefault(ts.strftime("%Y-%m-%d"), []).append(float(v))
+            days = [[d, sum(vs) / len(vs)] for d, vs in sorted(byday.items())]
+            if period == 7:      # media diaria en la escala de Google (100 = la hora pico de la semana)
+                days = [[d, round(v, 1)] for d, v in days]
+            else:
+                mx = max([v for _, v in days] + [0])
+                days = [[d, round(v * 100 / mx, 1) if mx else 0] for d, v in days]
+            if period == 7:
+                out[name] = {"points": pts, "days": days, "hourly": True, "direction": "sin datos"}
+                continue
+            out[name] = {"points": pts, "days": days, **trend_direction([v for _, v in pts])}
         except Exception as e:
             errs.append(f"google trends {name}: {type(e).__name__}")
-            out[name] = {"points": [], "direction": "sin datos", "error": type(e).__name__}
+            out[name] = {"points": [], "days": [], "direction": "sin datos", "error": type(e).__name__}
     return out, errs
 
 
@@ -264,6 +285,67 @@ def relevant(v, q, tag):
     flat = re.sub(r"[^0-9a-z\u00c0-\uffff]", "", text)
     words = [w for w in re.split(r"\s+", q.lower()) if w]
     return bool(tag and tag in flat) or (words and all(w in text for w in words))
+
+
+def day_of(t):
+    from zoneinfo import ZoneInfo
+    import datetime as dt
+    return dt.datetime.fromtimestamp(t, ZoneInfo(TZ)).strftime("%Y-%m-%d")
+
+
+def tiktok_days(vids, now, days=90):
+    """Por día (hora de Madrid): nº de vídeos de la muestra publicados ese día y suma de sus views."""
+    out = {}
+    for v in vids:
+        if v["t"] and now - v["t"] <= days * 86400 + 86400:
+            d = out.setdefault(day_of(v["t"]), [0, 0])
+            d[0] += 1
+            d[1] += v["views"]
+    return [[d, n, vw] for d, (n, vw) in sorted(out.items())]
+
+
+def first_viral(vids, now, threshold=VIRAL_VIEWS):
+    """El vídeo MÁS ANTIGUO de la muestra que pasa el umbral de views. Si ninguno, el más visto."""
+    vids = [v for v in vids if v["t"]]
+    if not vids:
+        return None
+    over = [v for v in vids if v["views"] >= threshold]
+    if over:
+        v, fb = min(over, key=lambda x: x["t"]), False
+    else:
+        v, fb = max(vids, key=lambda x: (x["views"], -x["t"])), True
+    return {"video": v, "threshold": threshold, "fallback": fb, "days_since": round((now - v["t"]) / 86400, 1),
+            "day": day_of(v["t"]), "count_over": len(over)}
+
+
+def rise_start(vids, now):
+    """¿Desde qué día sube el volumen? Suma móvil de 7 días de vídeos/día de la muestra (últimos 180 días).
+    Base = mediana de esa suma entre 120 y 35 días atrás. Si la suma de hoy o de ayer supera
+    max(5, 2 × base), se va hacia atrás mientras siga por encima: el primer día con vídeos de ese tramo = inicio de la subida."""
+    import datetime as dt
+    cnt = {}
+    for v in vids:
+        if v["t"] and now - v["t"] <= 180 * 86400:
+            k = day_of(v["t"])
+            cnt[k] = cnt.get(k, 0) + 1
+    if sum(cnt.values()) < 5:
+        return {"rising": False, "reason": "pocos vídeos recientes en la muestra"}
+    today = dt.date.fromisoformat(day_of(now))
+    days = [(today - dt.timedelta(days=i)).isoformat() for i in range(186, -1, -1)]   # antiguo → hoy
+    c = [cnt.get(d, 0) for d in days]
+    S = [sum(c[max(0, i - 6):i + 1]) for i in range(len(c))]
+    n = len(days)
+    base_vals = S[n - 121:n - 35]
+    base = statistics.median(base_vals) if base_vals else 0
+    thr = max(5, 2 * base)
+    if not (S[-1] > thr or S[-2] > thr):
+        return {"rising": False, "base7": base, "now7": S[-1], "threshold7": thr}
+    i = n - 1 if S[-1] > thr else n - 2
+    while i > 0 and S[i - 1] > thr:
+        i -= 1
+    j = next((k for k in range(max(0, i - 6), i + 1) if c[k] > 0), i)
+    return {"rising": True, "day": days[j], "days_since": (today - dt.date.fromisoformat(days[j])).days,
+            "base7": base, "now7": S[-1], "threshold7": thr}
 
 
 def analyse(vids, now):
@@ -525,13 +607,14 @@ class Service:
         except Exception:
             return "check_failed"
 
-    async def trends(self, word):
-        k = word.lower()
+    async def trends(self, word, period=90):
+        period = 7 if period == 7 else 90          # 30 días = recorte de los 90 (misma curva diaria)
+        k = f"{word.lower()}|{period}"
         c = self.tcache.get(k)
         if c and time.time() - c[0] < TRENDS_TTL:
             return c[1], c[2]
         loop = asyncio.get_running_loop()
-        data, errs = await asyncio.wait_for(loop.run_in_executor(None, trends_sync, word), 30)
+        data, errs = await asyncio.wait_for(loop.run_in_executor(None, trends_sync, word, period), 30)
         if any(t.get("points") for t in data.values()):
             self.tcache[k] = (time.time(), data, errs)
         return data, errs
@@ -597,7 +680,11 @@ class Service:
         # la búsqueda de TikTok es "difusa": solo cuentan los vídeos que mencionan de verdad la palabra
         sv_raw = len(sv)
         sv = [v for v in sv if relevant(v, q, tag)]
-        res["sample"] = analyse(hv + sv, now)
+        allv = list({v["id"]: v for v in hv + sv if v["id"]}.values())
+        res["sample"] = analyse(allv, now)
+        res["tiktok_days"] = tiktok_days(allv, now)
+        res["first_viral"] = first_viral(allv, now)
+        res["rise"] = rise_start(allv, now)
         res["sample"]["from_hashtag"] = len(hv)
         res["sample"]["from_search"] = len(sv)
         res["sample"]["search_discarded"] = sv_raw - len(sv)
@@ -752,6 +839,23 @@ class Service:
                      "caché" if res.get("cached") else "nueva")
         return self.json(code, res)
 
+    async def h_trends(self, req):
+        if (g := await self.guarded(req)):
+            return g
+        q = norm_q(req.query.get("q"))
+        try:
+            period = int(req.query.get("period") or 90)
+        except ValueError:
+            period = 90
+        if not q or period not in (7, 30, 90):
+            return self.json(400, {"error": "bad_query"})
+        self.last_user = time.time()
+        try:
+            data, errs = await self.trends(q, period)
+        except Exception as e:
+            return self.json(200, {"q": q, "period": period, "trends": None, "errors": [f"google trends: {type(e).__name__}"]})
+        return self.json(200, {"q": q, "period": period, "trends": data, "errors": errs})
+
     async def h_watch(self, req):
         if (g := await self.guarded(req)):
             return g
@@ -803,7 +907,8 @@ def main():
     svc = Service()
     app = web.Application(client_max_size=64 * 1024)
     app.add_routes([web.get("/health", svc.h_health), web.get("/search", svc.h_search),
-                    web.post("/watch", svc.h_watch), web.get("/watchlist", svc.h_watchlist)])
+                    web.post("/watch", svc.h_watch), web.get("/watchlist", svc.h_watchlist),
+                    web.get("/trends", svc.h_trends)])
     app.on_startup.append(svc.on_start)
     app.on_cleanup.append(svc.on_stop)
     log.info("Buscador en 127.0.0.1:%s (túnel %s, publicar %s)", PORT, "sí" if TUNNEL else "no", "sí" if PUBLISH else "no")

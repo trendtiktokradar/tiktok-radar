@@ -7,10 +7,19 @@
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const safeUrl = (u) => (/^https:\/\//i.test(u || "") ? esc(u) : null);
-  const num = (v) => v == null || isNaN(v) ? "–" : v >= 1e9 ? (v / 1e9).toFixed(1) + "B" : v >= 1e6 ? (v / 1e6).toFixed(1) + "M" : v >= 1e3 ? (v / 1e3).toFixed(1) + "K" : String(Math.round(v));
+  const num = (v) => (v == null || isNaN(v) ? "–" : v >= 1e9 ? (v / 1e9).toFixed(1) + "B" : v >= 1e6 ? (v / 1e6).toFixed(1) + "M" : v >= 1e3 ? (v / 1e3).toFixed(1) + "K" : String(Math.round(v))).replace(/\.0(?=[KMB])/, "");
   const agoS = (t) => { if (!t) return "–"; const d = (Date.now() / 1000 - t) / 86400; return d < 1 / 24 ? Math.max(1, Math.round(d * 1440)) + " min" : d < 1 ? Math.round(d * 24) + " h" : d < 60 ? Math.round(d) + " d" : d < 730 ? Math.round(d / 30) + " meses" : (d / 365).toFixed(1) + " años"; };
   const fmtDay = (t) => new Date(t * 1000).toLocaleDateString("es-ES", { day: "2-digit", month: "short" });
   let busy = false, last = null, inited = false, status = null;
+  let period = [7, 30, 90].includes(Number(localStorage.getItem("ttr_speriod"))) ? Number(localStorage.getItem("ttr_speriod")) : 30;
+  const hiddenSeries = new Set();
+  const fmtLong = (t) => new Date(t * 1000).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" });
+  const daysTxt = (d) => d < 1 ? "menos de 1 día" : d < 2 ? "1 día" : Math.round(d) + " días";
+  // ---------- fechas en hora de Madrid (igual que el box)
+  const madridDay = (ms) => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Madrid", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(ms));
+  const addDays = (day, k) => { const d = new Date(day + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + k); return d.toISOString().slice(0, 10); };
+  const dayLabel = (day, long) => new Date(day + "T12:00:00Z").toLocaleDateString("es-ES", long ? { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" } : { day: "numeric", month: "short", timeZone: "UTC" });
+
 
   function getPin(force) {
     let pin = localStorage.getItem(LS_PIN);
@@ -114,11 +123,18 @@
       `<div class="bar"><span class="bl">${l}</span><span class="bt"><span class="bf b${i}" style="width:${((b[k] || 0) / maxB) * 100}%"></span></span><span class="bn">${b[k] || 0} <span class="note">(${Math.round(((b[k] || 0) / n) * 100)}%)</span></span></div>`).join("")}
       <p class="note">TikTok da los vídeos del hashtag ordenados por popularidad, no por fecha: en hashtags enormes y antiguos lo reciente sale poco aunque siga activo.</p></div>` : "";
     const tw = (r.trends || {}).web || {}, ty = (r.trends || {}).youtube || {};
-    const tchart = chart([{ name: "Google (web)", color: "#25f4ee", points: tw.points || [] }, { name: "YouTube", color: "#fe2c55", points: ty.points || [] }], { yMax: 100 });
-    const trends = `<div class="scard"><h4>Interés últimos 90 días <span class="note">(Google Trends, 0-100)</span></h4>
-      <div class="tdirs">Web: <b class="${dirCls(tw.direction)}">${esc(dirTxt(tw.direction))}</b>${tw.ratio ? ` <span class="note">×${esc(tw.ratio)}</span>` : ""} · YouTube: <b class="${dirCls(ty.direction)}">${esc(dirTxt(ty.direction))}</b>${ty.ratio ? ` <span class="note">×${esc(ty.ratio)}</span>` : ""}</div>
-      ${tchart || `<p class="note">Google Trends no ha dado datos para esta palabra (o ha limitado las peticiones).</p>`}
-      <p class="note">TikTok no da su gráfica sin login: esto es lo que se busca la palabra en Google y YouTube. ×N = media de los últimos 7 días frente a las 4 semanas anteriores.</p></div>`;
+    const trends = `<div class="scard" id="tcard"><h4>Tendencia <span class="note">(Google, YouTube y muestra de TikTok)</span></h4>
+      <div class="tdirs">Google 90 d: Web <b class="${dirCls(tw.direction)}">${esc(dirTxt(tw.direction))}</b>${tw.ratio ? ` <span class="note">×${esc(tw.ratio)}</span>` : ""} · YouTube <b class="${dirCls(ty.direction)}">${esc(dirTxt(ty.direction))}</b>${ty.ratio ? ` <span class="note">×${esc(ty.ratio)}</span>` : ""}</div>
+      <div class="seg" id="tperiod">${[7, 30, 90].map((d) => `<button data-period="${d}" class="${d === period ? "on" : ""}">${d} días</button>`).join("")}</div>
+      <div id="tchart"></div></div>`;
+    const fv = r.first_viral, rise = r.rise || {};
+    const viral = fv ? `<div class="scard"><h4>🚀 Primer vídeo viral <span class="note">(muestra)</span></h4>
+      ${fv.fallback ? `<p class="note">Ningún vídeo de la muestra llega a ${num(fv.threshold)} views. El más visto:</p>`
+        : `<p>El vídeo más antiguo con <b>≥ ${num(fv.threshold)} views</b> es del <b>${esc(fmtLong(fv.video.t))}</b> · lleva <b>${esc(daysTxt(fv.days_since))}</b> <span class="note">(${esc(fv.count_over)} vídeos de la muestra pasan el umbral)</span></p>`}
+      ${videoRow(fv.video)}
+      <p class="rise">${rise.rising ? `📈 El volumen de la muestra empezó a subir el <b>${esc(fmtLong(Date.parse(rise.day + "T12:00:00") / 1000))}</b> (hace ${esc(daysTxt(rise.days_since))}): ${esc(rise.now7)} vídeos en los últimos 7 días frente a ~${esc(Math.round(rise.base7))} normales.`
+        : `➖ No se ve una subida reciente del volumen en la muestra${rise.now7 != null ? ` (${esc(rise.now7)} vídeos en 7 días, lo normal ~${esc(Math.round(rise.base7 || 0))})` : rise.reason ? ` (${esc(rise.reason)})` : ""}.`}</p>
+      <p class="note">Solo con los ~${esc(n)} vídeos de la muestra: puede haber vídeos virales más antiguos que TikTok no nos enseña.</p></div>` : "";
     const g = r.growth || {};
     const snaps = (g.snaps || []).filter((x) => x.videos);
     const gchart = snaps.length >= 2 ? chart([{ name: "Vídeos con #" + (h.tag || r.tag), color: "#14f195", points: snaps.map((x) => [x.t, x.videos]) }], { yMin: Math.min(...snaps.map((x) => x.videos)) * 0.98, yMax: Math.max(...snaps.map((x) => x.videos)) * 1.02, fmt: num }) : "";
@@ -132,10 +148,86 @@
     const related = rel || relT ? `<div class="scard"><h4>Hashtags relacionados</h4>${rel ? `<p class="note">Los que más se repiten en los vídeos de la muestra (nº de vídeos):</p><div class="chips">${rel}</div>` : ""}
       ${relT ? `<p class="note">Hashtags parecidos (tikwm, nº de vídeos totales):</p><div class="chips">${relT}</div>` : ""}</div>` : "";
     const errs = (r.errors || []).length ? `<p class="note warnline">Fuentes con fallo (resultado parcial): ${esc(r.errors.join(" · "))}</p>` : "";
-    $("#sresult").innerHTML = head + notFound + errs + `<div class="sgrid">${stats}${bars}</div>` + trends + growth + vids + related;
+    $("#sresult").innerHTML = head + notFound + errs + `<div class="sgrid">${stats}${bars}</div>` + trends + viral + growth + vids + related;
+    drawTrend(r);
+    if (period === 7 && !r._t7) setPeriod(7);
     $("#sfresh").onclick = () => doSearch(r.q, true);
     $("#swatchbtn").onclick = () => toggleWatch(r.q, !watching);
   }
+
+  // ---------- gráfica grande: Google web + YouTube + TikTok (muestra), 7/30/90 días, con tooltip táctil
+  const SER = [
+    { key: "web", name: "Google web", color: "#4c8dff", type: "line" },
+    { key: "yt", name: "YouTube", color: "#ff4d4d", type: "line" },
+    { key: "tt", name: "TikTok vídeos/día", color: "#25f4ee", type: "line", w: 3 },
+    { key: "ttv", name: "TikTok views/día", color: "rgba(254,44,85,.38)", type: "bar" },
+  ];
+  function seriesFor(r, P) {
+    const today = madridDay(Date.now());
+    const days = Array.from({ length: P }, (_, i) => addDays(today, i - (P - 1)));
+    const src = P === 7 ? r._t7 : r.trends;
+    const gmap = (k) => { const m = new Map(((src || {})[k] || {}).days || []); const vals = days.map((d) => (m.has(d) ? m.get(d) : null));
+      const mx = Math.max(0, ...vals.filter((v) => v != null));
+      // 30 días = recorte de la curva de 90: se reescala para que el pico del periodo sea 100 (como hace Google)
+      return P === 30 ? vals.map((v) => (v == null ? null : mx ? Math.round((v * 1000) / mx) / 10 : 0)) : vals; };
+    const tmap = new Map((r.tiktok_days || []).map((x) => [x[0], x]));
+    const tn = days.map((d) => (tmap.get(d) || [d, 0, 0])[1]), tv = days.map((d) => (tmap.get(d) || [d, 0, 0])[2]);
+    const mn = Math.max(0, ...tn), mv = Math.max(0, ...tv);
+    return { days, web: gmap("web"), yt: gmap("youtube"), tn, tv, tt: tn.map((v) => (mn ? (v * 100) / mn : 0)), ttv: tv.map((v) => (mv ? (v * 100) / mv : 0)),
+      N: tn.reduce((a, b) => a + b, 0), gLoaded: !!src };
+  }
+  function drawTrend(r) {
+    const box = $("#tchart"); if (!box) return;
+    const P = period, D = seriesFor(r, P);
+    const W = Math.round(Math.max(300, Math.min(1150, box.clientWidth || 640))), H = W < 520 ? 250 : 300, pad = { l: 30, r: 8, t: 10, b: 26 };
+    const n = D.days.length, cw = (W - pad.l - pad.r) / n;
+    const X = (i) => pad.l + cw * (i + 0.5), Y = (v) => H - pad.b - (v / 100) * (H - pad.t - pad.b);
+    const grid = [0, 25, 50, 75, 100].map((v) => `<line x1="${pad.l}" x2="${W - pad.r}" y1="${Y(v)}" y2="${Y(v)}" class="g"/><text x="${pad.l - 5}" y="${Y(v) + 4}" text-anchor="end">${v}</text>`).join("");
+    const step = Math.max(1, Math.ceil(n / (W < 520 ? 5 : 8)));
+    const xl = D.days.map((d, i) => ((n - 1 - i) % step === 0 ? `<text x="${X(i)}" y="${H - 8}" text-anchor="middle">${esc(dayLabel(d))}</text>` : "")).join("");
+    let body = "";
+    if (!hiddenSeries.has("ttv")) body += D.ttv.map((v, i) => (v > 0 ? `<rect x="${(X(i) - cw * 0.38).toFixed(1)}" width="${(cw * 0.76).toFixed(1)}" y="${Y(v).toFixed(1)}" height="${(Y(0) - Y(v)).toFixed(1)}" fill="${SER[3].color}" rx="2"/>` : "")).join("");
+    for (const s of SER.filter((x) => x.type === "line" && !hiddenSeries.has(x.key))) {
+      const vals = D[s.key]; let path = "", pen = false;
+      vals.forEach((v, i) => { if (v == null) { pen = false; return; } path += (pen ? "L" : "M") + X(i).toFixed(1) + "," + Y(v).toFixed(1); pen = true; });
+      if (path) body += `<path d="${path}" fill="none" stroke="${s.color}" stroke-width="${s.w || 2}" stroke-linejoin="round" stroke-linecap="round"/>`;
+      if (n <= 31) body += vals.map((v, i) => (v == null ? "" : `<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="${n <= 7 ? 3.5 : 2}" fill="${s.color}"/>`)).join("");
+    }
+    const legend = SER.map((s) => `<button class="lg${hiddenSeries.has(s.key) ? " off" : ""}" data-series="${s.key}"><i style="background:${s.color}"></i>${esc(s.name)}</button>`).join("");
+    const gNote = !D.gLoaded ? (P === 7 ? "Cargando Google 7 días…" : "Google Trends no ha dado datos.") : D.web.every((v) => v == null) && D.yt.every((v) => v == null) ? "Google Trends no tiene datos de este periodo para esta palabra." : "";
+    box.innerHTML = `<div class="tchart-wrap"><svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img">${grid}${xl}${body}
+        <line id="tcur" x1="0" x2="0" y1="${pad.t}" y2="${H - pad.b}" class="cur" visibility="hidden"/><rect id="thit" x="${pad.l}" y="0" width="${W - pad.l - pad.r}" height="${H}" fill="transparent"/></svg>
+      <div id="ttip" class="ttip" hidden></div></div>
+      <div class="legend">${legend}</div>
+      ${gNote ? `<p class="note">${esc(gNote)}</p>` : ""}
+      <p class="note">⚠️ TikTok = <b>muestra de ${esc(D.N)} vídeos</b> publicados en estos ${P} días (de los ~${esc((r.sample || {}).n || 0)} analizados: los más populares del hashtag + la búsqueda), <b>no el total</b>. Todas las líneas van de 0 a 100: 100 = el día más alto del periodo (en TikTok, el día con más vídeos de la muestra; las barras, el día con más views). Toca la gráfica para ver los números de cada día.${P === 7 ? " Google 7 días viene por horas: se muestra la media de cada día (100 = la hora pico de la semana; el primer día puede estar incompleto)." : ""}</p>`;
+    const hit = $("#thit"), tip = $("#ttip"), cur = $("#tcur"), svg = box.querySelector("svg");
+    const show = (ev) => {
+      const rc = svg.getBoundingClientRect(), x = ((ev.clientX - rc.left) / rc.width) * W;
+      const i = Math.max(0, Math.min(n - 1, Math.floor((x - pad.l) / cw)));
+      cur.setAttribute("x1", X(i)); cur.setAttribute("x2", X(i)); cur.setAttribute("visibility", "visible");
+      const gv = (v) => (v == null ? "–" : Math.round(v));
+      tip.innerHTML = `<b>${esc(dayLabel(D.days[i], true))}</b><div><i style="background:#4c8dff"></i>Google web: ${gv(D.web[i])}</div><div><i style="background:#ff4d4d"></i>YouTube: ${gv(D.yt[i])}</div>
+        <div><i style="background:#25f4ee"></i>TikTok: <b>${D.tn[i]}</b> vídeo${D.tn[i] === 1 ? "" : "s"}</div><div><i style="background:#fe2c55"></i>Views de esos vídeos: <b>${num(D.tv[i])}</b></div>`;
+      tip.hidden = false;
+      const px = (X(i) / W) * rc.width, tw = tip.offsetWidth;
+      tip.style.left = Math.max(0, Math.min(rc.width - tw, px - tw / 2)) + "px";
+    };
+    hit.addEventListener("pointermove", show); hit.addEventListener("pointerdown", show);
+    hit.addEventListener("pointerleave", (ev) => { if (ev.pointerType === "mouse") { tip.hidden = true; cur.setAttribute("visibility", "hidden"); } });
+  }
+  async function setPeriod(P) {
+    period = P; localStorage.setItem("ttr_speriod", String(P));
+    document.querySelectorAll("#tperiod button").forEach((b) => b.classList.toggle("on", Number(b.dataset.period) === P));
+    if (!last) return;
+    drawTrend(last);
+    if (P === 7 && !last._t7) {
+      const q = last.q, r = await api({ action: "trends", q, period: 7 });
+      if (last && last.q === q) { last._t7 = (r && r.trends) || { web: { days: [] }, youtube: { days: [] } }; if (period === 7) drawTrend(last); }
+    }
+  }
+  let rsz = null;
+  window.addEventListener("resize", () => { clearTimeout(rsz); rsz = setTimeout(() => last && drawTrend(last), 200); });
 
   function recent(q) {
     let arr = []; try { arr = JSON.parse(localStorage.getItem(LS_RECENT) || "[]"); } catch (_) {}
@@ -193,6 +285,10 @@
     if (t) { init(); setTimeout(() => $("#sq").focus(), 50); return; }
     const c = e.target.closest("[data-sq]");
     if (c) { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); doSearch(c.dataset.sq); return; }
+    const pb = e.target.closest("#tperiod [data-period]");
+    if (pb) { setPeriod(Number(pb.dataset.period)); return; }
+    const lg = e.target.closest("[data-series]");
+    if (lg) { const k = lg.dataset.series; hiddenSeries.has(k) ? hiddenSeries.delete(k) : hiddenSeries.add(k); last && drawTrend(last); return; }
     const u = e.target.closest("[data-unwatch]");
     if (u) { toggleWatch(u.dataset.unwatch, false); }
   });
