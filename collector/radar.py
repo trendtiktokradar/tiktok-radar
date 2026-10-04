@@ -509,7 +509,10 @@ def check_dex_paid(coins, state, cfg, ts, profile_cas=()):
     open(BUSY_PATH, "w").close()  # aviso al vigilante rápido: no hacer /orders a la vez (límite 60/min)
     for ca in todo[:cfg.get("dexpaid_max_checks_per_run", 40)]:
         if n % 10 == 0:
-            os.utime(BUSY_PATH)
+            try:
+                open(BUSY_PATH, "a").close(); os.utime(BUSY_PATH)
+            except OSError:
+                pass
         d = http(f"{DS}/orders/v1/solana/{ca}", "dexscreener_orders", retries=2)
         if not isinstance(d, dict):
             continue
