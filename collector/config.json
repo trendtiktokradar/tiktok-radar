@@ -163,15 +163,17 @@
     "nopump_retry_minutes": 360
   },
   "alerts": {
-    "_comment": "Avisos de Telegram (solo desde el box, nunca desde GitHub Actions). Solo coins claramente TikTok: tiktok/douyin en nombre o ticker, o link a un vídeo/foto de TikTok (un perfil, búsqueda, descripción, categoría o fyp solos no avisan). Token en la variable TELEGRAM_BOT_TOKEN_TIKTOK_RADAR; chat y avisos ya enviados en state/telegram.json. min_mc: no avisar por debajo de ese MC (0 = siempre).",
+    "_comment": "Avisos de Telegram (solo desde el box, nunca desde GitHub Actions). SOLO coins con link de TikTok asociado: vídeo/foto/enlace corto o perfil (tiktok.com/@cuenta); no cuentan las cuentas oficiales (@tiktok… + excluded_accounts), búsquedas/tags ni el nombre/ticker. fresh_minutes: solo eventos de hace ≤ N min (lo más antiguo se da por visto sin avisar). BONDING real: pump.fun complete o pool AMM creado después de ver la coin en curva. Token en la variable TELEGRAM_BOT_TOKEN_TIKTOK_RADAR; chat y avisos ya enviados en state/telegram.json. min_mc: no avisar por debajo de ese MC (0 = siempre).",
     "enabled": true,
     "dex_paid": true,
     "bonding": true,
     "min_mc": 0,
-    "max_per_run": 15
+    "max_per_run": 15,
+    "fresh_minutes": 30,
+    "excluded_accounts": []
   },
   "fastwatch": {
-    "_comment": "Vigilante rápido (collector/fastwatch.py, scripts/fastwatch.sh): avisos al momento. interval_s: segundos entre ciclos. orders_per_cycle/orders_gap_s: /orders de respaldo por ciclo (DexScreener permite 60/min; se pausa mientras la pasada lenta hace los suyos). young_hours/young_recheck_min/old_recheck_min: cada cuánto se recomprueba una coin joven/vieja. pump_min_mc/pump_per_cycle: consultas a pump.fun (complete) de coins cerca de graduarse. bonding_hot/bonding_rotate/tokens_gap_s: coins en bonding curve revisadas por ciclo (las de más MC siempre + el resto rotando) y pausa entre lotes de /tokens. profiles_every_s: cada cuántos segundos se mira la lista de perfiles nuevos (DEX PAID).",
+    "_comment": "Vigilante rápido (collector/fastwatch.py, scripts/fastwatch.sh): avisos al momento. interval_s: segundos entre ciclos. orders_per_cycle/orders_gap_s: /orders de respaldo por ciclo (DexScreener permite 60/min; se pausa mientras la pasada lenta hace los suyos). young_hours/young_recheck_min/old_recheck_min: cada cuánto se recomprueba una coin joven/vieja. pump_min_mc/pump_per_cycle: consultas a pump.fun (complete) de coins cerca de graduarse. bonding_hot/bonding_rotate/tokens_gap_s: coins en bonding curve revisadas por ciclo (las de más MC siempre + el resto rotando) y pausa entre lotes de /tokens. profiles_every_s: cada cuántos segundos se mira la lista de perfiles nuevos (DEX PAID). Además, cada ciclo mira pump.fun /coins?complete=true (recién creadas ya graduadas) para avisar de graduaciones instantáneas con link de TikTok.",
     "interval_s": 45,
     "orders_per_cycle": 6,
     "orders_gap_s": 1.0,

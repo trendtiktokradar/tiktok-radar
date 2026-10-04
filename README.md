@@ -228,14 +228,19 @@ avisa "Falta configurar el PIN en Vercel".
   - la pasada lenta (~8 min), como red de seguridad.
 - **Chat**: el primer chat privado que escribe al bot (/start) queda guardado en `state/telegram.json` (fuera del repo,
   no se publica) y solo se le escribe a él. Mensaje de bienvenida "✅ TikTok Radar conectado".
-- **Solo coins claramente TikTok** (señal fuerte): `tiktok`/`douyin` en el nombre o el ticker, o link a un **vídeo/foto**
-  de TikTok (`tiktok.com/@x/video/ID`, `/photo/ID`, `tiktok.com/t/…`, `vm.`/`vt.tiktok.com/…`). Un perfil
-  (`tiktok.com/@cuenta`), una búsqueda/tag, la descripción, la categoría de DexScreener o "fyp" solos **no avisan**
-  (esas coins siguen en el panel). Nunca las marcadas "No es TikTok".
+- **Solo coins con un link de TikTok asociado** (en web/redes/descripción): vídeo o foto (`tiktok.com/@x/video/ID`,
+  `/photo/ID`), enlace corto (`vm.`/`vt.tiktok.com/…`, `tiktok.com/t/…`) o perfil (`tiktok.com/@cuenta`).
+  **No cuentan**: la cuenta oficial `@tiktok` (y otras oficiales; `alerts.excluded_accounts` añade más), búsquedas, tags,
+  música…, ni el nombre/ticker ("TikTok Coin" sin link no avisa), la descripción, la categoría o "fyp" (esas coins
+  siguen en el panel). Nunca las marcadas "No es TikTok".
+- **Solo eventos frescos**: de hace ≤ `alerts.fresh_minutes` (30). Lo más antiguo (p. ej. una coin que el radar
+  descubre horas después de pagar) se da por visto sin avisar. En DEX PAID cuenta la aprobación: max(hora del pago,
+  última comprobación en la que aún no estaba pagada) o el momento en que aparece su perfil nuevo.
 - **Avisos** (una vez por coin y tipo):
   - 💰 **DEX PAID**: la coin pasa a tener DEX pagado (`/orders` de DexScreener).
-  - 🎓 **BONDING**: pump.fun dice `complete=true`, o su par principal en DexScreener pasa de un DEX de bonding curve
-    (pumpfun, meteoradbc, launchlab…) a un AMM (pumpswap, raydium, meteora…).
+  - 🎓 **BONDING real**: el par principal en DexScreener es un AMM (pumpswap, raydium, meteora…) con pool de hace ≤ 30 min
+    y además pump.fun dice `complete=true` **o** el pool se creó después de que el radar viera la coin en bonding curve
+    (`curve_seen`). Un pool que ya existía desde el lanzamiento no cuenta (evita falsos "bonding" de meteoradbc).
   - Texto: nombre, $ticker, CA (toca para copiar), MC, ATH, liquidez, edad, hora del pago/migración y hace cuánto,
     por qué es TikTok (con el link al vídeo),
     🔥 TikTok dev si aplica y links a DexScreener / pump.fun / GMGN / panel. Sin vista previa de links.
@@ -245,12 +250,15 @@ avisa "Falta configurar el PIN en Vercel".
   `/reanudar`.
 - **Vigilante rápido** (`collector/fastwatch.py`, `scripts/fastwatch.sh start|stop|status|ensure`, log `logs/fastwatch.log`).
   En cada ciclo de ~45 s (la lista de perfiles, cada 20 s):
-  1. `/token-profiles/latest/v1` (cada 20 s, también entre ciclos; ≈ 3/min): perfil nuevo no CTO = DEX PAID. Si la coin es TikTok fuerte (seguida por
+  1. `/token-profiles/latest/v1` (cada 20 s, también entre ciclos; ≈ 3/min): perfil nuevo no CTO = DEX PAID. Si la coin tiene link de TikTok (seguida por
      el radar, o nueva: nombre/edad con `/tokens/v1`, < 24 h) confirma la hora con `/orders` y avisa al momento.
-  2. Respaldo: `/orders` rotando por las coins TikTok fuertes sin pagar (6 por ciclo, 1/s ≈ 8/min; va después del paso 3 porque es lo menos urgente; jóvenes < 3 h cada
+  2. Respaldo: `/orders` rotando por las coins con link de TikTok sin pagar (6 por ciclo, 1/s ≈ 8/min; va después del paso 3 porque es lo menos urgente; jóvenes < 3 h cada
      5 min, el resto cada 20 min). Se pausa mientras la pasada hace sus `/orders` → entre los dos ≤ 60/min.
   3. BONDING: `/tokens/v1` en lotes de 30 (las 120 de más MC en bonding curve cada ciclo + 60 del resto rotando): el par
      principal pasa de pumpfun/meteoradbc… a un AMM. Y pump.fun `/coins-v2` (`complete`) para las de MC ≥ 35K.
+  4. Graduaciones instantáneas: pump.fun `/coins?complete=true&sort=created_timestamp&order=DESC` (1 petición):
+     coins creadas hace ≤ 30 min que ya completaron la curva (el radar no llega a verlas en curva). Si tienen link de
+     TikTok en website/twitter/telegram/descripción → aviso BONDING en ≤ ~1 min.
   - Si DexScreener responde 429 respeta su `Retry-After` en todos sus endpoints (el límite es por IP y común; el box
     comparte IP de salida, así que a veces llegan 429 aunque el radar vaya despacio). Lee las coins de `state/state.json` (lo escribe la pasada) y
     deja lo que ve en `state/fastwatch.json` (latido, contadores de peticiones, últimos avisos con su latencia).

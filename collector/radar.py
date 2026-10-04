@@ -21,6 +21,7 @@ DS = "https://api.dexscreener.com"
 PUMP = "https://frontend-api-v3.pump.fun"
 SOL_ADDR = re.compile(r"^[1-9A-HJ-NP-Za-km-z]{32,44}$")
 TIKTOK_URL = re.compile(r"https?://(?:www\.|vm\.|vt\.|m\.)?tiktok\.com/[^\s\"'<>)]*", re.I)
+CURVE_DEXES = {"pumpfun", "meteoradbc", "raydium-launchlab", "launchlab", "moonshot", "boop", "believe", "letsbonk"}
 QUOTE_MINTS = {"So11111111111111111111111111111111111111112",
                "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
                "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"}
@@ -396,6 +397,8 @@ def upsert(coins, info, reasons, tiktok_links, source, ts):
             L.setdefault("website", u)
     if tiktok_links:
         L["tiktok"] = sorted(set((L.get("tiktok") or []) + tiktok_links))[:5]
+    if info.get("pump_complete") is False and not c.get("curve_seen"):
+        c["curve_seen"] = ts  # vista en bonding curve (para distinguir un BONDING real de un pool ya existente)
     if info.get("pump_mc") is not None:
         prev_ath = (c.get("pump") or {}).get("ath") or 0
         c["pump"] = {"mc": info["pump_mc"], "complete": info.get("pump_complete"),
@@ -409,6 +412,8 @@ def apply_metrics(c, info, ts):
     m = info["metrics"]
     c["metrics"] = m
     c["pair"], c["dex"] = info.get("pair"), info.get("dex")
+    if c["dex"] in CURVE_DEXES and not c.get("curve_seen"):
+        c["curve_seen"] = ts
     if info.get("pair_ts"):
         c["pair_ts"] = info["pair_ts"]  # creación del par principal (en una graduación = momento de la migración)
     if info.get("pair_created"):
@@ -488,7 +493,7 @@ def check_dex_paid(coins, state, cfg, ts, profile_cas=()):
     fw = load_json(FW_PATH, {}) or {}
     for ca, e in (fw.get("orders") or {}).items():
         if ca in coins and not (cache.get(ca) or {}).get("paid") and e.get("checked", 0) > (cache.get(ca) or {}).get("checked", 0):
-            cache[ca] = {k: e[k] for k in ("checked", "paid", "status", "paid_at", "boost_total") if k in e}
+            cache[ca] = {k: e[k] for k in ("checked", "paid", "status", "paid_at", "prev_check", "boost_total") if k in e}
     seen = dict(fw.get("profiles") or {})
     for ca in profile_cas:
         seen.setdefault(ca, ts)
@@ -515,6 +520,9 @@ def check_dex_paid(coins, state, cfg, ts, profile_cas=()):
              "status": "approved" if paid else (prof[0].get("status") if prof else None)}
         if paid:
             e["paid_at"] = min(o.get("paymentTimestamp") or ts for o in paid)
+            old = cache.get(ca) or {}
+            if old.get("checked") and not old.get("paid"):
+                e["prev_check"] = old["checked"]  # aún no estaba pagada entonces: la aprobación es posterior
         boosts = d.get("boosts") if isinstance(d.get("boosts"), list) else []
         e["boost_total"] = sum(b.get("amount") or 0 for b in boosts)
         cache[ca] = e
@@ -530,6 +538,7 @@ def check_dex_paid(coins, state, cfg, ts, profile_cas=()):
         c["dex_paid"] = bool(e.get("paid"))
         c["dex_status"] = e.get("status")
         if e.get("paid_at"): c["dex_paid_at"] = e["paid_at"]
+        if e.get("paid"): c["dex_fresh_at"] = max(e.get("paid_at") or 0, e.get("prev_check") or 0) or None
         c["boost_total"] = e.get("boost_total") or 0
     # limpiar caché de coins que ya no seguimos (más de 3 días)
     for ca in [ca for ca, e in cache.items() if ca not in coins and ts - e.get("checked", 0) > 3 * 86_400_000]:

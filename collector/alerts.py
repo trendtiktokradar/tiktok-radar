@@ -5,8 +5,11 @@ Se usa desde dos sitios (solo en el box, nunca en GitHub Actions):
   - desde el vigilante rápido collector/fastwatch.py (cada ~45 s): avisa en cuanto detecta el evento
 Qué hace:
   - capta el chat de Alex: si aún no hay chat guardado, el primer chat PRIVADO que escriba al bot (/start)
-  - avisa "💰 DEX PAID" y "🎓 BONDING" una sola vez por coin, SOLO de coins claramente TikTok (señal fuerte:
-    tiktok/douyin en nombre o ticker, o link a un vídeo/foto de TikTok). El panel sigue mostrando más coins.
+  - avisa "💰 DEX PAID" y "🎓 BONDING" una sola vez por coin, SOLO de coins con un link de TikTok asociado
+    (vídeo/foto/enlace corto o perfil; no la cuenta oficial @tiktok ni búsquedas/tags). El nombre/ticker solo NO avisa.
+    Solo eventos frescos (≤ alerts.fresh_minutes, 30): lo más antiguo se da por visto sin avisar.
+    BONDING real: pump.fun complete=True, o un pool AMM creado DESPUÉS de que el radar viera la coin en bonding curve.
+    El panel sigue mostrando más coins.
   - comandos /estado /pausa /reanudar (los responde el vigilante rápido en ≤ ~1 min)
 Los dos procesos comparten el registro de avisos enviados con un candado de fichero (state/telegram.json.lock).
 Token: variable de entorno TELEGRAM_BOT_TOKEN_TIKTOK_RADAR (nunca se imprime ni se guarda).
@@ -21,12 +24,15 @@ TG_STATE = os.environ.get("RADAR_TG_STATE", os.path.join(ROOT, "state", "telegra
 TOKEN_VAR = "TELEGRAM_BOT_TOKEN_TIKTOK_RADAR"
 PANEL = "https://tiktok-radar-web.vercel.app"
 CURVE_DEXES = {"pumpfun", "meteoradbc", "raydium-launchlab", "launchlab", "moonshot", "boop", "believe", "letsbonk"}
-RECENT_MS = 15 * 60_000
 TG_LOCK = TG_STATE + ".lock"
-# señal fuerte (solo para los avisos): tiktok/douyin en nombre o ticker, o link a un VÍDEO/foto/enlace corto de TikTok
-STRONG_NAME = re.compile(r"tik[\s\-_.]?tok|douyin|抖音", re.I)
-STRONG_LINK = re.compile(r"tiktok\.com/@[^/?#\s]+/(?:video|photo)/\d+|tiktok\.com/t/\w+|(?:vm|vt)\.tiktok\.com/\w+"
-                         r"|m\.tiktok\.com/v/\d+", re.I)
+FRESH_MS = 30 * 60_000  # por defecto; config alerts.fresh_minutes
+# link de TikTok asociado (lo único que hace avisar): vídeo/foto/enlace corto o perfil (tiktok.com/@cuenta)
+POST_LINK = re.compile(r"tiktok\.com/@([^/?#\s]+)/(video|photo)/\d+", re.I)
+SHORT_LINK = re.compile(r"(?:vm|vt)\.tiktok\.com/\w+|tiktok\.com/t/\w+|m\.tiktok\.com/v/\d+", re.I)
+PROFILE_LINK = re.compile(r"tiktok\.com/@([^/?#\s]+)/?(?:[?#]|$)", re.I)
+# cuentas oficiales de TikTok: no cuentan como "link asociado" (config alerts.excluded_accounts las amplía)
+EXCLUDED_ACCOUNTS = {"tiktok", "tiktok_us", "tiktok_uk", "tiktokshop", "tiktokcreators", "tiktoknewsroom",
+                     "tiktokforbusiness", "tiktokforgood"}
 try:
     from zoneinfo import ZoneInfo
     TZ = ZoneInfo("Europe/Madrid")
@@ -36,17 +42,38 @@ except Exception:  # pragma: no cover
 def log(*a):
     print(time.strftime("%H:%M:%S"), "[telegram]", *a, flush=True)
 
-def strong_signal(c):
-    """Avisos SOLO de coins claramente TikTok. Devuelve ("name", texto) o ("link", url) o None.
-    Un perfil de TikTok (tiktok.com/@cuenta), una búsqueda/tag, la descripción, la categoría o 'fyp' solos NO avisan."""
-    for s in (c.get("name"), c.get("symbol")):
-        m = STRONG_NAME.search(s or "")
-        if m:
-            return ("name", m.group(0))
+def tiktok_link(c):
+    """Link de TikTok asociado a la coin (lo que hace avisar). Devuelve (tipo, url, cuenta) con tipo
+    video/photo/short/profile (prefiere vídeo/foto a perfil) o None. No cuentan: la cuenta oficial @tiktok (y otras
+    oficiales), búsquedas, tags, música, efectos… ni el nombre/ticker/descripción/categoría."""
+    profile = None
     for u in (c.get("links") or {}).get("tiktok") or []:
-        if STRONG_LINK.search(u or ""):
-            return ("link", u)
-    return None
+        u = u or ""
+        m = POST_LINK.search(u)
+        if m:
+            if m.group(1).lower() not in EXCLUDED_ACCOUNTS:
+                return (m.group(2).lower(), u, m.group(1))
+            continue
+        if SHORT_LINK.search(u):
+            return ("short", u, None)
+        m = PROFILE_LINK.search(u)
+        if m and not profile and m.group(1).lower() not in EXCLUDED_ACCOUNTS:
+            profile = ("profile", u, m.group(1))
+    return profile
+
+strong_signal = tiktok_link  # nombre antiguo (lo usa fastwatch.py)
+
+def bonding_event(c):
+    """BONDING real -> hora de creación del pool AMM (pair_ts), o None.
+    Vale si pump.fun dice complete=True, o si el pool se creó DESPUÉS de que el radar viera la coin en bonding curve
+    (curve_seen). Así no cuenta un pool que ya existía desde el lanzamiento (falsos 'bonding' de meteoradbc)."""
+    dex, pt = c.get("dex"), c.get("pair_ts")
+    if not dex or dex in CURVE_DEXES or not pt:
+        return None
+    if (c.get("pump") or {}).get("complete") is True:
+        return pt
+    cs = c.get("curve_seen")
+    return pt if cs and pt > cs else None
 
 @contextmanager
 def locked():
@@ -144,13 +171,16 @@ def coin_text(c, kind, now, test=False, event_ts=None):
     lines.append(f"MC <b>{money(m.get('mc'))}</b> · ATH {money(c.get('ath'))} · Liq {money(m.get('liq'))} · "
                  f"edad {age(c.get('created') or c.get('first_seen'), now)}")
     ev = event_ts or (c.get("dex_paid_at") if kind == "dex_paid" else None)
-    if ev:
+    if ev and kind == "dex_paid" and now - ev > FRESH_MS:
+        lines.append(f"⏱️ DEX aprobado hace poco (el pago es de las {hhmm(ev)})")  # la revisión tardó
+    elif ev:
         lines.append(f"⏱️ {'Pagó DEX' if kind == 'dex_paid' else 'Migró'} a las {hhmm(ev)} (hace {age(ev, now)})")
-    sig = strong_signal(c)
-    if sig and sig[0] == "name":
-        lines.append(f"TikTok: '{e(sig[1])}' en el nombre")
-    elif sig and sig[1].startswith("http"):
-        lines.append(f'TikTok: <a href="{e(sig[1])}">{"foto" if "/photo/" in sig[1] else "vídeo"} de TikTok</a>')
+    sig = tiktok_link(c)
+    if sig:
+        label = {"video": "vídeo de TikTok", "photo": "foto de TikTok", "short": "vídeo de TikTok"}.get(sig[0]) \
+            or f"perfil de TikTok @{sig[2]}"
+        url = sig[1] if sig[1].startswith("http") else "https://" + sig[1]
+        lines.append(f'TikTok: <a href="{e(url)}">{e(label)}</a>')
     links = []
     for key, name in (("dexscreener", "DexScreener"), ("pumpfun", "pump.fun"), ("gmgn", "GMGN")):
         if L.get(key):
@@ -160,20 +190,15 @@ def coin_text(c, kind, now, test=False, event_ts=None):
     return "\n".join(lines)
 
 # ---------------------------------------------------------------- eventos
-def is_bonded(c, last_dex):
-    """Bonding curve completada: pump.fun dice complete=True, o la coin estaba en un DEX de bonding curve
-    (pumpfun, meteoradbc, launchlab…) y su par principal en DexScreener pasa a un AMM (pumpswap, raydium, meteora…)."""
-    if (c.get("pump") or {}).get("complete") is True:
-        return True
-    dex = c.get("dex")
-    return bool(last_dex in CURVE_DEXES and dex and dex not in CURVE_DEXES)
+def event_ts(c, kind):
+    return c.get("dex_paid_at") if kind == "dex_paid" else bonding_event(c)
 
-def event_recent(c, kind, now):
+def fresh_ts(c, kind):
+    """Hora con la que se mide la frescura. DEX PAID: la aprobación puede llegar después del pago, así que se usa
+    max(pago, última comprobación en la que aún NO estaba pagada) (dex_fresh_at, lo calcula la pasada)."""
     if kind == "dex_paid":
-        t = c.get("dex_paid_at") or 0
-    else:
-        t = c.get("pair_ts") if c.get("dex") not in CURVE_DEXES else 0
-    return bool(t and now - t <= RECENT_MS)
+        return c.get("dex_fresh_at") or c.get("dex_paid_at")
+    return bonding_event(c)
 
 def handle_updates(tg, st, data, cfg):
     r = tg.call("getUpdates", offset=st.get("offset", 0), timeout=0, allowed_updates=["message"])
@@ -213,11 +238,17 @@ def handle_updates(tg, st, data, cfg):
                     f"Avisos: {'⏸️ en pausa' if st.get('paused') else '✅ activos'} · enviados en total: "
                     f"{st.get('sent_total', 0)}\n<a href=\"{PANEL}\">Abrir panel</a>")
 
-def deliver(tg, st, kind, c, now, A, event_ts=None):
+def deliver(tg, st, kind, c, now, A, event_ts=None, fresh_at=None):
     """Envía UN aviso si toca (llamar con el candado cogido). Devuelve sent/dup/paused/low/fail."""
     ca = c["ca"]
     if ca in st["sent"][kind]:
         return "dup"
+    fresh = (A.get("fresh_minutes", 30) or 30) * 60_000
+    ref = fresh_at or event_ts
+    if not ref or now - ref > fresh:
+        st["sent"][kind][ca] = now  # evento antiguo (o sin hora): se da por visto, sin avisar
+        st.setdefault("stale", {})[ca + ":" + kind] = ref
+        return "stale"
     if st.get("paused"):
         st["sent"][kind][ca] = now; return "paused"  # en pausa: se dan por vistos (sin avalancha al reanudar)
     if ((c.get("metrics") or {}).get("mc") or 0) < (A.get("min_mc", 0) or 0):
@@ -233,21 +264,23 @@ def deliver(tg, st, kind, c, now, A, event_ts=None):
 
 def _defaults(st):
     st.setdefault("sent", {"dex_paid": {}, "bonding": {}})
-    st.setdefault("last_dex", {})
+    st.pop("last_dex", None)  # ya no se usa (BONDING real = bonding_event)
+    st["stale"] = dict(list((st.get("stale") or {}).items())[-300:])
     return st
 
 def enabled_kinds(cfg):
     A = cfg.get("alerts") or {}
+    EXCLUDED_ACCOUNTS.update(a.lower().lstrip("@") for a in A.get("excluded_accounts") or [])
     if not A.get("enabled", False) or os.environ.get("GITHUB_ACTIONS") == "true" or os.environ.get("RADAR_ALERTS") == "0":
         return A, []
     return A, [k for k, on in (("dex_paid", A.get("dex_paid", True)), ("bonding", A.get("bonding", True))) if on]
 
-def alert_now(kind, c, cfg, event_ts=None, tg=None):
-    """Aviso inmediato desde el vigilante rápido. Respeta señal fuerte, pausa, mínimo de MC y el registro compartido."""
+def alert_now(kind, c, cfg, event_ts=None, tg=None, fresh_at=None):
+    """Aviso inmediato desde el vigilante rápido. Respeta link de TikTok, frescura, pausa, mínimo de MC y el registro compartido."""
     A, kinds = enabled_kinds(cfg)
     if kind not in kinds:
         return "off"
-    if not strong_signal(c):
+    if not tiktok_link(c):
         return "weak"
     token = os.environ.get(TOKEN_VAR)
     if not token:
@@ -258,8 +291,8 @@ def alert_now(kind, c, cfg, event_ts=None, tg=None):
         st = _defaults(load_state())
         if not st.get("chat_id") or not st.get("seeded"):
             return "nochat"
-        r = deliver(tg, st, kind, c, now, A, event_ts)
-        if r in ("sent", "paused"):
+        r = deliver(tg, st, kind, c, now, A, event_ts, fresh_at)
+        if r in ("sent", "paused", "stale"):
             save_state(st)
     return r
 
@@ -307,35 +340,22 @@ def _process_locked(tg, coins, data, cfg, A, kinds, now):
         chat = st.get("chat_id")
         events = []
         for ca, c in coins.items():
-            if c.get("dead") or not strong_signal(c):
-                continue  # avisos solo con señal fuerte de TikTok
+            if c.get("dead") or not tiktok_link(c):
+                continue  # avisos solo de coins con link de TikTok asociado
             if "dex_paid" in kinds and c.get("dex_paid") and ca not in st["sent"]["dex_paid"]:
                 events.append(("dex_paid", c))
-            if "bonding" in kinds and is_bonded(c, st["last_dex"].get(ca)) and ca not in st["sent"]["bonding"]:
+            if "bonding" in kinds and bonding_event(c) and ca not in st["sent"]["bonding"]:
                 events.append(("bonding", c))
         if chat and not st.get("seeded"):
-            # primera vez: no avisar de lo que ya estaba pagado/graduado, salvo si pasó en los últimos 15 min
-            n = 0
-            for kind, c in events:
-                if not event_recent(c, kind, now):
-                    st["sent"][kind][c["ca"]] = now; n += 1
-            st["seeded"] = True
-            log(f"primera conexión: {n} eventos antiguos marcados como ya vistos")
-            events = [(k, c) for k, c in events if c["ca"] not in st["sent"][k]]
+            st["seeded"] = True  # lo antiguo lo descarta el límite de frescura (deliver)
         if chat:
             max_per = A.get("max_per_run", 15)
             events.sort(key=lambda kc: -((kc[1].get("metrics") or {}).get("mc") or 0))
             for kind, c in events:
                 if tg.sent >= max_per:
                     break  # el resto en la próxima pasada
-                ev = c.get("pair_ts") if kind == "bonding" and c.get("dex") not in CURVE_DEXES else None
-                deliver(tg, st, kind, c, now, A, ev)
-        for ca, c in coins.items():
-            if c.get("dex"):
-                st["last_dex"][ca] = c["dex"]
+                deliver(tg, st, kind, c, now, A, event_ts(c, kind), fresh_ts(c, kind))
         # limpieza (coins que ya no seguimos)
-        for ca in [ca for ca in st["last_dex"] if ca not in coins]:
-            st["last_dex"].pop(ca, None)
         for kind in st["sent"]:
             for ca in [ca for ca, t in st["sent"][kind].items() if ca not in coins and now - t > 3 * 86_400_000]:
                 st["sent"][kind].pop(ca, None)

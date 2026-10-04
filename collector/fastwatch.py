@@ -3,11 +3,11 @@
 
 Cada ~45 s (FASTWATCH_INTERVAL), independiente de la pasada lenta (~8 min):
   1. DEX PAID al momento: lee /token-profiles/latest/v1 de DexScreener (cada 20 s, también entre ciclos). Un perfil nuevo (no CTO) = pago
-     de DEX. Si la coin tiene señal TikTok fuerte (ya seguida por el radar o recién descubierta con /tokens/v1),
+     de DEX. Si la coin tiene link de TikTok asociado (ya seguida por el radar o recién descubierta con /tokens/v1),
      se confirma la hora de pago con /orders y se avisa por Telegram en el acto.
-  2. BONDING: /tokens/v1 en lotes de 30 para las coins fuertes aún en bonding curve (el par principal pasa de
+  2. BONDING: /tokens/v1 en lotes de 30 para las coins con link de TikTok aún en bonding curve (el par principal pasa de
      pumpfun/meteoradbc… a un AMM) + pump.fun /coins-v2 (complete=True) para las que están cerca de graduarse.
-  3. Respaldo (lo menos urgente, va el último): /orders rotando por las coins TikTok fuertes sin pagar
+  3. Respaldo (lo menos urgente, va el último): /orders rotando por las coins con link de TikTok sin pagar
      (máx. orders_per_cycle por ciclo, ~1/s; se pausa mientras la pasada lenta hace sus /orders).
 El límite de DexScreener es por IP y común a todos sus endpoints: ante un 429 se espera su Retry-After.
 Lee la lista de coins que escribe la pasada lenta (state/state.json), comparte con ella el registro de avisos
@@ -15,7 +15,7 @@ enviados (state/telegram.json, con candado de fichero) y deja lo que ve en state
 lo usa para marcar DEX PAID antes (perfiles vistos + resultados de /orders).
 Arrancar/parar: scripts/fastwatch.sh start|stop|status|ensure (loop.sh hace "ensure" en cada vuelta).
 """
-import fcntl, json, os, signal, sys, time, urllib.error, urllib.request
+import fcntl, json, os, re, signal, sys, time, urllib.error, urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import alerts  # noqa: E402
@@ -30,6 +30,7 @@ DS = "https://api.dexscreener.com"
 PUMP = "https://frontend-api-v3.pump.fun"
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36"
 CURVE = alerts.CURVE_DEXES
+TIKTOK_URL = re.compile(r"(?:https?://)?(?:www\.|vm\.|vt\.|m\.)?tiktok\.com/[^\s\"'<>)]*", re.I)
 DAY = 86_400_000
 
 def ms():
@@ -115,7 +116,7 @@ def orders_info(d, now):
 class FastWatch:
     def __init__(self):
         self.fw = self._load(FW_PATH, {})
-        for k in ("profiles", "orders", "dex", "pump_checked"):
+        for k in ("profiles", "orders", "dex", "pump_checked", "curve_seen", "pump_state", "pump_new"):
             self.fw.setdefault(k, {})
         self.fw.setdefault("alerts", [])
         self.fw["started"] = ms()
@@ -182,16 +183,18 @@ class FastWatch:
     def sent(self, kind, ca):
         return ca in (alerts.load_state().get("sent") or {}).get(kind, {})
 
-    def alert(self, kind, c, event_ts):
+    def alert(self, kind, c, event_ts, fresh_at=None):
         if not self.tg:
             return "notoken"
-        r = alerts.alert_now(kind, c, self.cfg, event_ts, self.tg)
+        r = alerts.alert_now(kind, c, self.cfg, event_ts, self.tg, fresh_at)
         now = ms()
         if r == "sent":
             lat = round((now - event_ts) / 1000) if event_ts else None
             self.fw["alerts"] = (self.fw["alerts"] + [{"ca": c["ca"], "name": c.get("name"), "kind": kind,
                                                        "event": event_ts, "sent": now, "latency_s": lat}])[-50:]
             log(f"AVISO {kind}: {c.get('name')} ({c['ca'][:6]}…) latencia {lat if lat is not None else '?'} s")
+        elif r == "stale":
+            log(f"{kind} antiguo (no se avisa): {c.get('name')} ({c['ca'][:6]}…)")
         elif r not in ("dup", "weak", "off"):
             log(f"aviso {kind} {c['ca'][:6]}…: {r}")
         return r
@@ -232,12 +235,13 @@ class FastWatch:
         e = orders_info(d, now) if d is not None else None
         if e and e["paid"]:
             self.fw["orders"][ca] = e
-        paid_at = (e or {}).get("paid_at") or self.fw["profiles"].get(ca) or now
+        seen = self.fw["profiles"].get(ca) or now  # el perfil acaba de aparecer = aprobado ahora
+        paid_at = (e or {}).get("paid_at") or seen
         c.update(dex_paid=True, dex_paid_at=paid_at)
-        self.alert("dex_paid", c, paid_at)
+        self.alert("dex_paid", c, paid_at, fresh_at=seen)
 
     def discover(self, items, now):
-        """Perfil nuevo de una coin que el radar aún no sigue: nombre/MC con /tokens/v1; avisa si es TikTok fuerte
+        """Perfil nuevo de una coin que el radar aún no sigue: nombre/MC con /tokens/v1; avisa si tiene link de TikTok
         y tiene menos de max_age_hours (lo mismo que el panel). La pasada lenta la añadirá al panel."""
         max_age = (self.cfg.get("max_age_hours") or 24) * 3_600_000
         cas = [x["tokenAddress"] for x in items][:30]
@@ -296,12 +300,15 @@ class FastWatch:
                 if self.net.cooling("orders"):
                     break  # 429: se para hasta que DexScreener deje
                 continue
+            prev = last(ca)  # última comprobación (aún sin pagar)
             e = orders_info(d, ms())
+            if e["paid"] and prev:
+                e["prev_check"] = prev
             self.fw["orders"][ca] = e
             self.maybe_profiles()
             if e["paid"] and ca not in sent:
                 c = dict(self.coins[ca], dex_paid=True, dex_paid_at=e.get("paid_at"))
-                self.alert("dex_paid", c, e.get("paid_at"))
+                self.alert("dex_paid", c, e.get("paid_at"), fresh_at=max(e.get("paid_at") or 0, prev or 0) or None)
             time.sleep(gap)
 
     # ------------------------------------------------------------ 3) BONDING
@@ -340,12 +347,18 @@ class FastWatch:
                 p = pairs.get(c["ca"])
                 if not p or not p.get("dexId"):
                     continue
-                prev = self.fw["dex"].get(c["ca"]) or c.get("dex")
+                ca = c["ca"]
                 new = p["dexId"]
-                self.fw["dex"][c["ca"]] = new
-                if new not in CURVE and (prev in CURVE or (not prev and c["ca"].endswith("pump"))):
-                    cc = dict(c, dex=new, metrics=dict(c.get("metrics") or {}, **{k: v for k, v in pair_metrics(p).items() if v}))
-                    self.alert("bonding", cc, p.get("pairCreatedAt"))
+                self.fw["dex"][ca] = new
+                if new in CURVE:
+                    self.fw["curve_seen"].setdefault(ca, now)
+                    continue
+                seen = [t for t in (c.get("curve_seen"), self.fw["curve_seen"].get(ca)) if t]
+                cc = dict(c, dex=new, pair_ts=p.get("pairCreatedAt"), curve_seen=min(seen) if seen else None,
+                          metrics=dict(c.get("metrics") or {}, **{k: v for k, v in pair_metrics(p).items() if v}))
+                ev = alerts.bonding_event(cc)  # real: pool creado después de verla en curva (o pump.fun complete)
+                if ev:
+                    self.alert("bonding", cc, ev)
             time.sleep(self.F("tokens_gap_s", 0.6))
         # pump.fun: complete=True para las que están cerca de graduarse (por MC)
         min_mc = self.F("pump_min_mc", 35000)
@@ -358,17 +371,64 @@ class FastWatch:
             d = self.net.get("pump", f"{PUMP}/coins-v2/{c['ca']}",
                              headers={"Origin": "https://pump.fun", "Referer": "https://pump.fun/"})
             self.fw["pump_checked"][c["ca"]] = now
-            if isinstance(d, dict) and d.get("mint") == c["ca"] and d.get("complete") is True \
-                    and self.fw["dex"].get(c["ca"]) in CURVE | {None}:
-                cc = dict(c, pump=dict(c.get("pump") or {}, complete=True))
-                self.alert("bonding", cc, None)
+            if isinstance(d, dict) and d.get("mint") == c["ca"]:
+                was = self.fw["pump_state"].get(c["ca"])
+                self.fw["pump_state"][c["ca"]] = bool(d.get("complete"))
+                if d.get("complete") is True and was is False:  # visto pasar de curva a completa: graduación ahora
+                    cc = dict(c, pump=dict(c.get("pump") or {}, complete=True))
+                    self.alert("bonding", cc, now)
             time.sleep(0.8)
+
+    # ------------------------------------------------------------ 4) graduaciones instantáneas en pump.fun
+    def step_pump_new(self, now):
+        """pump.fun /coins?complete=true&sort=created_timestamp: coins recién creadas que YA completaron la bonding
+        curve (lanzamientos que se gradúan en minutos; el radar no llega a verlas en curva). Si tienen link de TikTok
+        en website/twitter/telegram/descripción y se crearon hace ≤ fresh_minutes, aviso BONDING al momento."""
+        fresh = ((self.cfg.get("alerts") or {}).get("fresh_minutes", 30) or 30) * 60_000
+        d = self.net.get("pump", f"{PUMP}/coins?offset=0&limit=50&sort=created_timestamp&order=DESC&complete=true"
+                                 "&includeNsfw=false", headers={"Origin": "https://pump.fun", "Referer": "https://pump.fun/"})
+        if not isinstance(d, list):
+            return
+        hits = []
+        for x in d:
+            ca, created = x.get("mint"), x.get("created_timestamp") or 0
+            if not ca or x.get("complete") is not True or now - created > fresh or ca in self.fw["pump_new"]:
+                continue
+            self.fw["pump_new"][ca] = now
+            text = " ".join(str(x.get(k) or "") for k in ("website", "twitter", "telegram", "description"))
+            tt = sorted({u.rstrip(".,") for u in TIKTOK_URL.findall(text)})
+            if not tt or ca in self.state_meta.get("marked", ()):
+                continue
+            c = dict(self.coins.get(ca) or {})
+            c.update({"ca": ca, "name": c.get("name") or x.get("name"), "symbol": c.get("symbol") or x.get("symbol"),
+                      "created": created, "pump": {"complete": True, "ath": fnum(x.get("ath_market_cap"))}})
+            c["links"] = dict(c.get("links") or {}, tiktok=sorted(set(((c.get("links") or {}).get("tiktok") or []) + tt)),
+                              dexscreener=f"https://dexscreener.com/solana/{ca}", pumpfun=f"https://pump.fun/coin/{ca}",
+                              gmgn=f"https://gmgn.ai/sol/token/{ca}")
+            if alerts.tiktok_link(c):
+                hits.append(c)
+        if not hits:
+            return
+        # MC y hora del pool (graduación) desde DexScreener si ya lo tiene
+        dd = self.net.get("tokens", f"{DS}/tokens/v1/solana/{','.join(c['ca'] for c in hits[:30])}")
+        pairs = best_pairs(dd if isinstance(dd, list) else [])
+        for c in hits:
+            p = pairs.get(c["ca"])
+            ev = alerts.bonding_event(c) or now  # hora del pool si el radar ya la tenía; si no, ahora
+            if p:
+                c["metrics"] = dict(c.get("metrics") or {}, **{k: v for k, v in pair_metrics(p).items() if v})
+                if p.get("dexId") not in CURVE and p.get("pairCreatedAt"):
+                    ev = p["pairCreatedAt"]
+            c["ath"] = max(c.get("ath") or 0, (c.get("metrics") or {}).get("mc") or 0, c["pump"].get("ath") or 0) or None
+            self.alert("bonding", c, ev, fresh_at=max(ev, c["created"]))
 
     # ------------------------------------------------------------ ciclo
     def cleanup(self, now):
-        for k in ("profiles", "pump_checked"):
+        for k in ("profiles", "pump_checked", "curve_seen", "pump_new"):
             for ca in [ca for ca, t in self.fw[k].items() if now - t > 3 * DAY]:
                 self.fw[k].pop(ca, None)
+        for ca in [ca for ca in self.fw["pump_state"] if ca not in self.coins]:
+            self.fw["pump_state"].pop(ca, None)
         for ca in [ca for ca, e in self.fw["orders"].items() if now - e.get("checked", 0) > 3 * DAY]:
             self.fw["orders"].pop(ca, None)
         for ca in [ca for ca in self.fw["dex"] if ca not in self.coins]:
@@ -391,7 +451,8 @@ class FastWatch:
         strong = self.strong() if self.coins else []
         self.maybe_profiles()
         # orden por prioridad (el cupo de DexScreener por IP es pequeño): perfiles > bonding (30 coins por petición) > /orders
-        for name, fn in (("bonding", lambda: self.step_bonding(now, strong)), ("orders", lambda: self.step_orders(now, strong))):
+        for name, fn in (("pump_new", lambda: self.step_pump_new(now)), ("bonding", lambda: self.step_bonding(now, strong)),
+                         ("orders", lambda: self.step_orders(now, strong))):
             if self.stop:
                 break
             self.maybe_profiles()
@@ -408,7 +469,7 @@ class FastWatch:
         if s["cycles"] == 1 or s["cycles"] % self.F("status_every", 40) == 0:
             mins = max((ms() - s["since"]) / 60000, 1.0)
             rate = " ".join(f"{k}={v / mins:.1f}/min" for k, v in sorted(s["req"].items()))
-            log(f"ciclo {s['cycles']} ({s['cycle_s']} s): {len(strong)} coins TikTok fuertes · peticiones {rate} · "
+            log(f"ciclo {s['cycles']} ({s['cycle_s']} s): {len(strong)} coins con link de TikTok · peticiones {rate} · "
                 f"429={s['r429'] or 0} · errores={s['err'] or 0} · avisos={len(self.fw['alerts'])}")
 
     def run(self):
