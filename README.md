@@ -217,6 +217,25 @@ Depende de que el box esté encendido.
 **Activar (una vez):** en Vercel basta `RADAR_PIN` (el mismo que "No es TikTok") y Redeploy. Sin él la pestaña
 avisa "Falta configurar el PIN en Vercel".
 
+### 9. Avisos de Telegram (@tiktokradarmyxd_bot)
+- Los manda el collector al final de cada pasada, **solo desde el box** (en GitHub Actions están desactivados para no
+  duplicar). Token en la variable de entorno `TELEGRAM_BOT_TOKEN_TIKTOK_RADAR` (nunca en el repo ni en logs).
+- **Chat**: el primer chat privado que escribe al bot (/start) queda guardado en `state/telegram.json` (fuera del repo,
+  no se publica) y solo se le escribe a él. Mensaje de bienvenida "✅ TikTok Radar conectado".
+- **Avisos** (una vez por coin y tipo, solo coins del panel: filtro TikTok estricto, sin las marcadas "No es TikTok"):
+  - 💰 **DEX PAID**: la coin pasa a tener DEX pagado (`/orders` de DexScreener).
+  - 🎓 **BONDING**: pump.fun dice `complete=true`, o su par principal en DexScreener pasa de un DEX de bonding curve
+    (pumpfun, meteoradbc, launchlab…) a un AMM (pumpswap, raydium, meteora…).
+  - Texto: nombre, $ticker, CA (toca para copiar), MC, ATH, liquidez, edad, por qué es TikTok (con el link de TikTok),
+    🔥 TikTok dev si aplica y links a DexScreener / pump.fun / GMGN / panel. Sin vista previa de links.
+- Al conectar por primera vez, lo que ya estaba pagado/graduado se da por visto (solo se avisa si pasó en los últimos 15 min).
+- ~1 mensaje/s, máx. `alerts.max_per_run` (15) por pasada (el resto en la siguiente). Si Telegram falla, la pasada sigue.
+- Comandos (se responden en la siguiente pasada, hasta ~8 min): `/estado`, `/pausa` (lo que pase en pausa se da por visto),
+  `/reanudar`.
+- Config `alerts` en `config.json`: `enabled`, `dex_paid`, `bonding`, `min_mc` (0 = sin mínimo), `max_per_run`.
+- Prueba: `python3 collector/alerts.py --test` (manda un aviso real marcado "(prueba)").
+- Para cambiar de chat: borrar `chat_id` de `state/telegram.json` y escribir /start al bot desde el chat nuevo.
+
 ---
 
 ## Uso en local
@@ -278,9 +297,10 @@ Por qué:
 ### Arrancar / parar el bucle en el box
 ```bash
 cd /workspace/tiktok-radar
+# el entorno debe tener GITHUB_TOKEN_TIKTOK_RADAR (publicar) y TELEGRAM_BOT_TOKEN_TIKTOK_RADAR (avisos)
 RADAR_PUBLISH=1 RADAR_REMOTE=https://github.com/trendtiktokradar/tiktok-radar.git \
-  nohup setsid scripts/loop.sh >/dev/null 2>&1 &      # necesita GITHUB_TOKEN_TIKTOK_RADAR en el entorno
-pkill -f tiktok-radar/scripts/loop.sh                  # parar
+  nohup setsid /workspace/tiktok-radar/scripts/loop.sh >/dev/null 2>&1 &
+pkill -f /workspace/tiktok-radar/scripts/loop.sh       # parar (ruta completa: no toca otros bucles del box)
 tail -f logs/radar.log                                  # ver qué hace
 ```
 Si el box se reinicia, el bucle se para: hay que volver a lanzarlo (mientras, la Action de respaldo mantiene los datos).

@@ -161,5 +161,13 @@
     "max_per_run": 20,
     "refresh_minutes": 20,
     "nopump_retry_minutes": 360
+  },
+  "alerts": {
+    "_comment": "Avisos de Telegram (solo desde el box, nunca desde GitHub Actions). Token en la variable TELEGRAM_BOT_TOKEN_TIKTOK_RADAR; chat y avisos ya enviados en state/telegram.json. min_mc: no avisar por debajo de ese MC (0 = siempre).",
+    "enabled": true,
+    "dex_paid": true,
+    "bonding": true,
+    "min_mc": 0,
+    "max_per_run": 15
   }
 }

@@ -170,7 +170,7 @@ def ds_pair_to_info(p):
             "buys_h1": (tx.get("h1") or {}).get("buys"), "sells_h1": (tx.get("h1") or {}).get("sells"),
             "buys_h24": (tx.get("h24") or {}).get("buys"), "sells_h24": (tx.get("h24") or {}).get("sells"),
         },
-        "pair": p.get("pairAddress"), "dex": p.get("dexId"),
+        "pair": p.get("pairAddress"), "dex": p.get("dexId"), "pair_ts": p.get("pairCreatedAt"),
         "pair_created": p.get("_oldest_pair") or p.get("pairCreatedAt"),
         "boosts_active": (p.get("boosts") or {}).get("active") or 0,
     }
@@ -405,6 +405,8 @@ def apply_metrics(c, info, ts):
     m = info["metrics"]
     c["metrics"] = m
     c["pair"], c["dex"] = info.get("pair"), info.get("dex")
+    if info.get("pair_ts"):
+        c["pair_ts"] = info["pair_ts"]  # creación del par principal (en una graduación = momento de la migración)
     if info.get("pair_created"):
         c["created"] = min(c.get("created") or info["pair_created"], info["pair_created"])
     if m.get("mc"):
@@ -902,6 +904,12 @@ def run(no_trends=False):
         "coins": lst,
     }
     save_json(DATA_PATH, data, compact=True)
+    # avisos de Telegram (solo box; si falla no rompe la pasada)
+    try:
+        import alerts
+        alerts.process(coins, data, cfg)
+    except Exception as e:
+        log("telegram: error", type(e).__name__)
     data["new_this_run"] = sum(1 for c in lst if c["first_seen"] == ts)
     log(f"OK: {len(lst)} coins ({data['active']} activas, {data['new_this_run']} nuevas) en {data['run_seconds']}s")
     for k, v in SRC.status.items():
