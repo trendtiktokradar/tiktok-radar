@@ -62,7 +62,10 @@ aprende de los motivos de entrada.
   Respuesta real: `{"orders":[{"type":"tokenProfile","status":"approved","paymentTimestamp":…}],"boosts":[…]}`.
 - **DEX PAID** = hay un pedido `tokenProfile` con estado `approved`. Si está `processing` sale "DEX en revisión".
 - Caché por CA en `state.json`: una vez pagado ya no se vuelve a consultar; las no pagadas se re-consultan cada
-  10 min (máx. 40 consultas por pasada; el límite de DexScreener es 60/min).
+  10 min (máx. 40 consultas por pasada, 1/s; el límite de DexScreener es 60/min).
+- Atajo: una coin que aparece en `/token-profiles/latest/v1` (perfil nuevo, no CTO) ya está pagada y se marca DEX PAID
+  sin esperar a su turno de `/orders`. La lista la miran la pasada y el vigilante rápido (cada ~45 s, sección 9), que
+  además deja sus resultados de `/orders` en `state/fastwatch.json` para que la pasada los use.
 - Badge ⚡ = boosts activos ahora mismo en DexScreener.
 - En el panel el badge **DEX PAID** es verde y lleva el icono de DexScreener (`web/img/dexscreener.png`, copia local,
   sin hotlink). El filtro "Solo DEX PAID" sigue igual.
@@ -218,20 +221,40 @@ Depende de que el box esté encendido.
 avisa "Falta configurar el PIN en Vercel".
 
 ### 9. Avisos de Telegram (@tiktokradarmyxd_bot)
-- Los manda el collector al final de cada pasada, **solo desde el box** (en GitHub Actions están desactivados para no
-  duplicar). Token en la variable de entorno `TELEGRAM_BOT_TOKEN_TIKTOK_RADAR` (nunca en el repo ni en logs).
+- **Solo desde el box** (en GitHub Actions están desactivados para no duplicar). Token en la variable de entorno
+  `TELEGRAM_BOT_TOKEN_TIKTOK_RADAR` (nunca en el repo ni en logs). Los mandan dos procesos que comparten el registro de
+  avisos enviados (`state/telegram.json`, con candado de fichero: nunca se avisa dos veces):
+  - el **vigilante rápido** `collector/fastwatch.py` (cada ~45 s, aparte de la pasada): avisa en cuanto lo detecta;
+  - la pasada lenta (~8 min), como red de seguridad.
 - **Chat**: el primer chat privado que escribe al bot (/start) queda guardado en `state/telegram.json` (fuera del repo,
   no se publica) y solo se le escribe a él. Mensaje de bienvenida "✅ TikTok Radar conectado".
-- **Avisos** (una vez por coin y tipo, solo coins del panel: filtro TikTok estricto, sin las marcadas "No es TikTok"):
+- **Solo coins claramente TikTok** (señal fuerte): `tiktok`/`douyin` en el nombre o el ticker, o link a un **vídeo/foto**
+  de TikTok (`tiktok.com/@x/video/ID`, `/photo/ID`, `tiktok.com/t/…`, `vm.`/`vt.tiktok.com/…`). Un perfil
+  (`tiktok.com/@cuenta`), una búsqueda/tag, la descripción, la categoría de DexScreener o "fyp" solos **no avisan**
+  (esas coins siguen en el panel). Nunca las marcadas "No es TikTok".
+- **Avisos** (una vez por coin y tipo):
   - 💰 **DEX PAID**: la coin pasa a tener DEX pagado (`/orders` de DexScreener).
   - 🎓 **BONDING**: pump.fun dice `complete=true`, o su par principal en DexScreener pasa de un DEX de bonding curve
     (pumpfun, meteoradbc, launchlab…) a un AMM (pumpswap, raydium, meteora…).
-  - Texto: nombre, $ticker, CA (toca para copiar), MC, ATH, liquidez, edad, por qué es TikTok (con el link de TikTok),
+  - Texto: nombre, $ticker, CA (toca para copiar), MC, ATH, liquidez, edad, hora del pago/migración y hace cuánto,
+    por qué es TikTok (con el link al vídeo),
     🔥 TikTok dev si aplica y links a DexScreener / pump.fun / GMGN / panel. Sin vista previa de links.
 - Al conectar por primera vez, lo que ya estaba pagado/graduado se da por visto (solo se avisa si pasó en los últimos 15 min).
 - ~1 mensaje/s, máx. `alerts.max_per_run` (15) por pasada (el resto en la siguiente). Si Telegram falla, la pasada sigue.
-- Comandos (se responden en la siguiente pasada, hasta ~8 min): `/estado`, `/pausa` (lo que pase en pausa se da por visto),
+- Comandos (los responde el vigilante rápido en ≤ ~1 min): `/estado`, `/pausa` (lo que pase en pausa se da por visto),
   `/reanudar`.
+- **Vigilante rápido** (`collector/fastwatch.py`, `scripts/fastwatch.sh start|stop|status|ensure`, log `logs/fastwatch.log`).
+  En cada ciclo de ~45 s:
+  1. `/token-profiles/latest/v1` (1 petición): perfil nuevo no CTO = DEX PAID. Si la coin es TikTok fuerte (seguida por
+     el radar, o nueva: nombre/edad con `/tokens/v1`, < 24 h) confirma la hora con `/orders` y avisa al momento.
+  2. Respaldo: `/orders` rotando por las coins TikTok fuertes sin pagar (15 por ciclo, 1/s ≈ 20/min; jóvenes < 3 h cada
+     5 min, el resto cada 20 min). Se pausa mientras la pasada hace sus `/orders` → entre los dos ≤ 60/min.
+  3. BONDING: `/tokens/v1` en lotes de 30 (las 150 de más MC en bonding curve cada ciclo + 90 del resto rotando): el par
+     principal pasa de pumpfun/meteoradbc… a un AMM. Y pump.fun `/coins-v2` (`complete`) para las de MC ≥ 35K.
+  - Si DexScreener responde 429 respeta su `Retry-After`. Lee las coins de `state/state.json` (lo escribe la pasada) y
+    deja lo que ve en `state/fastwatch.json` (latido, contadores de peticiones, últimos avisos con su latencia).
+  - Config `fastwatch` en `config.json`. `scripts/loop.sh` hace `scripts/fastwatch.sh ensure` en cada vuelta: si está
+    caído o sin latido > 5 min, lo (re)arranca. `FASTWATCH=0` lo desactiva.
 - Config `alerts` en `config.json`: `enabled`, `dex_paid`, `bonding`, `min_mc` (0 = sin mínimo), `max_per_run`.
 - Prueba: `python3 collector/alerts.py --test` (manda un aviso real marcado "(prueba)").
 - Para cambiar de chat: borrar `chat_id` de `state/telegram.json` y escribir /start al bot desde el chat nuevo.
@@ -300,10 +323,15 @@ cd /workspace/tiktok-radar
 # el entorno debe tener GITHUB_TOKEN_TIKTOK_RADAR (publicar) y TELEGRAM_BOT_TOKEN_TIKTOK_RADAR (avisos)
 RADAR_PUBLISH=1 RADAR_REMOTE=https://github.com/trendtiktokradar/tiktok-radar.git \
   nohup setsid /workspace/tiktok-radar/scripts/loop.sh >/dev/null 2>&1 &
-pkill -f /workspace/tiktok-radar/scripts/loop.sh       # parar (ruta completa: no toca otros bucles del box)
-tail -f logs/radar.log                                  # ver qué hace
+# al arrancar, el bucle lanza también el vigilante rápido de avisos (scripts/fastwatch.sh ensure) y el Buscador
+pkill -f /workspace/tiktok-radar/scripts/loop.sh       # parar el bucle (ruta completa: no toca otros bucles del box)
+scripts/fastwatch.sh stop                               # parar también el vigilante rápido (si no, sigue avisando)
+scripts/fastwatch.sh status                             # en marcha / último latido / últimos avisos
+tail -f logs/radar.log logs/fastwatch.log               # ver qué hacen
 ```
-Si el box se reinicia, el bucle se para: hay que volver a lanzarlo (mientras, la Action de respaldo mantiene los datos).
+Si el box se reinicia, el bucle y el vigilante se paran: basta con relanzar el bucle (comando de arriba), que arranca
+el vigilante y el Buscador solo (mientras, la Action de respaldo mantiene los datos, pero sin avisos).
+Para que el vigilante coja un cambio de código: `scripts/fastwatch.sh restart` (con el token de Telegram en el entorno).
 
 ### Arrancar / parar el Buscador en el box
 ```bash

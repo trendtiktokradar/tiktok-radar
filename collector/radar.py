@@ -14,6 +14,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIG_PATH = os.path.join(ROOT, "collector", "config.json")
 STATE_PATH = os.environ.get("RADAR_STATE", os.path.join(ROOT, "state", "state.json"))
 DATA_PATH = os.environ.get("RADAR_DATA", os.path.join(ROOT, "web", "data.json"))
+FW_PATH = os.environ.get("RADAR_FASTWATCH_STATE", os.path.join(ROOT, "state", "fastwatch.json"))  # vigilante rápido
+BUSY_PATH = os.path.join(ROOT, "state", "orders_busy")
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36"
 DS = "https://api.dexscreener.com"
 PUMP = "https://frontend-api-v3.pump.fun"
@@ -252,6 +254,8 @@ def src_ds_profiles():
             c = cands.setdefault(x["tokenAddress"], {"desc": "", "links": []})
             c["desc"] = c["desc"] or x.get("description") or ""
             c["links"] += [l.get("url", "") for l in x.get("links") or []]
+            if name == "dexscreener_profiles" and not x.get("cto"):
+                c["profile"] = True  # perfil nuevo pagado (no CTO) = DEX PAID
         SRC.mark(name, True, n)
         time.sleep(0.5)
     return cands
@@ -475,16 +479,32 @@ def prune(coins, cfg, ts):
         keep = {c["ca"]: c for c in ranked[:cfg["max_coins"]]}
     return keep
 
-def check_dex_paid(coins, state, cfg, ts):
+def check_dex_paid(coins, state, cfg, ts, profile_cas=()):
     """DEX PAID = DexScreener tiene un pedido 'tokenProfile' aprobado para la coin
-    (GET /orders/v1/solana/<CA>). Se cachea por CA: si está pagado, ya no se vuelve a consultar."""
+    (GET /orders/v1/solana/<CA>). Se cachea por CA: si está pagado, ya no se vuelve a consultar.
+    Atajo: una coin que aparece en /token-profiles/latest (perfil nuevo, no CTO) ya está pagada; las ve esta pasada
+    y el vigilante rápido (state/fastwatch.json, cada ~45 s), que además deja sus resultados de /orders."""
     cache = state.setdefault("dexpaid", {})
+    fw = load_json(FW_PATH, {}) or {}
+    for ca, e in (fw.get("orders") or {}).items():
+        if ca in coins and not (cache.get(ca) or {}).get("paid") and e.get("checked", 0) > (cache.get(ca) or {}).get("checked", 0):
+            cache[ca] = {k: e[k] for k in ("checked", "paid", "status", "paid_at", "boost_total") if k in e}
+    seen = dict(fw.get("profiles") or {})
+    for ca in profile_cas:
+        seen.setdefault(ca, ts)
+    for ca, t in seen.items():
+        if ca in coins and not (cache.get(ca) or {}).get("paid"):
+            cache[ca] = {"checked": ts, "paid": True, "status": "approved", "paid_at": t, "via": "profiles",
+                         "boost_total": (cache.get(ca) or {}).get("boost_total") or 0}
     recheck = cfg.get("dexpaid_recheck_minutes", 10) * 60_000
     todo = [ca for ca, c in coins.items()
             if not (cache.get(ca) or {}).get("paid") and ts - (cache.get(ca) or {}).get("checked", 0) > recheck]
     todo.sort(key=lambda ca: (cache.get(ca) or {}).get("checked", 0))  # nunca comprobadas primero
     n = 0
+    open(BUSY_PATH, "w").close()  # aviso al vigilante rápido: no hacer /orders a la vez (límite 60/min)
     for ca in todo[:cfg.get("dexpaid_max_checks_per_run", 40)]:
+        if n % 10 == 0:
+            os.utime(BUSY_PATH)
         d = http(f"{DS}/orders/v1/solana/{ca}", "dexscreener_orders", retries=2)
         if not isinstance(d, dict):
             continue
@@ -499,7 +519,11 @@ def check_dex_paid(coins, state, cfg, ts):
         e["boost_total"] = sum(b.get("amount") or 0 for b in boosts)
         cache[ca] = e
         n += 1
-        time.sleep(0.4)  # límite de DexScreener para /orders: 60 por minuto
+        time.sleep(1.0)  # límite de DexScreener para /orders: 60 por minuto
+    try:
+        os.remove(BUSY_PATH)
+    except OSError:
+        pass
     SRC.mark("dexscreener_orders", True, n)
     for ca, c in coins.items():
         e = cache.get(ca) or {}
@@ -838,6 +862,7 @@ def run(no_trends=False):
 
     # 3) perfiles / boosts / CTO recientes de DexScreener
     cands = src_ds_profiles()
+    profile_cas = {ca for ca, cd in cands.items() if cd.get("profile")}
     pinfo = ds_tokens(list(cands))
     for ca, cd in cands.items():
         p = pinfo.get(ca)
@@ -871,7 +896,7 @@ def run(no_trends=False):
         finalize(c, cfg, ts)
     coins = prune(coins, cfg, ts)
     # 7) DEX PAID (con caché por CA)
-    check_dex_paid(coins, state, cfg, ts)
+    check_dex_paid(coins, state, cfg, ts, profile_cas)
     # 8) dev (wallet creadora) + "TikTok dev 🔥" (solo informativo)
     resolve_devs(coins, state, cfg, ts)
     dev_hot = update_dev_history(coins, state, cfg, ts, M, learner)
