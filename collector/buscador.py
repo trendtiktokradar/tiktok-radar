@@ -18,7 +18,7 @@ servicio comprueba preguntando a /api/search (action "check") de la web: el box 
 
 Arrancar / parar: scripts/buscador.sh start|stop|status|ensure   (log: logs/buscador.log)
 """
-import asyncio, hashlib, hmac, json, logging, math, os, re, signal, statistics, sys, time, urllib.parse
+import asyncio, hashlib, hmac, json, logging, math, os, re, shutil, signal, statistics, sys, time, urllib.parse
 from pathlib import Path
 
 from aiohttp import web, ClientSession, ClientTimeout
@@ -40,7 +40,8 @@ CACHE_TTL = 45 * 60
 TRENDS_TTL = 6 * 3600
 MIN_GAP = 4.0            # segundos mínimos entre búsquedas nuevas (no cacheadas)
 MAX_QUEUE = 3
-SEARCH_BUDGET = 40       # segundos máximos por búsqueda
+LATEST_N = 20            # "Últimos vídeos": los más nuevos de la muestra, por fecha
+SEARCH_BUDGET = 45       # segundos máximos por búsqueda
 HASHTAG_PAGES = 6       # 6 × 30 vídeos del hashtag (páginas 2-6 en paralelo)
 SEARCH_PAGES = 4        # 4 × ~12 de la búsqueda (páginas 2-4 en paralelo)
 VIRAL_VIEWS = int(os.environ.get("BUSCADOR_VIRAL_VIEWS", "100000"))   # umbral de "vídeo viral"
@@ -48,7 +49,7 @@ TZ = os.environ.get("BUSCADOR_TZ", "Europe/Madrid")
 MAX_WATCH = 25
 SNAPSHOT_EVERY = 23 * 3600
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
-VERSION = 2
+VERSION = 3
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s", datefmt="%F %T")
 log = logging.getLogger("buscador")
@@ -83,7 +84,11 @@ class TikTok:
         self.template = None       # parámetros reales de item_list capturados de la propia web
         self.warmed = 0
         self.lock = asyncio.Lock()
-        self.fails = 0
+        self.fails = 0             # fallos SEGUIDOS de TikTok (vuelve a 0 con cada respuesta buena)
+        self.last_ok = 0.0
+        self.last_err = ""
+        self.restarts = 0
+        self.restarted_at = 0.0
 
     async def start(self):
         from playwright.async_api import async_playwright
@@ -108,6 +113,7 @@ class TikTok:
             self.template = q
 
     async def warm(self):
+        old, self.template = self.template, None     # plantilla nueva en cada calentamiento (la vieja solo de respaldo)
         await self.page.goto("https://www.tiktok.com/tag/capybara", wait_until="domcontentloaded", timeout=45000)
         for _ in range(30):
             if self.template:
@@ -115,25 +121,48 @@ class TikTok:
             await asyncio.sleep(0.5)
         await asyncio.sleep(1.5)
         self.warmed = time.time()
-        log.info("TikTok listo (plantilla item_list: %s)", "sí" if self.template else "no")
+        log.info("TikTok listo (plantilla item_list: %s)", "sí" if self.template else ("la anterior" if old else "no"))
+        if not self.template:
+            self.template = old
 
-    async def restart(self):
-        log.warning("reiniciando Chrome")
+    async def restart(self, fresh=None):
+        """Chrome nuevo. fresh=True (o automático si ya se reinició hace < 15 min sin arreglarse): además se borra el
+        perfil, porque TikTok puede marcar el perfil (id de dispositivo en localStorage) y seguir dando 403/200 vacíos
+        aunque se borren las cookies. Sin sesión iniciada no se pierde nada."""
+        if fresh is None:
+            fresh = time.time() - self.restarted_at < 15 * 60
+        log.warning("reiniciando Chrome%s", " con perfil nuevo" if fresh else "")
+        self.restarts += 1
+        self.restarted_at = time.time()
+        self.template = None
+        self.fails = 0
         try:
             if self.ctx:
                 await self.ctx.close()
         except Exception:
             pass
         self.ctx = self.page = None
+        if fresh:
+            shutil.rmtree(PROFILE, ignore_errors=True)
         await self.start()
+        if not self.template and not fresh:
+            log.warning("sin plantilla tras reiniciar: perfil nuevo")
+            await self.restart(fresh=True)
 
     async def ensure(self):
         async with self.lock:
             try:
                 if self.page is None or self.page.is_closed():
                     await self.restart()
-                elif time.time() - self.warmed > 30 * 60 or self.fails >= 3:
-                    self.fails = 0
+                elif self.fails >= 3:
+                    # recargar la página no basta cuando TikTok empieza a dar 200 vacíos: Chrome nuevo
+                    log.warning("TikTok: %s fallos seguidos (%s)", self.fails, self.last_err)
+                    await self.restart()
+                elif not self.template and time.time() - self.restarted_at > 5 * 60:
+                    # sin plantilla de item_list = la web de TikTok no cargó bien (bloqueo/captcha): Chrome nuevo
+                    log.warning("TikTok: sin plantilla item_list, reinicio Chrome")
+                    await self.restart()
+                elif time.time() - self.warmed > 30 * 60:
                     await self.warm()
             except Exception as e:
                 log.warning("ensure falló (%s), reinicio completo", e)
@@ -143,12 +172,20 @@ class TikTok:
         try:
             st, txt = await asyncio.wait_for(self.page.evaluate(self.JS, [path, timeout * 1000]), timeout + 3)
         except Exception as e:
-            self.fails += 1
-            raise RuntimeError("tiktok: " + type(e).__name__)
+            self._bad("tiktok: " + type(e).__name__)
         if st != 200 or not txt:
-            self.fails += 1
-            raise RuntimeError(f"tiktok HTTP {st} vacío" if st == 200 else f"tiktok HTTP {st}")
-        return json.loads(txt)
+            self._bad(f"tiktok HTTP {st} vacío" if st == 200 else f"tiktok HTTP {st}")
+        try:
+            d = json.loads(txt)
+        except ValueError:
+            self._bad("tiktok: respuesta no JSON")
+        self.fails, self.last_ok = 0, time.time()
+        return d
+
+    def _bad(self, msg):
+        self.fails += 1
+        self.last_err = msg
+        raise RuntimeError(msg)
 
     async def detail(self, tag):
         d = await self.get(f"/api/challenge/detail/?{self.BASE}&challengeName={urllib.parse.quote(tag)}")
@@ -360,13 +397,14 @@ def analyse(vids, now):
     med = lambda xs: int(statistics.median(xs)) if xs else 0
     top = sorted(vids, key=lambda v: v["views"], reverse=True)[:10]
     top_recent = sorted(recent, key=lambda v: v["views"], reverse=True)[:6]
+    latest = sorted([v for v in vids if v["t"]], key=lambda v: v["t"], reverse=True)[:LATEST_N]
     return {"n": len(vids), "buckets": b,
             "last24h": b["h24"], "last7d": b["h24"] + b["d7"], "last30d": b["h24"] + b["d7"] + b["d30"],
             "views_median": med(views), "views_max": max(views) if views else 0,
             "likes_median": med(likes), "likes_max": max(likes) if likes else 0,
             "recent_views_max": max([v["views"] for v in recent], default=0),
             "median_age_days": round(statistics.median(ages), 1) if ages else None,
-            "top": top, "top_recent": top_recent}
+            "top": top, "top_recent": top_recent, "latest": latest}
 
 
 def verdict(res):
@@ -408,6 +446,9 @@ def verdict(res):
         if g["videos_pct_day"] >= 2:
             s += 1; why.append(f"+1: el hashtag crece {g['videos_pct_day']}% de vídeos al día (watchlist)")
     share7 = (a["last7d"] / n) if n else 0
+    if (res.get("tiktok") or {}).get("status") == "fallo":
+        why.insert(0, "TikTok no ha respondido bien en esta búsqueda: sin sus vídeos el veredicto no es fiable")
+        return {"verdict": "sin_datos", "label": "⚠️ sin TikTok", "score": s, "why": why}
     if n < 5 and not ratios and not (res.get("hashtag") or {}).get("found"):
         v, label = "sin_datos", "❔ sin datos"
     elif s >= 5:
@@ -624,6 +665,8 @@ class Service:
         tag = to_tag(q)
         res = {"q": q, "tag": tag, "generated": now, "errors": [], "hashtag": None, "sample": None,
                "trends": None, "related": [], "box_version": VERSION}
+        tterr = []
+        t0 = time.time()
         await self.tt.ensure()
 
         async def tiktok_hashtag():
@@ -632,17 +675,20 @@ class Service:
             try:
                 h = await self.tt.detail(tag)
             except Exception as e:
-                res["errors"].append(f"detalle hashtag: {e}")
+                tterr.append(f"detalle hashtag: {e}")
                 return []
             res["hashtag"] = h
             if not h.get("found"):
                 return []
             try:
-                items = await self.tt.hashtag_items(h["id"], 1 if light else HASHTAG_PAGES)
-                return [video(x, "hashtag") for x in items]
+                items = [video(x, "hashtag") for x in await self.tt.hashtag_items(h["id"], 1 if light else HASHTAG_PAGES)]
             except Exception as e:
-                res["errors"].append(f"vídeos del hashtag: {e}")
+                tterr.append(f"vídeos del hashtag: {e}")
                 return []
+            # hashtag pequeño: TikTok rellena la lista con vídeos que no tienen nada que ver
+            if h.get("videos") is not None and len(items) > h["videos"] + 10:
+                items = [v for v in items if relevant(v, q, tag)]
+            return items
 
         async def tiktok_search():
             if light:
@@ -650,7 +696,7 @@ class Service:
             try:
                 return [video(x, "busqueda") for x in await self.tt.search_items(q, SEARCH_PAGES)]
             except Exception as e:
-                res["errors"].append(f"búsqueda TikTok: {e}")
+                tterr.append(f"búsqueda TikTok: {e}")
                 return []
 
         async def g_trends():
@@ -672,11 +718,38 @@ class Service:
                 res["errors"].append(f"tikwm: {e}")
                 res["related_tikwm"] = []
 
+        async def tiktok_all():
+            hv, sv = await asyncio.gather(tiktok_hashtag(), tiktok_search())
+            retried = False
+            # TikTok falló y no hay vídeos del hashtag (200 vacíos, 403, plantilla caducada…): Chrome nuevo y un reintento
+            if not hv and tterr and not light and time.time() - t0 < SEARCH_BUDGET - 22:
+                log.warning("búsqueda '%s': TikTok sin datos (%s) → reinicio Chrome y reintento", q, " · ".join(tterr))
+                retried = True
+                try:
+                    async with self.tt.lock:
+                        await self.tt.restart()
+                    first_h, first_sv = res["hashtag"], sv
+                    tterr.clear()
+                    res["hashtag"] = None
+                    hv, sv = await asyncio.gather(tiktok_hashtag(), tiktok_search())
+                    # lo que sí llegó en el primer intento no se pierde
+                    if not sv and first_sv:
+                        sv = first_sv
+                        tterr[:] = [e for e in tterr if not e.startswith("búsqueda TikTok")]
+                    if res["hashtag"] is None and first_h:
+                        res["hashtag"] = first_h
+                        tterr[:] = [e for e in tterr if not e.startswith("detalle hashtag")]
+                except Exception as e:
+                    tterr.append(f"reinicio de Chrome: {type(e).__name__}")
+            return hv, sv, retried
+
+        retried = timed_out = False
         try:
-            hv, sv, _, _ = await asyncio.wait_for(asyncio.gather(tiktok_hashtag(), tiktok_search(), g_trends(), related()), SEARCH_BUDGET)
+            (hv, sv, retried), _, _ = await asyncio.wait_for(asyncio.gather(tiktok_all(), g_trends(), related()), SEARCH_BUDGET)
         except asyncio.TimeoutError:
             res["errors"].append("tiempo agotado: resultados parciales")
-            hv, sv = [], []
+            hv, sv, timed_out = [], [], True
+        res["errors"] = tterr + res["errors"]
         # la búsqueda de TikTok es "difusa": solo cuentan los vídeos que mencionan de verdad la palabra
         sv_raw = len(sv)
         sv = [v for v in sv if relevant(v, q, tag)]
@@ -688,6 +761,9 @@ class Service:
         res["sample"]["from_hashtag"] = len(hv)
         res["sample"]["from_search"] = len(sv)
         res["sample"]["search_discarded"] = sv_raw - len(sv)
+        # ok = hay vídeos · vacio = TikTok respondió pero no hay vídeos de esta palabra · fallo = TikTok no respondió bien
+        res["tiktok"] = {"status": "ok" if allv else ("fallo" if tterr or timed_out else "vacio"),
+                         "retried": retried, "search_raw": sv_raw, "errors": len(tterr)}
         # si TikTok no dio el detalle, respaldo con tikwm (mismo dato: vídeos y views del hashtag)
         tw = res.get("related_tikwm") or []
         if (not res["hashtag"] or res["hashtag"].get("found") is None) and tw:
@@ -736,7 +812,9 @@ class Service:
                     self.last_search = time.time()
         finally:
             self.waiting -= 1
-        ok = bool((res.get("sample") or {}).get("n") or (res.get("hashtag") or {}).get("found"))
+        # a la caché solo resultados sin fallos de TikTok (si falló, la siguiente búsqueda vuelve a intentarlo)
+        tk = res.get("tiktok") or {}
+        ok = tk.get("status") in ("ok", "vacio") and not tk.get("errors")
         if ok:
             self.cache[k] = (time.time(), res)
         if len(self.cache) > 300:
@@ -815,7 +893,10 @@ class Service:
 
     async def h_health(self, req):
         return self.json(200, {"ok": True, "service": "buscador", "version": VERSION, "browser": bool(self.tt.page),
-                               "uptime_s": int(time.time() - self.started), "watch": len(self.store.d["watch"])})
+                               "uptime_s": int(time.time() - self.started), "watch": len(self.store.d["watch"]),
+                               "tiktok": {"last_ok_s_ago": int(time.time() - self.tt.last_ok) if self.tt.last_ok else None,
+                                          "fails_in_row": self.tt.fails, "restarts": self.tt.restarts,
+                                          "template": bool(self.tt.template)}})
 
     async def guarded(self, req):
         st = await self.pin_ok(req.headers.get("X-Radar-Pin", ""))
@@ -835,8 +916,11 @@ class Service:
         code, res = await self.search(q, force=req.query.get("fresh") == "1")
         if code == 200:
             res["took_s"] = round(time.time() - t, 1)
-            log.info("búsqueda '%s' → %s (%.1fs, %s)", q, (res.get("verdict") or {}).get("verdict"), time.time() - t,
-                     "caché" if res.get("cached") else "nueva")
+            log.info("búsqueda '%s' → %s (%.1fs, %s) · tiktok %s%s · n=%s · #%s · errores: %s", q,
+                     (res.get("verdict") or {}).get("verdict"), time.time() - t, "caché" if res.get("cached") else "nueva",
+                     (res.get("tiktok") or {}).get("status"), " (reintentado)" if (res.get("tiktok") or {}).get("retried") else "",
+                     (res.get("sample") or {}).get("n"), (res.get("hashtag") or {}).get("videos"),
+                     " · ".join(res.get("errors") or []) or "ninguno")
         return self.json(code, res)
 
     async def h_trends(self, req):

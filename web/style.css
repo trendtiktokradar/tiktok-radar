@@ -95,6 +95,7 @@ button.primary{background:var(--acc2);color:#fff;border:0;border-radius:8px;padd
 button.primary:disabled{opacity:.5}
 .sstatus{margin:8px 0}
 .warnbox.inline{display:inline-block;padding:4px 8px}
+.warnbox.ttnone{font-size:14px;line-height:1.5;margin:10px 0;padding:11px 12px}.warnbox.ttnone b{color:var(--txt,#fff)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}
 .chip{background:var(--card2);border:1px solid var(--line);color:var(--txt);border-radius:14px;padding:4px 10px;font-size:13px;cursor:pointer}
 .chip:hover{border-color:var(--acc)}
@@ -170,3 +171,5 @@ b.ath{color:#facc15}
 .legend .lg{background:var(--card2);border:1px solid var(--line);color:var(--txt);border-radius:12px;padding:3px 9px;font-size:12px;cursor:pointer}
 .legend .lg.off{opacity:.4;text-decoration:line-through}
 .rise{font-size:13px;margin:10px 0 4px}
+.vdate{color:var(--txt);font-weight:600}
+details.more summary{cursor:pointer;color:var(--acc);padding:6px 0;font-size:13px}

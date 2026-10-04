@@ -176,6 +176,23 @@ los números de cada día):
   **Es una muestra, no el total**: TikTok da los vídeos del hashtag por popularidad y la búsqueda prioriza lo
   reciente, así que sirve para ver la forma (cuándo arranca), no para contar.
 
+**🆕 Últimos vídeos (arriba del todo):** los 20 vídeos **más nuevos de la muestra, ordenados por fecha** (fecha y
+hora de Madrid, "hace X", views, likes y link; 8 visibles + "Ver más"). TikTok sin sesión **no deja ordenar por
+fecha** (probado: ignora `publish_time`/`sort_type`), así que puede haber vídeos más recientes que no salen; la tarjeta
+lo explica y enlaza a la búsqueda de TikTok. Si el hashtag es pequeño (TikTok rellena con vídeos ajenos: p. ej.
+1 vídeo real y 66 devueltos), solo se quedan los que mencionan la palabra.
+
+**Si TikTok no da vídeos:** sale un aviso claro "TikTok no devolvió vídeos para esta palabra" con el motivo
+(TikTok falló / no existe el hashtag y la búsqueda no la menciona / hashtag sin vídeos visibles) y debajo igualmente
+Google web y YouTube. Si fue un fallo de TikTok el veredicto es **⚠️ sin TikTok** (nunca "flojo") y no se guarda en
+caché. **Auto-arreglo:** TikTok a veces deja "marcada" la sesión de Chrome y responde 403 o 200 vacíos (o la página
+del hashtag no carga y no hay plantilla de `item_list`); recargar la página no lo arregla. Por eso, si una búsqueda
+falla sin vídeos del hashtag, el box **reinicia Chrome y reintenta una vez** en la misma búsqueda; si ya se reinició
+hace < 15 min o sigue sin plantilla, **borra el perfil** (`~/.tiktok-radar-chrome`, sin sesión: no se pierde nada) y
+arranca limpio. Con 3 fallos seguidos también reinicia. Cada búsqueda se apunta en `logs/buscador.log` con estado de
+TikTok (ok / vacio / fallo, reintentado), nº de vídeos y errores; `/health` enseña `tiktok.last_ok_s_ago`,
+`fails_in_row`, `restarts` y `template`.
+
 **🚀 Primer vídeo viral:** el vídeo **más antiguo de la muestra con ≥ 100K views** (`BUSCADOR_VIRAL_VIEWS`), con fecha,
 views, link y "lleva X días". Si ninguno llega, sale el más visto. **Inicio de la subida:** suma móvil de 7 días de
 vídeos/día de la muestra; base = mediana de esa suma entre 120 y 35 días atrás; si hoy o ayer supera
@@ -191,7 +208,7 @@ subir el …". Si no, "no se ve una subida reciente". Aproximado (misma muestra)
 - Watchlist: el hashtag crece ≥ 2 % de vídeos al día → **+1**.
 
 **≥ 5 = 🔥 HOT · 3-4 = 📈 sube** · si Trends baja, o < 10 % de la muestra es de esta semana (y Trends no sube) = **📉 baja** ·
-resto = **💤 flojo** · sin hashtag ni vídeos = **❔ sin datos**.
+resto = **💤 flojo** · sin hashtag ni vídeos = **❔ sin datos** · TikTok falló = **⚠️ sin TikTok**.
 
 **Watchlist (⭐ Seguir):** el box guarda una foto al día de cada palabra seguida (vídeos, views del hashtag, nº de
 vídeos de la semana) en `state/buscador.json` y en el resultado sale la curva y el % de crecimiento por día
@@ -199,7 +216,7 @@ vídeos de la semana) en `state/buscador.json` y en el resultado sale la curva y
 a TikTok por palabra y día). Sin IA.
 
 **Límites y protección:** caché 45 min por palabra (↻ Actualizar fuerza una búsqueda nueva), como mucho 1 búsqueda
-nueva cada 4 s y 3 en cola, 40 s máximo por búsqueda (si una fuente falla, sale el resto y se avisa).
+nueva cada 4 s y 3 en cola, 45 s máximo por búsqueda (si una fuente falla, sale el resto y se avisa).
 Cada petición lleva el PIN: Vercel lo comprueba y el box lo vuelve a comprobar preguntando a `/api/search`
 (`action: "check"`), así que el box **no guarda el PIN** (solo un hash en memoria 1 h). 10 PIN malos en 1 h → bloqueo.
 La URL del box está en `box.json` (repo público), pero sin PIN no responde nada salvo `/health`.

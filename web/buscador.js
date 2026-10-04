@@ -14,6 +14,8 @@
   let period = [7, 30, 90].includes(Number(localStorage.getItem("ttr_speriod"))) ? Number(localStorage.getItem("ttr_speriod")) : 30;
   const hiddenSeries = new Set();
   const fmtLong = (t) => new Date(t * 1000).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" });
+  const fmtWhen = (t) => new Date(t * 1000).toLocaleString("es-ES", Object.assign({ timeZone: "Europe/Madrid", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" },
+    Date.now() / 1000 - t > 300 * 86400 ? { year: "numeric" } : {}));
   const daysTxt = (d) => d < 1 ? "menos de 1 día" : d < 2 ? "1 día" : Math.round(d) + " días";
   // ---------- fechas en hora de Madrid (igual que el box)
   const madridDay = (ms) => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Madrid", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(ms));
@@ -89,10 +91,10 @@
   const dirTxt = (d) => ({ "sube fuerte": "▲▲ sube fuerte", sube: "▲ sube", baja: "▼ baja", estable: "■ estable", "poco volumen": "· poco volumen", "sin datos": "· sin datos" }[d] || d || "–");
   const dirCls = (d) => (d || "").startsWith("sube") ? "up" : d === "baja" ? "down" : "note";
 
-  function videoRow(v) {
+  function videoRow(v, dated) {
     const cover = safeUrl(v.cover) ? `<img loading="lazy" referrerpolicy="no-referrer" src="${safeUrl(v.cover)}" alt="" onerror="this.remove()">` : "";
     return `<a class="vrow" href="${safeUrl(v.url) || "#"}" target="_blank" rel="noopener noreferrer">${cover}<div class="vtxt"><div class="vdesc">${esc(v.desc || "(sin texto)")}</div>
-      <div class="vmeta">@${esc(v.author)} · hace ${esc(agoS(v.t))} · 👁 ${num(v.views)} · ❤ ${num(v.likes)} · 💬 ${num(v.comments)}${v.src === "busqueda" ? ' · <span class="note">búsqueda</span>' : ""}</div></div></a>`;
+      <div class="vmeta">${dated && v.t ? `<span class="vdate">📅 ${esc(fmtWhen(v.t))}</span> (hace ${esc(agoS(v.t))}) · @${esc(v.author)}` : `@${esc(v.author)} · hace ${esc(agoS(v.t))}`} · 👁 ${num(v.views)} · ❤ ${num(v.likes)} · 💬 ${num(v.comments)}${v.src === "busqueda" ? ' · <span class="note">búsqueda</span>' : ""}</div></div></a>`;
   }
 
   function render(r) {
@@ -105,7 +107,17 @@
         <button class="link" id="sfresh">↻ Actualizar</button>
         <button class="watchbtn${watching ? " on" : ""}" id="swatchbtn">${watching ? "⭐ Siguiendo" : "☆ Seguir (foto diaria)"}</button></div>
       ${(v.why || []).length ? `<details class="why"><summary>¿Por qué este veredicto?</summary><ul>${v.why.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></details>` : ""}</div>`;
-    const notFound = h && h.found === false ? `<p class="warnbox">No existe el hashtag <b>#${esc(r.tag)}</b> en TikTok. Abajo solo salen vídeos de la búsqueda normal que mencionan la palabra.</p>` : "";
+    // TikTok sin vídeos: decirlo claro (y por qué) y enseñar igualmente Google / YouTube
+    const errL = r.errors || [];
+    const tts = (r.tiktok || {}).status || (n ? "ok" : errL.some((e) => /tiktok|hashtag/i.test(e)) ? "fallo" : "vacio");
+    const raw = (r.tiktok || {}).search_raw || 0;
+    const why0 = tts === "fallo"
+      ? `TikTok no ha respondido bien (bloqueo temporal o firma caducada)${(r.tiktok || {}).retried ? "; el box ya ha reiniciado su navegador y lo ha reintentado" : ""}. Prueba <b>↻ Actualizar</b> en 1-2 minutos.${errL.length ? `<br><span class="note">Detalle: ${esc(errL.join(" · "))}</span>` : ""}`
+      : h.found === false ? `No existe el hashtag <b>#${esc(r.tag)}</b> y la búsqueda de TikTok no tiene vídeos que mencionen la palabra${raw ? ` (dio ${esc(raw)} vídeos que no la mencionan: descartados)` : ""}.`
+      : h.found ? `El hashtag <b>#${esc(h.tag || r.tag)}</b> existe (${num(h.videos)} vídeos) pero TikTok no ha enseñado ninguno.`
+      : `La búsqueda de TikTok no tiene vídeos que mencionen la palabra.`;
+    const noTT = n ? "" : `<div class="warnbox ttnone"><b>TikTok no devolvió vídeos para esta palabra.</b><br>${why0}<br>Abajo tienes lo que hay en Google y YouTube.</div>`;
+    const notFound = n && h && h.found === false ? `<p class="warnbox">No existe el hashtag <b>#${esc(r.tag)}</b> en TikTok. Abajo solo salen vídeos de la búsqueda normal que mencionan la palabra.</p>` : "";
     const stat = (k, val, t) => `<div class="stat"${t ? ` title="${esc(t)}"` : ""}><div class="k">${k}</div><div class="v">${val}</div></div>`;
     const stats = `<div class="scard"><h4>Números</h4><div class="stats">
       ${stat("Vídeos #" + esc(h.tag || r.tag), h.found ? num(h.videos) : "–", "Total de vídeos con el hashtag (dato de TikTok)")}
@@ -135,6 +147,16 @@
       <p class="rise">${rise.rising ? `📈 El volumen de la muestra empezó a subir el <b>${esc(fmtLong(Date.parse(rise.day + "T12:00:00") / 1000))}</b> (hace ${esc(daysTxt(rise.days_since))}): ${esc(rise.now7)} vídeos en los últimos 7 días frente a ~${esc(Math.round(rise.base7))} normales.`
         : `➖ No se ve una subida reciente del volumen en la muestra${rise.now7 != null ? ` (${esc(rise.now7)} vídeos en 7 días, lo normal ~${esc(Math.round(rise.base7 || 0))})` : rise.reason ? ` (${esc(rise.reason)})` : ""}.`}</p>
       <p class="note">Solo con los ~${esc(n)} vídeos de la muestra: puede haber vídeos virales más antiguos que TikTok no nos enseña.</p></div>` : "";
+    // 🆕 Últimos vídeos: los más nuevos de la muestra ordenados por fecha (TikTok sin sesión no ordena por fecha)
+    const lat = (s.latest && s.latest.length ? s.latest : Object.values(Object.fromEntries([...(s.top_recent || []), ...(s.top || [])].map((x) => [x.id, x]))))
+      .filter((x) => x.t).sort((a, b2) => b2.t - a.t).slice(0, 20);
+    const ttSearch = "https://www.tiktok.com/search/video?q=" + encodeURIComponent(r.q);
+    const latest = lat.length ? `<div class="scard" id="slatest"><h4>🆕 Últimos vídeos <span class="note">(más nuevos primero)</span></h4>
+      ${lat.slice(0, 8).map((x) => videoRow(x, true)).join("")}
+      ${lat.length > 8 ? `<details class="more"><summary>Ver ${lat.length - 8} más</summary>${lat.slice(8).map((x) => videoRow(x, true)).join("")}</details>` : ""}
+      ${Date.now() / 1000 - lat[0].t > 7 * 86400 ? `<p class="warnline note">El vídeo más nuevo que ha salido es de hace ${esc(agoS(lat[0].t))}.</p>` : ""}
+      <p class="note">ℹ️ TikTok sin sesión iniciada no deja ordenar por fecha (ignora el filtro de fecha), así que esto son los ${esc(lat.length)} más nuevos entre los ${esc(n)} vídeos que nos da (los más populares del hashtag + la búsqueda por relevancia). Puede haber vídeos más recientes que no salen:
+        <a href="${safeUrl(ttSearch)}" target="_blank" rel="noopener noreferrer">abrir la búsqueda en TikTok</a>${h.found && h.url ? ` · <a href="${safeUrl(h.url)}" target="_blank" rel="noopener noreferrer">ver #${esc(h.tag)}</a>` : ""}.</p></div>` : "";
     const g = r.growth || {};
     const snaps = (g.snaps || []).filter((x) => x.videos);
     const gchart = snaps.length >= 2 ? chart([{ name: "Vídeos con #" + (h.tag || r.tag), color: "#14f195", points: snaps.map((x) => [x.t, x.videos]) }], { yMin: Math.min(...snaps.map((x) => x.videos)) * 0.98, yMax: Math.max(...snaps.map((x) => x.videos)) * 1.02, fmt: num }) : "";
@@ -147,8 +169,9 @@
     const relT = (r.related_tikwm || []).map((x) => `<button class="chip" data-sq="${esc(x.tag)}" title="${esc(num(x.videos))} vídeos · ${esc(num(x.views))} views">#${esc(x.tag)} <span class="note">${num(x.videos)}</span></button>`).join("");
     const related = rel || relT ? `<div class="scard"><h4>Hashtags relacionados</h4>${rel ? `<p class="note">Los que más se repiten en los vídeos de la muestra (nº de vídeos):</p><div class="chips">${rel}</div>` : ""}
       ${relT ? `<p class="note">Hashtags parecidos (tikwm, nº de vídeos totales):</p><div class="chips">${relT}</div>` : ""}</div>` : "";
-    const errs = (r.errors || []).length ? `<p class="note warnline">Fuentes con fallo (resultado parcial): ${esc(r.errors.join(" · "))}</p>` : "";
-    $("#sresult").innerHTML = head + notFound + errs + `<div class="sgrid">${stats}${bars}</div>` + trends + viral + growth + vids + related;
+    const errs = n && errL.length ? `<p class="note warnline">Fuentes con fallo (resultado parcial): ${esc(r.errors.join(" · "))}</p>` : "";
+    $("#sresult").innerHTML = n ? head + notFound + errs + latest + `<div class="sgrid">${stats}${bars}</div>` + trends + viral + growth + vids + related
+      : head + noTT + trends + (h.found ? `<div class="sgrid">${stats}</div>` : "") + growth + related;
     drawTrend(r);
     if (period === 7 && !r._t7) setPeriod(7);
     $("#sfresh").onclick = () => doSearch(r.q, true);
@@ -178,7 +201,8 @@
   }
   function drawTrend(r) {
     const box = $("#tchart"); if (!box) return;
-    const P = period, D = seriesFor(r, P);
+    const P = period, D = seriesFor(r, P), noTT = !((r.sample || {}).n);
+    const shown = (k) => !hiddenSeries.has(k) && !(noTT && (k === "tt" || k === "ttv"));
     const W = Math.round(Math.max(300, Math.min(1150, box.clientWidth || 640))), H = W < 520 ? 250 : 300, pad = { l: 30, r: 8, t: 10, b: 26 };
     const n = D.days.length, cw = (W - pad.l - pad.r) / n;
     const X = (i) => pad.l + cw * (i + 0.5), Y = (v) => H - pad.b - (v / 100) * (H - pad.t - pad.b);
@@ -186,21 +210,21 @@
     const step = Math.max(1, Math.ceil(n / (W < 520 ? 5 : 8)));
     const xl = D.days.map((d, i) => ((n - 1 - i) % step === 0 ? `<text x="${X(i)}" y="${H - 8}" text-anchor="middle">${esc(dayLabel(d))}</text>` : "")).join("");
     let body = "";
-    if (!hiddenSeries.has("ttv")) body += D.ttv.map((v, i) => (v > 0 ? `<rect x="${(X(i) - cw * 0.38).toFixed(1)}" width="${(cw * 0.76).toFixed(1)}" y="${Y(v).toFixed(1)}" height="${(Y(0) - Y(v)).toFixed(1)}" fill="${SER[3].color}" rx="2"/>` : "")).join("");
-    for (const s of SER.filter((x) => x.type === "line" && !hiddenSeries.has(x.key))) {
+    if (shown("ttv")) body += D.ttv.map((v, i) => (v > 0 ? `<rect x="${(X(i) - cw * 0.38).toFixed(1)}" width="${(cw * 0.76).toFixed(1)}" y="${Y(v).toFixed(1)}" height="${(Y(0) - Y(v)).toFixed(1)}" fill="${SER[3].color}" rx="2"/>` : "")).join("");
+    for (const s of SER.filter((x) => x.type === "line" && shown(x.key))) {
       const vals = D[s.key]; let path = "", pen = false;
       vals.forEach((v, i) => { if (v == null) { pen = false; return; } path += (pen ? "L" : "M") + X(i).toFixed(1) + "," + Y(v).toFixed(1); pen = true; });
       if (path) body += `<path d="${path}" fill="none" stroke="${s.color}" stroke-width="${s.w || 2}" stroke-linejoin="round" stroke-linecap="round"/>`;
       if (n <= 31) body += vals.map((v, i) => (v == null ? "" : `<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="${n <= 7 ? 3.5 : 2}" fill="${s.color}"/>`)).join("");
     }
-    const legend = SER.map((s) => `<button class="lg${hiddenSeries.has(s.key) ? " off" : ""}" data-series="${s.key}"><i style="background:${s.color}"></i>${esc(s.name)}</button>`).join("");
+    const legend = SER.filter((s) => !(noTT && (s.key === "tt" || s.key === "ttv"))).map((s) => `<button class="lg${hiddenSeries.has(s.key) ? " off" : ""}" data-series="${s.key}"><i style="background:${s.color}"></i>${esc(s.name)}</button>`).join("");
     const gNote = !D.gLoaded ? (P === 7 ? "Cargando Google 7 días…" : "Google Trends no ha dado datos.") : D.web.every((v) => v == null) && D.yt.every((v) => v == null) ? "Google Trends no tiene datos de este periodo para esta palabra." : "";
     box.innerHTML = `<div class="tchart-wrap"><svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img">${grid}${xl}${body}
         <line id="tcur" x1="0" x2="0" y1="${pad.t}" y2="${H - pad.b}" class="cur" visibility="hidden"/><rect id="thit" x="${pad.l}" y="0" width="${W - pad.l - pad.r}" height="${H}" fill="transparent"/></svg>
       <div id="ttip" class="ttip" hidden></div></div>
       <div class="legend">${legend}</div>
       ${gNote ? `<p class="note">${esc(gNote)}</p>` : ""}
-      <p class="note">⚠️ TikTok = <b>muestra de ${esc(D.N)} vídeos</b> publicados en estos ${P} días (de los ~${esc((r.sample || {}).n || 0)} analizados: los más populares del hashtag + la búsqueda), <b>no el total</b>. Todas las líneas van de 0 a 100: 100 = el día más alto del periodo (en TikTok, el día con más vídeos de la muestra; las barras, el día con más views). Toca la gráfica para ver los números de cada día.${P === 7 ? " Google 7 días viene por horas: se muestra la media de cada día (100 = la hora pico de la semana; el primer día puede estar incompleto)." : ""}</p>`;
+      ${noTT ? `<p class="note">Sin vídeos de TikTok: solo Google web y YouTube (0-100, 100 = el día más alto del periodo).</p>` : `<p class="note">⚠️ TikTok = <b>muestra de ${esc(D.N)} vídeos</b> publicados en estos ${P} días (de los ~${esc((r.sample || {}).n || 0)} analizados: los más populares del hashtag + la búsqueda), <b>no el total</b>. Todas las líneas van de 0 a 100: 100 = el día más alto del periodo (en TikTok, el día con más vídeos de la muestra; las barras, el día con más views). Toca la gráfica para ver los números de cada día.${P === 7 ? " Google 7 días viene por horas: se muestra la media de cada día (100 = la hora pico de la semana; el primer día puede estar incompleto)." : ""}</p>`}`;
     const hit = $("#thit"), tip = $("#ttip"), cur = $("#tcur"), svg = box.querySelector("svg");
     const show = (ev) => {
       const rc = svg.getBoundingClientRect(), x = ((ev.clientX - rc.left) / rc.width) * W;
@@ -208,7 +232,7 @@
       cur.setAttribute("x1", X(i)); cur.setAttribute("x2", X(i)); cur.setAttribute("visibility", "visible");
       const gv = (v) => (v == null ? "–" : Math.round(v));
       tip.innerHTML = `<b>${esc(dayLabel(D.days[i], true))}</b><div><i style="background:#4c8dff"></i>Google web: ${gv(D.web[i])}</div><div><i style="background:#ff4d4d"></i>YouTube: ${gv(D.yt[i])}</div>
-        <div><i style="background:#25f4ee"></i>TikTok: <b>${D.tn[i]}</b> vídeo${D.tn[i] === 1 ? "" : "s"}</div><div><i style="background:#fe2c55"></i>Views de esos vídeos: <b>${num(D.tv[i])}</b></div>`;
+        ${noTT ? "" : `<div><i style="background:#25f4ee"></i>TikTok: <b>${D.tn[i]}</b> vídeo${D.tn[i] === 1 ? "" : "s"}</div><div><i style="background:#fe2c55"></i>Views de esos vídeos: <b>${num(D.tv[i])}</b></div>`}`;
       tip.hidden = false;
       const px = (X(i) / W) * rc.width, tw = tip.offsetWidth;
       tip.style.left = Math.max(0, Math.min(rc.width - tw, px - tw / 2)) + "px";
