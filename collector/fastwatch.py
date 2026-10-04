@@ -2,13 +2,14 @@
 """Vigilante rápido de avisos de TikTok Radar (sin IA, solo Python stdlib). Corre en el box junto a loop.sh.
 
 Cada ~45 s (FASTWATCH_INTERVAL), independiente de la pasada lenta (~8 min):
-  1. DEX PAID al momento: lee /token-profiles/latest/v1 de DexScreener (1 petición). Un perfil nuevo (no CTO) = pago
+  1. DEX PAID al momento: lee /token-profiles/latest/v1 de DexScreener (cada 20 s, también entre ciclos). Un perfil nuevo (no CTO) = pago
      de DEX. Si la coin tiene señal TikTok fuerte (ya seguida por el radar o recién descubierta con /tokens/v1),
      se confirma la hora de pago con /orders y se avisa por Telegram en el acto.
-  2. Respaldo: /orders rotando por las coins TikTok fuertes sin pagar (máx. FW orders_per_cycle por ciclo, ~1/s;
-     se pausa mientras la pasada lenta hace sus /orders) -> límite de DexScreener de 60/min respetado.
-  3. BONDING: /tokens/v1 en lotes de 30 para las coins fuertes aún en bonding curve (el par principal pasa de
+  2. BONDING: /tokens/v1 en lotes de 30 para las coins fuertes aún en bonding curve (el par principal pasa de
      pumpfun/meteoradbc… a un AMM) + pump.fun /coins-v2 (complete=True) para las que están cerca de graduarse.
+  3. Respaldo (lo menos urgente, va el último): /orders rotando por las coins TikTok fuertes sin pagar
+     (máx. orders_per_cycle por ciclo, ~1/s; se pausa mientras la pasada lenta hace sus /orders).
+El límite de DexScreener es por IP y común a todos sus endpoints: ante un 429 se espera su Retry-After.
 Lee la lista de coins que escribe la pasada lenta (state/state.json), comparte con ella el registro de avisos
 enviados (state/telegram.json, con candado de fichero) y deja lo que ve en state/fastwatch.json: la pasada lenta
 lo usa para marcar DEX PAID antes (perfiles vistos + resultados de /orders).
@@ -45,12 +46,18 @@ def fnum(x):
         return None
 
 class Net:
-    """GET con contador por endpoint y respeto de 429 (Retry-After)."""
+    """GET con contador por endpoint y respeto de 429 (Retry-After). El límite de DexScreener es por IP y común a
+    todos sus endpoints (un 429 en uno bloquea todos), así que la espera se aplica a todo DexScreener."""
     def __init__(self, stats):
         self.stats = stats
-        self.cool = {}  # endpoint -> ms hasta el que no se llama
+        self.cool = {}  # grupo ("ds" o "pump") -> ms hasta el que no se llama
+    @staticmethod
+    def group(key):
+        return "pump" if key == "pump" else "ds"
+    def cooling(self, key):
+        return self.cool.get(self.group(key), 0) > ms()
     def get(self, key, url, headers=None, timeout=15):
-        if self.cool.get(key, 0) > ms():
+        if self.cooling(key):
             return None
         h = {"User-Agent": UA, "Accept": "application/json, text/plain, */*"}
         h.update(headers or {})
@@ -65,7 +72,7 @@ class Net:
                     ra = int(e.headers.get("Retry-After") or 30)
                 except (TypeError, ValueError):
                     ra = 30
-                self.cool[key] = ms() + min(max(ra, 10), 120) * 1000
+                self.cool[self.group(key)] = ms() + min(max(ra, 5), 120) * 1000
             else:
                 self.stats["err"][key] = self.stats["err"].get(key, 0) + 1
         except Exception:
@@ -118,6 +125,18 @@ class FastWatch:
         self.cfg = {}
         self.tg = alerts.TG(os.environ[alerts.TOKEN_VAR]) if os.environ.get(alerts.TOKEN_VAR) else None
         self.stop = False
+        self.last_prof = 0.0
+
+    def maybe_profiles(self):
+        """La lista de perfiles nuevos se mira cada profiles_every_s (20 s ≈ 3/min de 60/min), también entre ciclos:
+        si DexScreener da 429 se reintenta en cuanto pasa su Retry-After."""
+        if time.time() - self.last_prof < self.F("profiles_every_s", 20) or self.net.cooling("profiles"):
+            return
+        self.last_prof = time.time()
+        try:
+            self.step_profiles(ms())
+        except Exception as ex:
+            log(f"perfiles: error {type(ex).__name__}: {str(ex)[:150]}")
 
     @staticmethod
     def _load(path, default):
@@ -269,16 +288,17 @@ class FastWatch:
             return
         sent = alerts.load_state().get("sent", {}).get("dex_paid", {})
         gap = self.F("orders_gap_s", 1.0)
-        for _, _, ca in todo[:self.F("orders_per_cycle", 15)]:
+        for _, _, ca in todo[:self.F("orders_per_cycle", 6)]:
             if self.stop:
                 break
             d = self.net.get("orders", f"{DS}/orders/v1/solana/{ca}")
             if d is None:
-                if self.net.cool.get("orders", 0) > ms():
+                if self.net.cooling("orders"):
                     break  # 429: se para hasta que DexScreener deje
                 continue
             e = orders_info(d, ms())
             self.fw["orders"][ca] = e
+            self.maybe_profiles()
             if e["paid"] and ca not in sent:
                 c = dict(self.coins[ca], dex_paid=True, dex_paid_at=e.get("paid_at"))
                 self.alert("dex_paid", c, e.get("paid_at"))
@@ -297,7 +317,7 @@ class FastWatch:
                 cands.append(c)
         # cada ciclo: las 150 de más MC (las que pueden graduarse ya) + 90 del resto rotando (~8 lotes de 30)
         cands.sort(key=lambda c: -((c.get("metrics") or {}).get("mc") or 0))
-        hot_n, rot_n = self.F("bonding_hot", 150), self.F("bonding_rotate", 90)
+        hot_n, rot_n = self.F("bonding_hot", 120), self.F("bonding_rotate", 60)
         rest = cands[hot_n:]
         if rest:
             self.rot = getattr(self, "rot", 0) % len(rest)
@@ -312,7 +332,7 @@ class FastWatch:
             chunk = check[i:i + 30]
             d = self.net.get("tokens", f"{DS}/tokens/v1/solana/{','.join(c['ca'] for c in chunk)}")
             if not isinstance(d, list):
-                if self.net.cool.get("tokens", 0) > ms():
+                if self.net.cooling("tokens"):
                     break
                 continue
             pairs = best_pairs(d)
@@ -369,10 +389,12 @@ class FastWatch:
             except Exception as ex:
                 log("comandos: error", type(ex).__name__)
         strong = self.strong() if self.coins else []
-        for name, fn in (("perfiles", lambda: self.step_profiles(now)), ("orders", lambda: self.step_orders(now, strong)),
-                         ("bonding", lambda: self.step_bonding(now, strong))):
+        self.maybe_profiles()
+        # orden por prioridad (el cupo de DexScreener por IP es pequeño): perfiles > bonding (30 coins por petición) > /orders
+        for name, fn in (("bonding", lambda: self.step_bonding(now, strong)), ("orders", lambda: self.step_orders(now, strong))):
             if self.stop:
                 break
+            self.maybe_profiles()
             try:
                 fn()
             except Exception as ex:  # un fallo en un paso no tumba el vigilante
@@ -404,6 +426,10 @@ class FastWatch:
             end = time.time() + max(wait, 5)
             while not self.stop and time.time() < end:
                 time.sleep(1)
+                n = len(self.fw["profiles"])
+                self.maybe_profiles()
+                if len(self.fw["profiles"]) != n:
+                    self.save()
         self.save()
         log("vigilante rápido parado")
 

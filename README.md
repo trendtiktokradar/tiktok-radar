@@ -244,14 +244,15 @@ avisa "Falta configurar el PIN en Vercel".
 - Comandos (los responde el vigilante rápido en ≤ ~1 min): `/estado`, `/pausa` (lo que pase en pausa se da por visto),
   `/reanudar`.
 - **Vigilante rápido** (`collector/fastwatch.py`, `scripts/fastwatch.sh start|stop|status|ensure`, log `logs/fastwatch.log`).
-  En cada ciclo de ~45 s:
-  1. `/token-profiles/latest/v1` (1 petición): perfil nuevo no CTO = DEX PAID. Si la coin es TikTok fuerte (seguida por
+  En cada ciclo de ~45 s (la lista de perfiles, cada 20 s):
+  1. `/token-profiles/latest/v1` (cada 20 s, también entre ciclos; ≈ 3/min): perfil nuevo no CTO = DEX PAID. Si la coin es TikTok fuerte (seguida por
      el radar, o nueva: nombre/edad con `/tokens/v1`, < 24 h) confirma la hora con `/orders` y avisa al momento.
-  2. Respaldo: `/orders` rotando por las coins TikTok fuertes sin pagar (15 por ciclo, 1/s ≈ 20/min; jóvenes < 3 h cada
+  2. Respaldo: `/orders` rotando por las coins TikTok fuertes sin pagar (6 por ciclo, 1/s ≈ 8/min; va después del paso 3 porque es lo menos urgente; jóvenes < 3 h cada
      5 min, el resto cada 20 min). Se pausa mientras la pasada hace sus `/orders` → entre los dos ≤ 60/min.
-  3. BONDING: `/tokens/v1` en lotes de 30 (las 150 de más MC en bonding curve cada ciclo + 90 del resto rotando): el par
+  3. BONDING: `/tokens/v1` en lotes de 30 (las 120 de más MC en bonding curve cada ciclo + 60 del resto rotando): el par
      principal pasa de pumpfun/meteoradbc… a un AMM. Y pump.fun `/coins-v2` (`complete`) para las de MC ≥ 35K.
-  - Si DexScreener responde 429 respeta su `Retry-After`. Lee las coins de `state/state.json` (lo escribe la pasada) y
+  - Si DexScreener responde 429 respeta su `Retry-After` en todos sus endpoints (el límite es por IP y común; el box
+    comparte IP de salida, así que a veces llegan 429 aunque el radar vaya despacio). Lee las coins de `state/state.json` (lo escribe la pasada) y
     deja lo que ve en `state/fastwatch.json` (latido, contadores de peticiones, últimos avisos con su latencia).
   - Config `fastwatch` en `config.json`. `scripts/loop.sh` hace `scripts/fastwatch.sh ensure` en cada vuelta: si está
     caído o sin latido > 5 min, lo (re)arranca. `FASTWATCH=0` lo desactiva.

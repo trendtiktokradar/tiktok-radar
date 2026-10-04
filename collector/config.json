@@ -171,9 +171,9 @@
     "max_per_run": 15
   },
   "fastwatch": {
-    "_comment": "Vigilante rápido (collector/fastwatch.py, scripts/fastwatch.sh): avisos al momento. interval_s: segundos entre ciclos. orders_per_cycle/orders_gap_s: /orders de respaldo por ciclo (DexScreener permite 60/min; se pausa mientras la pasada lenta hace los suyos). young_hours/young_recheck_min/old_recheck_min: cada cuánto se recomprueba una coin joven/vieja. pump_min_mc/pump_per_cycle: consultas a pump.fun (complete) de coins cerca de graduarse. bonding_hot/bonding_rotate/tokens_gap_s: coins en bonding curve revisadas por ciclo (las de más MC siempre + el resto rotando) y pausa entre lotes de /tokens.",
+    "_comment": "Vigilante rápido (collector/fastwatch.py, scripts/fastwatch.sh): avisos al momento. interval_s: segundos entre ciclos. orders_per_cycle/orders_gap_s: /orders de respaldo por ciclo (DexScreener permite 60/min; se pausa mientras la pasada lenta hace los suyos). young_hours/young_recheck_min/old_recheck_min: cada cuánto se recomprueba una coin joven/vieja. pump_min_mc/pump_per_cycle: consultas a pump.fun (complete) de coins cerca de graduarse. bonding_hot/bonding_rotate/tokens_gap_s: coins en bonding curve revisadas por ciclo (las de más MC siempre + el resto rotando) y pausa entre lotes de /tokens. profiles_every_s: cada cuántos segundos se mira la lista de perfiles nuevos (DEX PAID).",
     "interval_s": 45,
-    "orders_per_cycle": 15,
+    "orders_per_cycle": 6,
     "orders_gap_s": 1.0,
     "young_hours": 3,
     "young_recheck_min": 5,
@@ -181,8 +181,9 @@
     "pump_min_mc": 35000,
     "pump_per_cycle": 8,
     "status_every": 40,
-    "bonding_hot": 150,
-    "bonding_rotate": 90,
-    "tokens_gap_s": 0.6
+    "bonding_hot": 120,
+    "bonding_rotate": 60,
+    "tokens_gap_s": 0.6,
+    "profiles_every_s": 20
   }
 }
