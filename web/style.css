@@ -173,3 +173,23 @@ b.ath{color:#facc15}
 .rise{font-size:13px;margin:10px 0 4px}
 .vdate{color:var(--txt);font-weight:600}
 details.more summary{cursor:pointer;color:var(--acc);padding:6px 0;font-size:13px}
+/* pestaña 🔥 Top volumen */
+.topctl{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.topctl .seg{margin:0}
+#toplist{display:block}
+.trow{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin-bottom:7px;cursor:pointer}
+.trow.open{border-color:var(--acc2);border-bottom-left-radius:4px;border-bottom-right-radius:4px;margin-bottom:0}
+.trow .tr1{display:flex;align-items:center;gap:9px}
+.trow .rk{font-weight:800;color:var(--mut);min-width:28px;font-size:14px}
+.trow img,.trow .ph{width:34px;height:34px;border-radius:50%;object-fit:cover;background:var(--card2);flex:none}
+.trow .tnm{flex:1;min-width:0}
+.trow .nm{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trow .sym{color:var(--mut);font-size:12px}
+.trow .tvol{font-weight:800;font-size:17px;color:var(--acc);white-space:nowrap}
+.trow .tr2{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:6px 0 0 37px;font-size:12.5px;color:var(--mut)}
+.trow .tr2 b{color:var(--txt)}
+.trow .partial{color:var(--warn);font-size:14px}
+.topcard{margin-bottom:10px}
+.topcard .card{border-top-left-radius:4px;border-top-right-radius:4px;border-color:var(--acc2)}
+.b.clones.sm,.trow .b.clones{cursor:pointer}
+@media (max-width:520px){.hide-m{display:none}.tabs button{padding:9px 1px}}

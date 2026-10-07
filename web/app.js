@@ -220,7 +220,78 @@
     </article>`;
   }
 
+  // ---------- pestaña "🔥 Top volumen": ranking por volumen USD en 1h / 3h / 6h / 8h, clones sumados
+  const LS_TOPWIN = "ttr_topwin";
+  let topWin = [1, 3, 6, 8].includes(Number(localStorage.getItem(LS_TOPWIN))) ? Number(localStorage.getItem(LS_TOPWIN)) : 1;
+  const TOPOPEN = new Set();
+  // volumen, compras y ventas de una coin en la ventana: 1h/6h = DexScreener; 3h/8h = historial del radar (vw)
+  function winStats(c, W) {
+    const m = c.metrics || {}, born = c.created || c.first_seen, ageMin = (Date.now() - born) / 60000;
+    if (W === 1 || W === 6) {
+      const v = (m.vol || {})["h" + W];
+      if (v == null) return null;
+      return { v, b: m["buys_h" + W], s: m["sells_h" + W], partial: false, cov: Math.min(W * 60, ageMin), life: ageMin <= W * 60 };
+    }
+    const x = (c.vw || {})[String(W)];
+    if (!x) return null;
+    return { v: x[0], b: x[1], s: x[2], cov: x[3], partial: !!x[4], life: ageMin <= W * 60 };
+  }
+  function topGroups(W) {
+    const coins = DATA.coins.filter((c) => !HIDDEN[c.ca] && !isNotTT(c.ca));
+    const byKey = new Map();
+    for (const c of coins) {
+      const k = normName(c.name) || normName(c.symbol) || c.ca;
+      if (!byKey.has(k)) byKey.set(k, []);
+      byKey.get(k).push(c);
+    }
+    const out = [];
+    for (const arr of byKey.values()) {
+      arr.sort((a, b) => (b.metrics?.mc || 0) - (a.metrics?.mc || 0));   // principal = la de más MC (como en Coins)
+      let v = 0, b = 0, s = 0, any = false, partial = false, bsKnown = true, minCov = Infinity;
+      for (const c of arr) {
+        const w = winStats(c, W);
+        if (!w) continue;
+        any = true; v += w.v || 0; b += w.b || 0; s += w.s || 0;
+        if (w.b == null || w.s == null) bsKnown = false;
+        if (w.partial && w.v > 0) { partial = true; minCov = Math.min(minCov, w.cov); }
+      }
+      if (!any || v <= 0) continue;
+      const clones = arr.slice(1).sort((a, c2) => (c2.ath || c2.metrics?.mc || 0) - (a.ath || a.metrics?.mc || 0));
+      out.push({ main: arr[0], clones, key: "t:" + (normName(arr[0].name) || normName(arr[0].symbol) || arr[0].ca), v, b, s, bsKnown, partial, minCov });
+    }
+    return out.sort((a, b) => b.v - a.v).slice(0, 20);
+  }
+  function topRow(g, i) {
+    const c = g.main, m = c.metrics || {};
+    const img = safeUrl(c.image) ? `<img loading="lazy" src="${safeUrl(c.image)}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'ph'}))">` : `<div class="ph"></div>`;
+    const badges = (c.dex_paid || g.clones.some((x) => x.dex_paid) ? `<span class="b paid sm" title="${c.dex_paid ? "Perfil de DexScreener pagado" : "Un clon del grupo tiene DEX PAID"}"><img src="img/dexscreener.png" alt="" width="11" height="11">DEX PAID</span>` : "") +
+      (c.dev_hot ? `<span class="b devhot sm" title="${esc(devTitle(c))}">TikTok dev 🔥</span>` : "") +
+      (g.clones.length ? `<span class="b clones sm">+${g.clones.length} clon${g.clones.length > 1 ? "es" : ""}</span>` : "");
+    const open = TOPOPEN.has(g.key);
+    const bs = g.bsKnown ? `<span class="up">🟢 ${num(g.b)}</span> <span class="down">🔴 ${num(g.s)}</span>` : `<span class="note">compras/ventas –</span>`;
+    return `<div class="trow${open ? " open" : ""}" data-topk="${esc(g.key)}">
+      <div class="tr1"><span class="rk">#${i + 1}</span>${img}<div class="tnm"><div class="nm">${esc(c.name || "?")}</div><div class="sym">$${esc(c.symbol || "?")}</div></div>
+        <div class="tvol" title="Volumen en la ventana${g.clones.length ? " (suma del grupo de clones)" : ""}">${money(g.v)}${g.partial ? ` <span class="partial" title="Cobertura parcial: solo hay historial de los últimos ${Math.round(g.minCov)} min">◔</span>` : ""}</div></div>
+      <div class="tr2">${bs}<span>MC <b>${money(m.mc)}</b></span><span>${ago(c.created || c.first_seen)}</span>${badges}</div>
+    </div>${open ? `<div class="topcard">${card(g)}</div>` : ""}`;
+  }
+  function renderTop() {
+    if (!DATA || !$("#toplist")) return;
+    document.querySelectorAll("#topwin [data-win]").forEach((b) => b.classList.toggle("on", Number(b.dataset.win) === topWin));
+    const W = topWin, groups = topGroups(W);
+    const since = DATA.vol_hist_since, histMin = since ? (Date.now() - since) / 60000 : 0;
+    let note = W === 1 || W === 6
+      ? `Volumen de las últimas <b>${W} h</b> según DexScreener (compras/ventas = nº de transacciones). Si la coin es más joven, es toda su vida.`
+      : `Volumen de las últimas <b>${W} h</b> calculado con el historial del radar (una foto cada ~5-10 min del volumen acumulado de DexScreener). Si la coin es más joven, es toda su vida.`;
+    if ((W === 3 || W === 8) && !since) note += ` <span class="warnline">El historial aún no ha empezado: sale en la próxima pasada (≤ 5 min).</span>`;
+    else if ((W === 3 || W === 8) && histMin < W * 60) note += ` <span class="warnline">⚠️ El historial empezó hace ${ago(since)}: hasta tener ${W} h, las coins más viejas que eso solo cuentan el volumen desde entonces (marcadas con ◔).</span>`;
+    else if (groups.some((g) => g.partial)) note += ` ◔ = cobertura parcial (historial incompleto para esa coin).`;
+    $("#topnote").innerHTML = note;
+    $("#toplist").innerHTML = groups.length ? groups.map(topRow).join("") : `<div class="empty">Sin datos de volumen para esta ventana todavía.</div>`;
+  }
+
   function renderCoins() {
+    renderTop();
     const groups = filtered();
     const n = groups.reduce((a, g) => a + 1 + g.clones.length, 0);
     const nh = Object.keys(HIDDEN).length;
@@ -350,6 +421,10 @@
 
   // ---------- eventos
   document.addEventListener("click", async (e) => {
+    const tw = e.target.closest("#topwin [data-win]");
+    if (tw) { topWin = Number(tw.dataset.win); localStorage.setItem(LS_TOPWIN, String(topWin)); renderTop(); return; }
+    const tk = e.target.closest(".trow[data-topk]");
+    if (tk) { const k = tk.dataset.topk; if (TOPOPEN.has(k)) TOPOPEN.delete(k); else TOPOPEN.add(k); renderTop(); return; }
     const cp = e.target.closest("[data-copy]");
     if (cp) {
       e.preventDefault();
@@ -383,7 +458,7 @@
   });
   function switchTab(t) {
     document.querySelectorAll(".tabs button").forEach((b) => b.classList.toggle("active", b.dataset.tab === t));
-    ["coins", "search", "trends", "learned", "sources"].forEach((x) => ($("#tab-" + x).hidden = x !== t));
+    ["coins", "top", "search", "trends", "learned", "sources"].forEach((x) => ($("#tab-" + x).hidden = x !== t));
   }
   ["#q", "#sort", "#mcmin", "#mcmax", "#agemax", "#liqmin", "#hideInactive", "#groupClones", "#onlyNew", "#onlyPaid", "#onlyDevHot", "#showHidden"].forEach((s) =>
     $(s).addEventListener("input", () => { saveFilters(); DATA && renderCoins(); }));

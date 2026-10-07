@@ -171,6 +171,7 @@ def ds_pair_to_info(p):
             "vol": {k: fnum(vol.get(k)) for k in ("m5", "h1", "h6", "h24")},
             "chg": {k: fnum(chg.get(k)) for k in ("m5", "h1", "h6", "h24")},
             "buys_h1": (tx.get("h1") or {}).get("buys"), "sells_h1": (tx.get("h1") or {}).get("sells"),
+            "buys_h6": (tx.get("h6") or {}).get("buys"), "sells_h6": (tx.get("h6") or {}).get("sells"),
             "buys_h24": (tx.get("h24") or {}).get("buys"), "sells_h24": (tx.get("h24") or {}).get("sells"),
         },
         "pair": p.get("pairAddress"), "dex": p.get("dexId"), "pair_ts": p.get("pairCreatedAt"),
@@ -469,6 +470,72 @@ def too_old(c, cfg, ts):
     if not created:  # sin fecha de creación conocida: no podemos garantizar < 24 h
         return ts - c["first_seen"] > 15 * 60_000
     return ts - created > cfg["max_age_hours"] * 3_600_000
+
+# ---------------------------------------------------------------- historial de volumen (pestaña "Top volumen")
+# Todas las coins tienen < 24 h, así que el volumen/txns "h24" de DexScreener de su par es lo acumulado desde que
+# nació el par. Guardando ese acumulado en cada pasada (~5 min) sale el volumen de cualquier ventana:
+#   vol(últimas W h) = acumulado ahora − acumulado hace W h   (por par: si cambia de par al graduarse, se suman).
+# Solo en state.json (no en data.json): puntos [minuto, vol24 USD, compras24, ventas24] cada ≥ 10 min, últimas ~8,5 h.
+VH_KEEP_MIN = 8 * 60 + 30
+VH_STEP_MIN = 10
+VOL_WINDOWS = (3, 8)
+
+def vol_history(c, ts):
+    m = c.get("metrics") or {}
+    v = (m.get("vol") or {}).get("h24")
+    if c.get("updated") != ts or v is None:
+        return
+    tmin = ts // 60000
+    pt = [tmin, round(v), int(m.get("buys_h24") or 0), int(m.get("sells_h24") or 0)]
+    vh = c.setdefault("vh", [])
+    pair = c.get("pair") or "?"
+    if not vh or vh[-1]["p"] != pair:
+        vh.append({"p": pair, "c": (c.get("pair_ts") or 0) // 60000, "s": []})
+    seg = vh[-1]["s"]
+    if len(seg) >= 2 and seg[-1][0] - seg[-2][0] < VH_STEP_MIN:
+        seg[-1] = pt                      # el último punto avanza hasta tener 10 min de hueco con el anterior
+    elif not seg or seg[-1][0] != tmin:
+        seg.append(pt)
+    cut = tmin - VH_KEEP_MIN
+    for sg in vh:
+        old = [x for x in sg["s"] if x[0] < cut]
+        sg["s"] = old[-1:] + [x for x in sg["s"] if x[0] >= cut]   # 1 punto anterior al corte para interpolar
+    c["vh"] = [sg for sg in vh if sg["s"] and (sg["s"][-1][0] >= cut or sg is vh[-1])]
+
+def _at(seg, t):
+    """Acumulado [vol, compras, ventas] interpolado en el minuto t (t dentro del rango del segmento)."""
+    for a, b in zip(seg, seg[1:]):
+        if a[0] <= t <= b[0]:
+            f = (t - a[0]) / max(1, b[0] - a[0])
+            return [a[i] + (b[i] - a[i]) * f for i in (1, 2, 3)]
+    return seg[-1][1:]
+
+def vol_window(c, ts, hours):
+    """[vol USD, compras, ventas, minutos cubiertos, parcial 0/1] de las últimas `hours` horas (o toda la vida si es más joven)."""
+    vh = c.get("vh") or []
+    if not vh:
+        return None
+    now = ts / 60000
+    start = now - hours * 60
+    born = (c.get("created") or c.get("first_seen") or ts) / 60000
+    tot, known_from = [0.0, 0.0, 0.0], max(start, born)
+    for sg in vh:
+        seg = sg["s"]
+        if not seg or seg[-1][0] < start:
+            continue
+        if seg[0][0] <= start:
+            base = _at(seg, start)
+        elif (sg.get("c") and sg["c"] >= start - 5) or born >= start - 5:
+            base = [0, 0, 0]              # el par nació dentro de la ventana: todo su acumulado cuenta
+        else:
+            base = seg[0][1:]             # historial empezado después del inicio de la ventana: cobertura parcial
+            known_from = max(known_from, seg[0][0])
+        last = seg[-1][1:]
+        for i in range(3):
+            tot[i] += max(0.0, last[i] - base[i])
+    cov = max(0, round(now - known_from))
+    partial = 1 if known_from > max(start, born) + 5 else 0
+    return [round(tot[0]), round(tot[1]), round(tot[2]), cov, partial]
 
 def prune(coins, cfg, ts):
     keep = {}
@@ -907,6 +974,13 @@ def run(no_trends=False):
     for c in coins.values():
         finalize(c, cfg, ts)
     coins = prune(coins, cfg, ts)
+    for c in coins.values():
+        try:
+            vol_history(c, ts)
+            c["vw"] = {str(h): vol_window(c, ts, h) for h in VOL_WINDOWS}
+        except Exception as e:
+            log("historial de volumen: error", c.get("ca"), type(e).__name__)
+    state.setdefault("vh_since", ts)
     # 7) DEX PAID (con caché por CA)
     check_dex_paid(coins, state, cfg, ts, profile_cas)
     # 8) dev (wallet creadora) + "TikTok dev 🔥" (solo informativo)
@@ -926,7 +1000,9 @@ def run(no_trends=False):
     for t in sorted(trends, key=lambda t: (-t["views"])):
         lbl = f"#{t['name']} ({t['country']})"
         out_trends.append(dict(t, coins_matched=tag_hits.get(f"Coincide con trend TikTok {lbl}", 0)))
-    lst = sorted(coins.values(), key=lambda c: c.get("created") or c["first_seen"], reverse=True)
+    # el historial de volumen (vh) se queda en state.json: en data.json solo van las ventanas ya calculadas (vw)
+    lst = sorted(({k: v for k, v in c.items() if k != "vh"} for c in coins.values()),
+                 key=lambda c: c.get("created") or c["first_seen"], reverse=True)
     data = {
         "generated_at": iso(), "generated_ms": now_ms(), "run_seconds": round(time.time() - t0, 1),
         "new_this_run": new_count, "total": len(lst), "max_age_hours": cfg["max_age_hours"],
@@ -938,6 +1014,7 @@ def run(no_trends=False):
         "dev_hot_window_days": (cfg.get("dev_hot") or {}).get("window_days", 7),
         "dev_hot_min_share": (cfg.get("dev_hot") or {}).get("min_share", 0.5),
         "dev_hot": dev_hot,
+        "vol_hist_since": state.get("vh_since"), "vol_windows": list(VOL_WINDOWS),
         "coins": lst,
     }
     save_json(DATA_PATH, data, compact=True)

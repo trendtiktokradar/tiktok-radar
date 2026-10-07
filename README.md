@@ -84,6 +84,16 @@ aprende de los motivos de entrada.
 - **Agrupar clones**: junta las coins con el mismo nombre y muestra la de más MC con "+N clones".
 - **Ocultar sin actividad** (activado por defecto): esconde coins con más de 1 h de vida, volumen 24 h < $200 y MC < $8K.
 - **NUEVA** / "Solo nuevas desde mi última visita": lo que apareció desde que abriste el panel la vez anterior.
+- Pestaña **🔥 Top volumen**: las 20 coins (mismas coins TikTok < 24 h, sin las ocultas ni las "No es TikTok") con más
+  volumen en USD en **1h / 3h / 6h / 8h**, clones sumados en un grupo (sale la principal con "+N clones"), con compras 🟢
+  y ventas 🔴 (nº de transacciones), MC, edad y badges DEX PAID / TikTok dev 🔥; al tocar una fila se abre la tarjeta
+  completa. 1h y 6h = `volume.h1/h6` y `txns` de DexScreener. 3h y 8h = **historial propio**: en cada pasada se guarda en
+  `state/state.json` (campo `vh` por coin, NO va a data.json) el volumen/compras/ventas `h24` del par (como la coin
+  tiene < 24 h, es lo acumulado desde que nació el par), un punto cada ≥ 10 min de las últimas ~8,5 h; la ventana es
+  "acumulado ahora − acumulado hace W h" (si se gradúa y cambia de par, se suman los dos). En data.json solo van las
+  ventanas calculadas (`vw: {"3": [vol, compras, ventas, min_cubiertos, parcial], "8": …}`) y `vol_hist_since`.
+  Coin más joven que la ventana = toda su vida. Si el historial no cubre la ventana (recién empezado o hueco),
+  sale ◔ "cobertura parcial" y un aviso arriba.
 - Pestaña **Buscador** (sección 8): escribes una palabra y el box te dice cuántos vídeos de TikTok hay, views, recientes vs antiguos, si sube o baja y los vídeos top.
 - Pestaña **Trends** (solo informativa), pestaña **Aprendido** (reglas aprendidas, coins marcadas, TikTok devs 🔥)
   y pestaña **Fuentes** (estado de cada fuente).
