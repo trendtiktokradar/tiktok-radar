@@ -286,6 +286,10 @@
     if ((W === 3 || W === 8) && !since) note += ` <span class="warnline">El historial aún no ha empezado: sale en la próxima pasada (≤ 5 min).</span>`;
     else if ((W === 3 || W === 8) && histMin < W * 60) note += ` <span class="warnline">⚠️ El historial empezó hace ${ago(since)}: hasta tener ${W} h, las coins más viejas que eso solo cuentan el volumen desde entonces (marcadas con ◔).</span>`;
     else if (groups.some((g) => g.partial)) note += ` ◔ = cobertura parcial (historial incompleto para esa coin).`;
+    // DexScreener caído o sin datos: las métricas son de la última actualización buena → avisarlo
+    const gen = DATA.generated_ms || Date.now(), upd = DATA.coins.map((c) => c.updated || 0).filter(Boolean);
+    const freshN = upd.filter((u) => gen - u < 15 * 60000).length, lastGood = upd.length ? Math.max(...upd) : 0;
+    if (upd.length && freshN < upd.length * 0.3) note = `<span class="warnline">⚠️ DexScreener no está dando datos de pares en las últimas pasadas: los volúmenes son de la última actualización buena (${lastGood ? "hace " + ago(lastGood) : "–"})${W === 3 || W === 8 ? " y el historial no avanza" : ""}.</span><br>` + note;
     $("#topnote").innerHTML = note;
     $("#toplist").innerHTML = groups.length ? groups.map(topRow).join("") : `<div class="empty">Sin datos de volumen para esta ventana todavía.</div>`;
   }

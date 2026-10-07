@@ -980,7 +980,9 @@ def run(no_trends=False):
             c["vw"] = {str(h): vol_window(c, ts, h) for h in VOL_WINDOWS}
         except Exception as e:
             log("historial de volumen: error", c.get("ca"), type(e).__name__)
-    state.setdefault("vh_since", ts)
+    firsts = [sg["s"][0][0] for c in coins.values() for sg in (c.get("vh") or [])[:1] if sg["s"]]
+    vh_since = min(firsts) * 60000 if firsts else None     # punto más antiguo del historial (≤ ~8,5 h)
+    state.pop("vh_since", None)
     # 7) DEX PAID (con caché por CA)
     check_dex_paid(coins, state, cfg, ts, profile_cas)
     # 8) dev (wallet creadora) + "TikTok dev 🔥" (solo informativo)
@@ -1014,7 +1016,7 @@ def run(no_trends=False):
         "dev_hot_window_days": (cfg.get("dev_hot") or {}).get("window_days", 7),
         "dev_hot_min_share": (cfg.get("dev_hot") or {}).get("min_share", 0.5),
         "dev_hot": dev_hot,
-        "vol_hist_since": state.get("vh_since"), "vol_windows": list(VOL_WINDOWS),
+        "vol_hist_since": vh_since, "vol_windows": list(VOL_WINDOWS),
         "coins": lst,
     }
     save_json(DATA_PATH, data, compact=True)
