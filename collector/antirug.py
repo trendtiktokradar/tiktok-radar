@@ -7,7 +7,9 @@ Datos: API web pública de Jupiter (datapi.jup.ag, sin login): hasta 100 CAs por
 Reglas (una coin que cumpla alguna NO sale en la web; en los avisos solo cuentan 🧹 y 🤖):
   🧹 fake_chart  MC ≥ $10K y fees < 1 SOL por cada $30K de MC          (chart/MC falso, nadie opera de verdad)
   🤖 wash        volumen de toda su vida ≥ $5K y fees en USD < 0,3 % del volumen   (volumen de bots)
-  💀 rug         ATH ≥ $30K y MC < 10 % del ATH
+  💀 rug         ATH ≥ $30K, MC < 10 % del ATH y fees < 1 SOL por cada $30K de ATH (el pump nunca tuvo traders
+                de verdad). Las coins reales que se han hundido (fees altas para su ATH) SÍ salen.
+                Datos del 8-oct: pumps falsos 0,004-0,34 SOL por $30K de ATH; coins reales hundidas 4,5-8,1.
 Si Jupiter no responde (o no trae la coin): no se filtra, salvo el respaldo de 🤖 con DexScreener
 (tamaño medio de operación < $15 con ≥ 1000 transacciones en 24 h).
 """
@@ -27,6 +29,7 @@ WASH_MIN_VOL = 5_000
 WASH_MAX_FEE_RATIO = 0.003        # 0,3 %
 RUG_MIN_ATH = 30_000
 RUG_MAX_FRACTION = 0.10
+RUG_SOL_PER_ATH = 1 / 30_000      # 1 SOL por cada $30K de ATH
 FB_MAX_AVG_TRADE = 15
 FB_MIN_TXNS = 1000
 
@@ -86,7 +89,7 @@ def reasons(c, j, sol, alert=False):
         if vol >= WASH_MIN_VOL and fees * sol < WASH_MAX_FEE_RATIO * vol:
             out.append("wash")
         ath = max(c.get("ath") or 0, mc)
-        if not alert and ath >= RUG_MIN_ATH and mc < RUG_MAX_FRACTION * ath:
+        if not alert and ath >= RUG_MIN_ATH and mc < RUG_MAX_FRACTION * ath and fees < ath * RUG_SOL_PER_ATH:
             out.append("rug")
     elif not alert:
         v24 = (m.get("vol") or {}).get("h24") or 0

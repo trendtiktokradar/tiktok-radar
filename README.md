@@ -90,7 +90,8 @@ aprende de los motivos de entrada.
   alguna regla **desaparece de la web** (Coins, Top volumen, clones y sumas de grupo):
   - 🧹 `fake_chart`: MC ≥ $10K y fees < 1 SOL por cada $30K de MC (chart/MC falso).
   - 🤖 `wash`: volumen de toda su vida ≥ $5K y fees en USD < 0,3 % del volumen (volumen de bots; lo normal es ~0,5-1 %).
-  - 💀 `rug`: ATH ≥ $30K y MC < 10 % del ATH.
+  - 💀 `rug`: ATH ≥ $30K, MC < 10 % del ATH **y** fees < 1 SOL por cada $30K de ATH (pump falso que nunca tuvo
+    traders). Las coins reales que se han hundido (con fees de verdad para su ATH) **sí salen**.
   Si Jupiter falla (o no trae la coin) no se filtra, salvo el respaldo de 🤖 con DexScreener: operación media < $15
   con ≥ 1000 transacciones en 24 h. Para auditar falsos positivos: en `state/state.json` cada coin filtrada lleva
   `rf` (motivos), `rf_since` y `jup` (datos de Jupiter); `state.antirug_log` guarda las últimas 500 filtradas (con MC,
