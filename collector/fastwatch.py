@@ -195,7 +195,7 @@ class FastWatch:
             log(f"AVISO {kind}: {c.get('name')} ({c['ca'][:6]}…) latencia {lat if lat is not None else '?'} s")
         elif r == "stale":
             log(f"{kind} antiguo (no se avisa): {c.get('name')} ({c['ca'][:6]}…)")
-        elif r not in ("dup", "weak", "off"):
+        elif r not in ("dup", "weak", "off", "filtered"):   # filtered: lo apunta alerts.py (una vez por coin)
             log(f"aviso {kind} {c['ca'][:6]}…: {r}")
         return r
 

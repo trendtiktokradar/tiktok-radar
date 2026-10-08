@@ -253,6 +253,21 @@ def deliver(tg, st, kind, c, now, A, event_ts=None, fresh_at=None):
         st["sent"][kind][ca] = now; return "paused"  # en pausa: se dan por vistos (sin avalancha al reanudar)
     if ((c.get("metrics") or {}).get("mc") or 0) < (A.get("min_mc", 0) or 0):
         return "low"  # se avisará si más adelante supera el mínimo
+    # anti-rug en el momento del aviso (Jupiter fresco): 🧹 chart falso / 🤖 volumen bot → no se avisa.
+    # Si Jupiter falla, se avisa igual. No se marca como enviado: si deja de cumplir la regla (y sigue fresco), se avisa.
+    try:
+        import antirug
+        why = antirug.alert_check(c)
+    except Exception:
+        why = []
+    if why:
+        k = ca + ":" + kind
+        fl = st.setdefault("filtered", {})
+        if k not in fl:
+            log(f"aviso {kind} omitido por anti-rug ({', '.join(why)}): {c.get('name')} ${c.get('symbol')} {ca}")
+        fl[k] = {"at": now, "why": why, "name": c.get("name")}
+        st["filtered"] = dict(list(fl.items())[-300:])
+        return "filtered"
     if tg.send(st["chat_id"], coin_text(c, kind, now, event_ts=event_ts)):
         st["sent"][kind][ca] = now
         st["sent_total"] = st.get("sent_total", 0) + 1
@@ -292,7 +307,7 @@ def alert_now(kind, c, cfg, event_ts=None, tg=None, fresh_at=None):
         if not st.get("chat_id") or not st.get("seeded"):
             return "nochat"
         r = deliver(tg, st, kind, c, now, A, event_ts, fresh_at)
-        if r in ("sent", "paused", "stale"):
+        if r in ("sent", "paused", "stale", "filtered"):
             save_state(st)
     return r
 

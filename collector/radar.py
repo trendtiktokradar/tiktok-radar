@@ -537,6 +537,52 @@ def vol_window(c, ts, hours):
     partial = 1 if known_from > max(start, born) + 5 else 0
     return [round(tot[0]), round(tot[1]), round(tot[2]), cov, partial]
 
+# ---------------------------------------------------------------- filtro anti-rug (collector/antirug.py)
+def antirug_pass(coins, state, ts):
+    """Jupiter en lotes de ≤100 CAs; marca c["rf"] = motivos. Las marcadas no salen en data.json (se quedan en el
+    estado para auditar: c["rf"], c["jup"] y state["antirug_log"])."""
+    try:
+        import antirug
+    except Exception as e:
+        log("anti-rug: no se pudo cargar", type(e).__name__); return
+    t = time.time()
+    tok, sol, bad = antirug.fetch(list(coins))
+    if sol:
+        state["sol_usd"] = [sol, ts]
+    elif (state.get("sol_usd") or [0, 0])[1] > ts - 6 * 3_600_000:
+        sol = state["sol_usd"][0]
+    cnt, new, fb = {}, [], 0
+    alog = state.setdefault("antirug_log", [])
+    for ca, c in coins.items():
+        j = tok.get(ca)
+        if j:
+            c["jup"] = antirug.compact(j, ts)
+        else:
+            fb += 1
+        rs = antirug.reasons(c, j if j else None, sol)
+        if rs:
+            if not c.get("rf"):
+                c["rf_since"] = ts
+                new.append(c)
+                alog.append({"ca": ca, "name": c.get("name"), "symbol": c.get("symbol"), "at": ts, "why": rs,
+                             "mc": (c.get("metrics") or {}).get("mc"), "ath": c.get("ath"),
+                             "fees": (c.get("jup") or {}).get("fees") if j else None,
+                             "vol": (c.get("jup") or {}).get("vol") if j else None, "jupiter": bool(j)})
+            c["rf"] = rs
+            for r in rs:
+                cnt[r] = cnt.get(r, 0) + 1
+        else:
+            c.pop("rf", None); c.pop("rf_since", None)
+    state["antirug_log"] = alog[-500:]
+    n = sum(1 for c in coins.values() if c.get("rf"))
+    state["antirug_last"] = {"at": ts, "filtered": n, "by_rule": cnt, "jupiter_coins": len(tok), "jupiter_failed_calls": bad,
+                             "fallback_coins": fb, "sol_usd": sol}
+    log(f"anti-rug: {n} de {len(coins)} filtradas ({', '.join(f'{k}={v}' for k, v in sorted(cnt.items())) or '-'}) · "
+        f"Jupiter {len(tok)}/{len(coins)} coins ({bad} llamadas fallidas, {time.time() - t:.1f}s) · SOL ${sol or '?'}")
+    for c in new[:30]:
+        log(f"  anti-rug nueva: {c.get('name')} ${c.get('symbol')} {c['ca']} → {', '.join(c['rf'])} "
+            f"(MC {round((c.get('metrics') or {}).get('mc') or 0)}, fees {(c.get('jup') or {}).get('fees')})")
+
 def prune(coins, cfg, ts):
     keep = {}
     limit_ms = cfg["prune_after_days_dead"] * 86_400_000
@@ -983,6 +1029,7 @@ def run(no_trends=False):
     firsts = [sg["s"][0][0] for c in coins.values() for sg in (c.get("vh") or [])[:1] if sg["s"]]
     vh_since = min(firsts) * 60000 if firsts else None     # punto más antiguo del historial (≤ ~8,5 h)
     state.pop("vh_since", None)
+    antirug_pass(coins, state, ts)
     # 7) DEX PAID (con caché por CA)
     check_dex_paid(coins, state, cfg, ts, profile_cas)
     # 8) dev (wallet creadora) + "TikTok dev 🔥" (solo informativo)
@@ -995,6 +1042,8 @@ def run(no_trends=False):
     # 6) data.json para la web
     tag_hits = {}
     for c in coins.values():
+        if c.get("rf"):
+            continue
         for r in c["reasons"]:
             if r["t"] == "trend":
                 tag_hits[r["d"]] = tag_hits.get(r["d"], 0) + 1
@@ -1003,7 +1052,8 @@ def run(no_trends=False):
         lbl = f"#{t['name']} ({t['country']})"
         out_trends.append(dict(t, coins_matched=tag_hits.get(f"Coincide con trend TikTok {lbl}", 0)))
     # el historial de volumen (vh) se queda en state.json: en data.json solo van las ventanas ya calculadas (vw)
-    lst = sorted(({k: v for k, v in c.items() if k != "vh"} for c in coins.values()),
+    # las filtradas por el anti-rug (rf) no salen en la web (ni en Coins ni en Top volumen ni como clones)
+    lst = sorted(({k: v for k, v in c.items() if k not in ("vh", "jup")} for c in coins.values() if not c.get("rf")),
                  key=lambda c: c.get("created") or c["first_seen"], reverse=True)
     data = {
         "generated_at": iso(), "generated_ms": now_ms(), "run_seconds": round(time.time() - t0, 1),
@@ -1016,7 +1066,7 @@ def run(no_trends=False):
         "dev_hot_window_days": (cfg.get("dev_hot") or {}).get("window_days", 7),
         "dev_hot_min_share": (cfg.get("dev_hot") or {}).get("min_share", 0.5),
         "dev_hot": dev_hot,
-        "vol_hist_since": vh_since, "vol_windows": list(VOL_WINDOWS),
+        "vol_hist_since": vh_since, "antirug": state.get("antirug_last"), "vol_windows": list(VOL_WINDOWS),
         "coins": lst,
     }
     save_json(DATA_PATH, data, compact=True)

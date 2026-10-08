@@ -84,6 +84,20 @@ aprende de los motivos de entrada.
 - **Agrupar clones**: junta las coins con el mismo nombre y muestra la de más MC con "+N clones".
 - **Ocultar sin actividad** (activado por defecto): esconde coins con más de 1 h de vida, volumen 24 h < $200 y MC < $8K.
 - **NUEVA** / "Solo nuevas desde mi última visita": lo que apareció desde que abriste el panel la vez anterior.
+- **Filtro anti-rug** (`collector/antirug.py`, sin IA): en cada pasada se piden a la API web pública de Jupiter
+  (`datapi.jup.ag/v1/assets/search`, sin login, ≤ 100 CAs por llamada, ~2 s para todo el radar) las **fees totales
+  pagadas** por los traders (SOL, como el "Fees" de Axiom/GMGN), holders, traders y volumen. Una coin que cumpla
+  alguna regla **desaparece de la web** (Coins, Top volumen, clones y sumas de grupo):
+  - 🧹 `fake_chart`: MC ≥ $10K y fees < 1 SOL por cada $30K de MC (chart/MC falso).
+  - 🤖 `wash`: volumen de toda su vida ≥ $5K y fees en USD < 0,3 % del volumen (volumen de bots; lo normal es ~0,5-1 %).
+  - 💀 `rug`: ATH ≥ $30K y MC < 10 % del ATH.
+  Si Jupiter falla (o no trae la coin) no se filtra, salvo el respaldo de 🤖 con DexScreener: operación media < $15
+  con ≥ 1000 transacciones en 24 h. Para auditar falsos positivos: en `state/state.json` cada coin filtrada lleva
+  `rf` (motivos), `rf_since` y `jup` (datos de Jupiter); `state.antirug_log` guarda las últimas 500 filtradas (con MC,
+  ATH, fees y volumen al filtrarlas) y `state.antirug_last` / `data.json → antirug` el resumen de la pasada; el log
+  de la pasada (`logs/radar.log`) dice cuántas por regla y cuáles son nuevas. **Avisos de Telegram:** justo antes de
+  enviar se consulta Jupiter para esa coin; si cumple 🧹 o 🤖 no se avisa (se apunta una vez en el log y en
+  `state/telegram.json → filtered`); 💀 no cuenta para avisos; si Jupiter falla, se avisa igual.
 - Pestaña **🔥 Top volumen**: las 20 coins (mismas coins TikTok < 24 h, sin las ocultas ni las "No es TikTok") con más
   volumen en USD en **1h / 3h / 6h / 8h**, clones sumados en un grupo (sale la principal con "+N clones"), con compras 🟢
   y ventas 🔴 (nº de transacciones), MC, edad y badges DEX PAID / TikTok dev 🔥; al tocar una fila se abre la tarjeta
