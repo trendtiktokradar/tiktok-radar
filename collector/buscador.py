@@ -11,8 +11,8 @@ Qué hace (bajo demanda, cuando Alex busca una palabra en la pestaña "Buscador"
 Caché 45 min por palabra, 1 búsqueda nueva cada 4 s como mucho, resultados parciales si una fuente falla.
 Watchlist opcional: las palabras que Alex sigue guardan una foto diaria (vídeos/views) → curva de crecimiento real.
 
-Se expone a internet con un "quick tunnel" gratis de Cloudflare (cloudflared, sin cuenta). Como la URL cambia
-al reiniciar, el servicio publica la URL actual en box.json de la rama "feedback" del repo; la función de Vercel
+Se expone a internet con un túnel gratis de Pinggy (ssh sobre TLS por el 443, sin cuenta; el box bloquea el 7844 de cloudflared). La URL cambia
+al reiniciar y cada ~50 min (los túneles gratis caducan a los 60), el servicio publica la URL actual en box.json de la rama "feedback" del repo; la función de Vercel
 /api/search la lee de ahí (el navegador nunca ve la URL del box). Cada petición lleva el PIN del panel, que el
 servicio comprueba preguntando a /api/search (action "check") de la web: el box no guarda el PIN.
 
@@ -33,7 +33,6 @@ REPO = os.environ.get("RADAR_REPO", "trendtiktokradar/tiktok-radar")
 BOX_BRANCH = os.environ.get("RADAR_FEEDBACK_BRANCH", "feedback")
 BOX_FILE = "box.json"
 TOKEN_VAR = os.environ.get("RADAR_TOKEN_VAR", "GITHUB_TOKEN_TIKTOK_RADAR")
-CLOUDFLARED = os.path.expanduser(os.environ.get("CLOUDFLARED", "~/.local/bin/cloudflared"))
 TUNNEL = os.environ.get("BUSCADOR_TUNNEL", "1") == "1"     # 0 = solo local (pruebas)
 PUBLISH = os.environ.get("BUSCADOR_PUBLISH", "1") == "1"   # 0 = no escribir box.json en GitHub
 CACHE_TTL = 45 * 60
@@ -512,7 +511,14 @@ class Store:
 
 # ---------------------------------------------------------------- túnel + publicación de la URL
 class Tunnel:
-    RX = re.compile(r"https://[a-z0-9-]+\.trycloudflare\.com")
+    """Túnel público hacia 127.0.0.1:PORT con Pinggy (gratis, sin cuenta): SSH envuelto en TLS por el puerto 443
+    (el box solo deja salir 443; cloudflared/localtunnel/SSH normal no pasan). Los túneles gratis de Pinggy caducan
+    a los 60 min: a los ROTATE_S se levanta un túnel nuevo, se publica su URL y el viejo se cierra tras un margen.
+    El watchdog (tunnel_task) comprueba cada ~30 s que la URL pública responde y, si no, la rehace con espera
+    creciente (30 s → 10 min) para no hacer spam de commits ni de conexiones."""
+    RX = re.compile(r"https://[a-z0-9-]+\.free\.pinggy\.net")
+    ROTATE_S = int(os.environ.get("BUSCADOR_ROTATE_S", "3000"))   # 50 min
+    GRACE_S = 90
 
     def __init__(self):
         self.proc = None
@@ -520,50 +526,95 @@ class Tunnel:
         self.published = None
         self.since = 0
         self.bad = 0
+        self.fails = 0          # arranques fallidos seguidos (para la espera creciente)
+        self.next_try = 0.0
+        self.old = []           # (proc, cierra_en) túneles viejos que siguen vivos durante el margen
 
-    async def start(self):
-        await self.stop()
-        self.url = None
-        logf = open(ROOT / "logs" / "cloudflared.log", "ab")
-        self.proc = await asyncio.create_subprocess_exec(
-            CLOUDFLARED, "tunnel", "--no-autoupdate", "--url", f"http://127.0.0.1:{PORT}",
-            stdout=logf, stderr=asyncio.subprocess.PIPE)
-        deadline = time.time() + 60
-        while time.time() < deadline and self.proc.returncode is None:
+    def _cmd(self):
+        return ["ssh", "-T", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "LogLevel=ERROR",
+                "-o", "NumberOfPasswordPrompts=1", "-o", "ServerAliveInterval=15", "-o", "ServerAliveCountMax=3", "-o", "ExitOnForwardFailure=yes",
+                "-o", "ProxyCommand=openssl s_client -quiet -verify_quiet -connect a.pinggy.io:443 -servername a.pinggy.io 2>/dev/null",
+                "-p", "443", f"-R0:127.0.0.1:{PORT}", "a.pinggy.io"]
+
+    async def _spawn(self):
+        """Lanza un ssh nuevo y devuelve (proc, url) o (None, None)."""
+        logf = open(ROOT / "logs" / "tunnel.log", "ab")
+        proc = await asyncio.create_subprocess_exec(*self._cmd(), stdin=asyncio.subprocess.DEVNULL,
+                                                    stdout=asyncio.subprocess.PIPE, stderr=logf, start_new_session=True,
+                                                    env=dict(os.environ, SSH_ASKPASS=str(ROOT / "scripts" / "empty_askpass.sh"), SSH_ASKPASS_REQUIRE="force", DISPLAY=os.environ.get("DISPLAY", ":0")))
+        deadline = time.time() + 45
+        url = None
+        while time.time() < deadline and proc.returncode is None:
             try:
-                line = await asyncio.wait_for(self.proc.stderr.readline(), 5)
+                line = await asyncio.wait_for(proc.stdout.readline(), 5)
             except asyncio.TimeoutError:
                 continue
             if not line:
                 break
-            logf.write(line)
             m = self.RX.search(line.decode("utf8", "ignore"))
             if m:
-                self.url, self.since = m.group(0), int(time.time() * 1000)
-                log.info("túnel activo: %s", self.url)
+                url = m.group(0)
                 break
-        asyncio.get_running_loop().create_task(self._drain(logf))
-        return self.url
+        if not url:
+            await self._kill(proc)
+            return None, None
+        asyncio.get_running_loop().create_task(self._drain(proc))
+        return proc, url
 
-    async def _drain(self, logf):
+    async def _drain(self, proc):
         try:
-            while self.proc and self.proc.returncode is None:
-                line = await self.proc.stderr.readline()
-                if not line:
+            while proc.returncode is None:
+                if not await proc.stdout.readline():
                     break
-                logf.write(line)
-                logf.flush()
         except Exception:
             pass
 
-    async def stop(self):
-        if self.proc and self.proc.returncode is None:
-            self.proc.terminate()
+    @staticmethod
+    async def _kill(proc):
+        if proc and proc.returncode is None:
             try:
-                await asyncio.wait_for(self.proc.wait(), 10)
+                os.killpg(proc.pid, 15)
+            except Exception:
+                proc.terminate()
+            try:
+                await asyncio.wait_for(proc.wait(), 5)
             except asyncio.TimeoutError:
-                self.proc.kill()
+                try:
+                    os.killpg(proc.pid, 9)
+                except Exception:
+                    proc.kill()
+
+    async def start(self, http=None):
+        """Levanta un túnel nuevo. El viejo (si lo hay) queda vivo GRACE_S s para que la web tenga tiempo de leer la URL nueva."""
+        proc, url = await self._spawn()
+        if not url:
+            self.fails += 1
+            self.next_try = time.time() + min(30 * 2 ** (self.fails - 1), 600)
+            log.warning("túnel: no ha arrancado (intento %s); reintento en %ss", self.fails, int(self.next_try - time.time()))
+            return None
+        if self.proc is not None:
+            self.old.append((self.proc, time.time() + self.GRACE_S))
+        self.proc, self.url, self.since = proc, url, int(time.time() * 1000)
+        self.fails, self.bad, self.next_try = 0, 0, 0.0
+        self.born = time.time()
+        log.info("túnel activo: %s", url)
+        return url
+
+    async def reap(self):
+        keep = []
+        for p, t in self.old:
+            if time.time() >= t or p.returncode is not None:
+                await self._kill(p)
+            else:
+                keep.append((p, t))
+        self.old = keep
+
+    async def stop(self):
+        await self._kill(self.proc)
         self.proc = None
+        for p, _ in self.old:
+            await self._kill(p)
+        self.old = []
 
     async def publish(self, http):
         """Escribe box.json en la rama feedback (API Contents de GitHub). Sin token → no publica."""
@@ -865,26 +916,43 @@ class Service:
             await asyncio.sleep(15 * 60)
 
     async def tunnel_task(self):
+        """Watchdog del túnel cada ~30 s: arranca, rota antes de que caduque, vigila que la URL pública responda y
+        publica box.json SOLO cuando la URL cambia (con espera creciente si GitHub falla)."""
+        t = self.tunnel
+        pub_fail = 0
+        pub_next = 0.0
         while True:
             try:
-                if self.tunnel.proc is None or self.tunnel.proc.returncode is not None or not self.tunnel.url:
-                    await self.tunnel.start()
-                    self.tunnel.bad = 0
-                if self.tunnel.url and self.tunnel.published != self.tunnel.url:
-                    await self.tunnel.publish(self.http)
-                else:
+                await t.reap()
+                dead = t.proc is None or t.proc.returncode is not None or not t.url
+                old_age = t.url and time.time() - getattr(t, "born", time.time()) > t.ROTATE_S
+                if (dead or old_age) and time.time() >= t.next_try:
+                    if dead:
+                        log.warning("túnel caído o sin arrancar: lo levanto")
+                    else:
+                        log.info("túnel con %s min: lo rejuvenezco antes de que caduque", int((time.time() - t.born) / 60))
+                    await t.start(self.http)
+                elif t.url and not dead:
                     try:
-                        async with self.http.get(self.tunnel.url + "/health", timeout=ClientTimeout(total=15)) as r:
-                            self.tunnel.bad = 0 if r.status == 200 else self.tunnel.bad + 1
+                        async with self.http.get(t.url + "/health", timeout=ClientTimeout(total=12)) as r:
+                            t.bad = 0 if r.status == 200 else t.bad + 1
                     except Exception:
-                        self.tunnel.bad += 1
-                    if self.tunnel.bad >= 3:
-                        log.warning("el túnel no responde desde fuera: lo reinicio")
-                        await self.tunnel.stop()
+                        t.bad += 1
+                    if t.bad >= 2:
+                        log.warning("la URL pública no responde (%s fallos seguidos): rehago el túnel", t.bad)
+                        await t._kill(t.proc)
+                        t.proc = None
+                        t.next_try = 0.0
                         continue
+                if t.url and t.published != t.url and time.time() >= pub_next:
+                    if await t.publish(self.http):
+                        pub_fail = 0
+                    else:
+                        pub_fail += 1
+                        pub_next = time.time() + min(30 * 2 ** (pub_fail - 1), 600)
             except Exception as e:
                 log.warning("túnel: %s", e)
-            await asyncio.sleep(120 if self.tunnel.published == self.tunnel.url else 30)
+            await asyncio.sleep(30)
 
     # ---- HTTP
     def json(self, code, obj):

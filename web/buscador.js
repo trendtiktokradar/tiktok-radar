@@ -35,8 +35,9 @@
     no_pin: "Sin PIN no se puede buscar. Pulsa Buscar otra vez y mételo.",
     bad_pin: "PIN incorrecto: se te volverá a pedir.",
     not_configured: "Falta configurar el PIN en Vercel (variable RADAR_PIN). Mira el README → Buscador.",
-    box_offline: "El box está apagado o reiniciándose (el servicio del Buscador no responde). Prueba en unos minutos.",
-    box_timeout: "El box ha tardado demasiado. Prueba otra vez.",
+    box_offline: "No consigo conectar con el box del Buscador (el túnel se está renovando o el box se reinicia). Lo he reintentado varias veces: prueba otra vez en un minuto.",
+    box_timeout: "El box ha tardado demasiado en responder (TikTok va lento). Pulsa Buscar otra vez: lo ya consultado queda en caché.",
+    server_error: "Fallo temporal del servidor de la web. Prueba otra vez.",
     busy: "El box está ocupado con otras búsquedas: prueba en unos segundos.",
     locked: "Demasiados PIN incorrectos: el box bloquea las búsquedas durante un rato.",
     check_failed: "El box no ha podido comprobar el PIN con la web. Prueba otra vez.",
@@ -47,9 +48,20 @@
   };
   const errText = (e) => ERR[e] || "Error (" + e + ")";
 
-  async function api(body, needPin = true) {
+  // Reintenta solo (sin que haya que refrescar la web) los fallos temporales: box/túnel caído, red, 5xx.
+  const RETRY = ["box_offline", "network", "server_error"];
+  async function api(body, needPin = true, onRetry) {
     const pin = needPin ? getPin() : null;
     if (needPin && !pin) return { error: "no_pin" };
+    let r;
+    for (let i = 0; i < 3; i++) {
+      r = await api1(body, pin);
+      if (!r.error || !(RETRY.includes(r.error) || /^HTTP 5/.test(r.error))) return r;
+      if (i < 2) { if (onRetry) onRetry(i + 1); await new Promise((res) => setTimeout(res, 4000 + i * 4000)); }
+    }
+    return r;
+  }
+  async function api1(body, pin) {
     try {
       const r = await fetch(API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(Object.assign({ pin }, body)) });
       if (r.status === 404) return { error: "noapi" };
@@ -265,7 +277,7 @@
     $("#sq").value = q;
     busy = true; $("#sbtn").disabled = true;
     $("#sresult").innerHTML = `<div class="scard loading"><span class="spin"></span> Buscando “${esc(q)}” en TikTok, Google Trends y tikwm… (~5-10 s)</div>`;
-    const r = await api({ action: "search", q, fresh: !!fresh });
+    const r = await api({ action: "search", q, fresh: !!fresh }, true, (n) => { $("#sresult").innerHTML = `<div class="scard loading"><span class="spin"></span> El box no ha contestado; reintentando (${n}/2)…</div>`; });
     busy = false; $("#sbtn").disabled = false;
     if (r.error) {
       const st = ["box_offline", "not_configured", "noapi"].includes(r.error);

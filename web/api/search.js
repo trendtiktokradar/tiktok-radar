@@ -1,7 +1,7 @@
 // Función serverless de Vercel: pestaña "Buscador" del panel.
 // Hace de puente entre el navegador y el servicio del box (collector/buscador.py). El navegador NUNCA ve la URL del box.
 //
-// La URL del box (quick tunnel de Cloudflare, cambia si el box se reinicia) la publica el propio box en
+// La URL del box (túnel Pinggy; cambia si el box se reinicia y cada ~50 min) la publica el propio box en
 // box.json de la rama "feedback" del repo. Aquí se lee con la API de GitHub (sin caché; con RADAR_GH_TOKEN si existe)
 // y, si falla, de raw.githubusercontent.com. Se guarda en memoria 60 s.
 //
@@ -19,7 +19,7 @@ const crypto = require("crypto");
 
 const REPO = process.env.RADAR_REPO || "trendtiktokradar/tiktok-radar";
 const BRANCH = process.env.RADAR_FEEDBACK_BRANCH || "feedback";
-const BOX_RX = /^https:\/\/[a-z0-9-]+\.trycloudflare\.com$/;
+const BOX_RX = /^https:\/\/[a-z0-9-]+\.(trycloudflare\.com|free\.pinggy\.net|run\.pinggy-free\.link)$/;
 let boxCache = { url: null, at: 0 };
 
 function send(res, code, obj) {
@@ -70,23 +70,32 @@ async function boxUrl(force) {
   return null;
 }
 
+// Llama al box con hasta 3 intentos dentro de un presupuesto de ~55 s (maxDuration 60). Si el box no contesta con JSON
+// (túnel caído / URL vieja → página de error del proveedor) o la conexión falla, vuelve a leer box.json (URL fresca,
+// sin caché) y reintenta. Solo un timeout del propio box (búsqueda lenta en marcha) no se reintenta.
 async function callBox(path, pin, opts = {}, ms = 50000) {
-  for (let attempt = 0; attempt < 2; attempt++) {
+  const t0 = Date.now();
+  let why = "sin_url";
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const left = 55000 - (Date.now() - t0);
+    if (left < 4000) break;
     const base = await boxUrl(attempt > 0);
-    if (!base) return { status: 503, body: { error: "box_offline", why: "sin_url" } };
+    if (!base) { why = "sin_url"; await new Promise((r) => setTimeout(r, 1500)); continue; }
     try {
-      const r = await fetchT(base + path, Object.assign({}, opts, { headers: Object.assign({ "X-Radar-Pin": pin, "Content-Type": "application/json" }, opts.headers || {}) }), ms);
+      const r = await fetchT(base + path, Object.assign({}, opts, { headers: Object.assign({ "X-Radar-Pin": pin, "Content-Type": "application/json", "X-Pinggy-No-Screen": "1", "bypass-tunnel-reminder": "1" }, opts.headers || {}) }), Math.min(ms, left - 500));
       const txt = await r.text();
       let body;
       try { body = JSON.parse(txt); } catch (_) { body = null; }
       if (body && typeof body === "object") return { status: r.status, body };
-      // respuesta que no es del servicio (túnel caído → página de error de Cloudflare): reintentar con URL fresca
+      why = "respuesta_no_json_" + r.status;
     } catch (e) {
       if (e && e.name === "AbortError") return { status: 504, body: { error: "box_timeout" } };
+      why = "conexion";
     }
     boxCache = { url: null, at: 0 };
+    await new Promise((r) => setTimeout(r, 1200));
   }
-  return { status: 503, body: { error: "box_offline" } };
+  return { status: 503, body: { error: "box_offline", why } };
 }
 
 module.exports = async function handler(req, res) {
@@ -94,10 +103,12 @@ module.exports = async function handler(req, res) {
   try {
     if (req.method === "GET") {
       if (!configured) return send(res, 200, { configured: false, box: "unknown" });
-      const base = await boxUrl(false);
       let box = "offline";
-      if (base) {
-        try { const r = await fetchT(base + "/health", {}, 6000); const j = await r.json(); box = j && j.ok ? "online" : "offline"; } catch (_) { box = "offline"; boxCache = { url: null, at: 0 }; }
+      for (let i = 0; i < 2 && box !== "online"; i++) {
+        const base = await boxUrl(i > 0);
+        if (!base) continue;
+        try { const r = await fetchT(base + "/health", { headers: { "X-Pinggy-No-Screen": "1" } }, 6000); const j = await r.json(); box = j && j.ok ? "online" : "offline"; } catch (_) { box = "offline"; }
+        if (box !== "online") boxCache = { url: null, at: 0 };
       }
       return send(res, 200, { configured: true, box });
     }

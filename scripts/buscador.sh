@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Servicio del Buscador en el box (collector/buscador.py + quick tunnel de Cloudflare). Sin IA.
 #   scripts/buscador.sh start    arranca en segundo plano (nohup setsid) si no está ya en marcha
-#   scripts/buscador.sh stop     lo para (también cloudflared y Chrome)
+#   scripts/buscador.sh stop     lo para (también el túnel ssh de Pinggy y Chrome)
 #   scripts/buscador.sh restart
 #   scripts/buscador.sh status
 #   scripts/buscador.sh ensure   lo arranca solo si está caído (lo llama scripts/loop.sh cada 5 min)
@@ -21,7 +21,7 @@ start() {
   if [ -f "$ROOT/logs/buscador.log" ] && [ "$(wc -c < "$ROOT/logs/buscador.log")" -gt 5000000 ]; then
     tail -n 3000 "$ROOT/logs/buscador.log" > "$ROOT/logs/buscador.log.1" && mv "$ROOT/logs/buscador.log.1" "$ROOT/logs/buscador.log"
   fi
-  [ -f "$ROOT/logs/cloudflared.log" ] && [ "$(wc -c < "$ROOT/logs/cloudflared.log")" -gt 5000000 ] && : > "$ROOT/logs/cloudflared.log"
+  [ -f "$ROOT/logs/tunnel.log" ] && [ "$(wc -c < "$ROOT/logs/tunnel.log")" -gt 1000000 ] && : > "$ROOT/logs/tunnel.log"
   rm -f "$PIDF"
   cd "$ROOT" && BUSCADOR_PIDFILE="$PIDF" nohup setsid "$PY" "$ROOT/collector/buscador.py" >> "$ROOT/logs/buscador.log" 2>&1 < /dev/null &
   for _ in $(seq 1 20); do [ -s "$PIDF" ] && break; sleep 0.5; done   # el propio servicio escribe su pid
@@ -40,6 +40,7 @@ stop() {
   fi
   # restos (p. ej. pid perdido): por si acaso
   pkill -f "$ROOT/collector/[b]uscador.py" 2>/dev/null || true
+  pkill -f "ssh .*-R0:127.0.0.1:$PORT [a]\.pinggy\.io" 2>/dev/null || true   # túneles huérfanos
   rm -f "$PIDF"
 }
 
@@ -49,12 +50,12 @@ case "${1:-status}" in
   restart) stop; sleep 1; start ;;
   status)
     if running; then echo "en marcha (pid $(cat "$PIDF"))"; healthy && echo "health: OK" || echo "health: NO responde"; else echo "parado"; fi
-    grep -o 'https://[a-z0-9-]*\.trycloudflare\.com' "$ROOT/logs/buscador.log" 2>/dev/null | tail -1 | sed 's/^/último túnel: /'
+    grep -o 'https://[a-z0-9-]*\.free\.pinggy\.net' "$ROOT/logs/buscador.log" 2>/dev/null | tail -1 | sed 's/^/último túnel: /'
     ;;
   ensure)
     if ! running; then echo "$(date '+%F %T') Buscador caído: lo arranco"; start
     elif ! healthy; then
-      sleep 20
+      sleep 8
       if ! healthy; then echo "$(date '+%F %T') Buscador no responde: reinicio"; stop; sleep 1; start; fi
     fi
     ;;
