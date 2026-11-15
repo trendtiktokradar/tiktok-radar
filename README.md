@@ -369,6 +369,9 @@ Por qué:
 - Respaldo: GitHub Action `fallback-collector` cada 15 min (solo actúa si los datos tienen > 20 min).
 
 ### Arrancar / parar el bucle en el box
+Dependencias (idempotente, tras un reinicio del box puede faltar `.venv`): `scripts/setup.sh`.
+`scripts/loop.sh` y `scripts/buscador.sh` lo ejecutan solos si falta algo, o fallan con un error claro.
+
 ```bash
 cd /workspace/tiktok-radar
 # el entorno debe tener GITHUB_TOKEN_TIKTOK_RADAR (publicar) y TELEGRAM_BOT_TOKEN_TIKTOK_RADAR (avisos)
@@ -380,23 +383,26 @@ scripts/fastwatch.sh stop                               # parar también el vigi
 scripts/fastwatch.sh status                             # en marcha / último latido / últimos avisos
 tail -f logs/radar.log logs/fastwatch.log               # ver qué hacen
 ```
-Si el box se reinicia, el bucle y el vigilante se paran: basta con relanzar el bucle (comando de arriba), que arranca
-el vigilante y el Buscador solo (mientras, la Action de respaldo mantiene los datos, pero sin avisos).
+Este box no tiene cron ni systemd como init, así que tras un reinicio el bucle no vuelve solo: `scripts/ensure_loop.sh`
+está en `~/.profile` y `~/.bashrc` (como otros servicios del box) y lo relanza en cuanto abre un terminal o un agente,
+con los tokens que ya vienen en el entorno (nunca se escriben a disco). Mientras tanto, la Action de respaldo mantiene
+los datos, pero sin avisos. También se puede relanzar a mano con el comando de arriba.
 Para que el vigilante coja un cambio de código: `scripts/fastwatch.sh restart` (con el token de Telegram en el entorno).
 
 ### Arrancar / parar el Buscador en el box
 ```bash
 cd /workspace/tiktok-radar
-scripts/buscador.sh start      # nohup setsid: Chrome headless + cloudflared; publica box.json (necesita GITHUB_TOKEN_TIKTOK_RADAR)
+scripts/buscador.sh start      # nohup setsid: Chrome headless + túnel Pinggy (ssh/TLS 443); publica box.json (necesita GITHUB_TOKEN_TIKTOK_RADAR)
 scripts/buscador.sh status     # en marcha / health / último túnel
 scripts/buscador.sh stop       # para servicio, túnel y Chrome
 tail -f logs/buscador.log
 ```
 - `scripts/loop.sh` llama a `scripts/buscador.sh ensure` en cada vuelta (5 min): si el servicio está caído o no
-  responde, lo arranca. Así, tras reiniciar el box **basta con relanzar el bucle** (comando de arriba) y el Buscador
-  vuelve solo en ≤ 5 min con una URL nueva que publica en `box.json`.
-- Perfil de Chrome propio y sin login en `~/.tiktok-radar-chrome` (fuera del repo). cloudflared en `~/.local/bin/cloudflared`
-  (descarga: `curl -L -o ~/.local/bin/cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 && chmod +x ~/.local/bin/cloudflared`).
+  responde, lo arranca. Tras un reinicio del box, `scripts/ensure_loop.sh` relanza el bucle (y este al Buscador)
+  en cuanto hay sesión; también se puede arrancar a mano. El Buscador publica la URL nueva en `box.json`.
+- Perfil de Chrome propio y sin login en `~/.tiktok-radar-chrome` (fuera del repo). El túnel va por Pinggy (ssh + openssl
+  por el puerto 443; hace falta `openssh-client`). `scripts/setup.sh` también deja cloudflared en `~/.local/bin/cloudflared`
+  por si hace falta, pero el Buscador ya no lo usa (el box bloquea el puerto 7844).
 - Puerto local 18790 (los 8790/8791 los usa el propio box).
 
 ### Conectar Vercel (una sola vez)

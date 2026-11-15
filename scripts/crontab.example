@@ -1,2 +1,9 @@
-# Alternativa a loop.sh si la máquina tiene cron (el box actual NO tiene cron instalado):
-*/5 * * * * cd /workspace/tiktok-radar && RADAR_PUBLISH=1 RADAR_REMOTE=git@github.com:USUARIO/tiktok-radar.git RADAR_SSH_KEY=$HOME/.ssh/tiktok_radar_deploy scripts/run_once.sh >> logs/radar.log 2>&1
+# El box actual NO tiene cron ni systemd como init (PID 1 no es systemd).
+# Por eso el autoarranque no va por crontab: scripts/ensure_loop.sh se llama desde
+# ~/.profile y ~/.bashrc (igual que otros servicios del box). Tras un reinicio,
+# el bucle vuelve en cuanto un terminal o un agente abre sesión (con los tokens
+# ya inyectados en el entorno; nunca se escriben a disco).
+#
+# Si algún día hay cron, esto serviría como alternativa a loop.sh:
+# */5 * * * * cd /workspace/tiktok-radar && RADAR_PUBLISH=1 RADAR_REMOTE=https://github.com/trendtiktokradar/tiktok-radar.git scripts/run_once.sh >> logs/radar.log 2>&1
+# @reboot /workspace/tiktok-radar/scripts/ensure_loop.sh

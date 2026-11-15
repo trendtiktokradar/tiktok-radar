@@ -15,7 +15,20 @@ mkdir -p "$ROOT/logs" "$ROOT/state"
 running() { [ -f "$PIDF" ] && kill -0 "$(cat "$PIDF")" 2>/dev/null; }
 healthy() { curl -s -m 8 "http://127.0.0.1:$PORT/health" | grep -q '"ok": true'; }
 
+ensure_deps() {
+  if [ -x "$PY" ] && "$PY" -c "import aiohttp, playwright, pytrends" 2>/dev/null; then
+    return 0
+  fi
+  echo "faltan dependencias del Buscador: ejecuto scripts/setup.sh"
+  if ! "$ROOT/scripts/setup.sh"; then
+    echo "ERROR: no puedo arrancar el Buscador (falta $PY o sus paquetes). Ejecuta: scripts/setup.sh"
+    return 1
+  fi
+  [ -x "$PY" ] || { echo "ERROR: sigue faltando $PY después de setup.sh"; return 1; }
+}
+
 start() {
+  ensure_deps || return 1
   if running; then echo "ya está en marcha (pid $(cat "$PIDF"))"; return 0; fi
   # el log no crece sin límite
   if [ -f "$ROOT/logs/buscador.log" ] && [ "$(wc -c < "$ROOT/logs/buscador.log")" -gt 5000000 ]; then

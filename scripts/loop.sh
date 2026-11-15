@@ -6,6 +6,13 @@
 # Parar:  pkill -f /workspace/tiktok-radar/scripts/loop.sh  (el Buscador y el vigilante rápido siguen: ver README)
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 mkdir -p "$ROOT/logs"
+# Tras un reinicio del box puede faltar .venv (el Buscador lo necesita). setup.sh es idempotente.
+if [ ! -x "$ROOT/.venv/bin/python" ] || ! "$ROOT/.venv/bin/python" -c "import aiohttp, playwright, pytrends" 2>/dev/null; then
+  echo "$(date '+%F %T') faltan dependencias: ejecuto scripts/setup.sh" >> "$ROOT/logs/radar.log"
+  if ! "$ROOT/scripts/setup.sh" >> "$ROOT/logs/radar.log" 2>&1; then
+    echo "$(date '+%F %T') ERROR: setup.sh falló; el collector sigue, pero el Buscador no arrancará hasta que estén las deps" >> "$ROOT/logs/radar.log"
+  fi
+fi
 while true; do
   # vigilante rápido de avisos de Telegram (cada ~45 s, aparte): si está caído o colgado lo arranca (FASTWATCH=0 lo desactiva)
   [ "${FASTWATCH:-1}" = "1" ] && "$ROOT/scripts/fastwatch.sh" ensure >> "$ROOT/logs/radar.log" 2>&1
