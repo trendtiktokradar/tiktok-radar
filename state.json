@@ -1,0 +1,7153 @@
+{
+ "coins": {
+  "BfNcetwXyxFJjsnmMboPpHqpZg19ez1ueQGPGE9upump": {
+   "ca": "BfNcetwXyxFJjsnmMboPpHqpZg19ez1ueQGPGE9upump",
+   "first_seen": 1795172660172,
+   "reasons": [
+    {
+     "t": "link_tiktok",
+     "d": "Link de TikTok en sus redes/descripción",
+     "w": 3,
+     "q": true
+    }
+   ],
+   "sources": [
+    "dexscreener_profiles"
+   ],
+   "links": {
+    "x": "https://x.com/MomMumMimCat",
+    "tiktok": [
+     "https://www.tiktok.com/@bebosua550"
+    ],
+    "gmgn": "https://gmgn.ai/sol/token/BfNcetwXyxFJjsnmMboPpHqpZg19ez1ueQGPGE9upump",
+    "dexscreener": "https://dexscreener.com/solana/BfNcetwXyxFJjsnmMboPpHqpZg19ez1ueQGPGE9upump",
+    "pumpfun": "https://pump.fun/coin/BfNcetwXyxFJjsnmMboPpHqpZg19ez1ueQGPGE9upump"
+   },
+   "metrics": {
+    "mc": 2361.0,
+    "fdv": 2361.0,
+    "liq": 2394.47,
+    "price": 2.483e-06,
+    "vol": {
+     "m5": null,
+     "h1": 15.74,
+     "h6": 294.67,
+     "h24": 393187.72
+    },
+    "chg": {
+     "m5": null,
+     "h1": -0.22,
+     "h6": 0.17,
+     "h24": -90.98
+    },
+    "buys_h1": 1,
+    "sells_h1": 2,
+    "buys_h6": 5,
+    "sells_h6": 15,
+    "buys_h24": 7538,
+    "sells_h24": 5442
+   },
+   "name": "Móm Mủm Mĩm",
+   "symbol": "Móm",
+   "image": "https://cdn.dexscreener.com/cms/images/vY55DLEglntqYD6k?width=800&height=800&quality=95&format=auto",
+   "desc": "Móm Mủm Mĩm",
+   "pair": "BRUkqRJv1Xo8vAUemvqKUvT4fmYWksAXorbxhtoDtN8G",
+   "dex": "pumpswap",
+   "pair_ts": 1795191599000,
+   "created": 1795191599000,
+   "ath_seen": 81206.0,
+   "updated": 1795276084312,
+   "boosts_active": 0,
+   "last_match": 1795192584344,
+   "ath": 81206.0,
+   "ath_src": "radar",
+   "score": 3,
+   "momentum": 0.6,
+   "flags": [],
+   "dead": false,
+   "inactive": false,
+   "vh": [
+    {
+     "p": "BRUkqRJv1Xo8vAUemvqKUvT4fmYWksAXorbxhtoDtN8G",
+     "c": 29919859,
+     "s": [
+      [
+       29920489,
+       392716,
+       7520,
+       5400
+      ],
+      [
+       29920812,
+       392851,
+       7529,
+       5423
+      ],
+      [
+       29920837,
+       392851,
+       7529,
+       5423
+      ],
+      [
+       29920947,
+       392894,
+       7533,
+       5428
+      ],
+      [
+       29920982,
+       392914,
+       7534,
+       5430
+      ],
+      [
+       29921261,
+       393188,
+       7538,
+       5442
+      ],
+      [
+       29921268,
+       393188,
+       7538,
+       5442
+      ]
+     ]
+    }
+   ],
+   "vw": {
+    "3": [
+     170,
+     2,
+     7,
+     180,
+     0
+    ],
+    "8": [
+     347,
+     10,
+     21,
+     480,
+     0
+    ]
+   },
+   "jup": {
+    "fees": 15.7011,
+    "vol": 443945.0,
+    "mc": 2363.0,
+    "liq": 8416.0,
+    "holders": 255,
+    "traders": 2221,
+    "buys": 8620,
+    "sells": 6132,
+    "top10": 17.2,
+    "bot": 0.3,
+    "org": 49.7,
+    "dev_mints": 1,
+    "bundle": 2.291,
+    "at": 1795276084312
+   },
+   "dex_paid": true,
+   "dex_status": "approved",
+   "dex_paid_at": 1795189894882,
+   "dex_fresh_at": 1795189894882,
+   "boost_total": 0,
+   "dev_hot": false,
+   "dev_count": 0,
+   "dev_mass": false,
+   "rf_since": 1795210378776,
+   "rf": [
+    "wash"
+   ]
+  },
+  "7qGSNKA31KHGfTezVyoQvCYXSEdHU5mPigKNHiy7pump": {
+   "ca": "7qGSNKA31KHGfTezVyoQvCYXSEdHU5mPigKNHiy7pump",
+   "first_seen": 1795210378776,
+   "reasons": [
+    {
+     "t": "kw_name",
+     "k": "kw_name:tiktok",
+     "d": "'tiktok' en nombre/ticker",
+     "w": 3,
+     "q": true
+    }
+   ],
+   "sources": [
+    "dexscreener_search"
+   ],
+   "links": {
+    "gmgn": "https://gmgn.ai/sol/token/7qGSNKA31KHGfTezVyoQvCYXSEdHU5mPigKNHiy7pump",
+    "dexscreener": "https://dexscreener.com/solana/7qGSNKA31KHGfTezVyoQvCYXSEdHU5mPigKNHiy7pump",
+    "pumpfun": "https://pump.fun/coin/7qGSNKA31KHGfTezVyoQvCYXSEdHU5mPigKNHiy7pump"
+   },
+   "metrics": {
+    "mc": 4.86,
+    "fdv": 4.86,
+    "liq": null,
+    "price": 4.858e-09,
+    "vol": {
+     "m5": null,
+     "h1": null,
+     "h6": null,
+     "h24": 2297.06
+    },
+    "chg": {
+     "m5": null,
+     "h1": null,
+     "h6": null,
+     "h24": -99.75
+    },
+    "buys_h1": 0,
+    "sells_h1": 0,
+    "buys_h6": 0,
+    "sells_h6": 0,
+    "buys_h24": 310,
+    "sells_h24": 231
+   },
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "pair": "65DsnhEFAKitTbgxm7EEGBfpTzNgAwnmcWUZdCYDbCkZ",
+   "dex": "pumpfun",
+   "curve_seen": 1795210378776,
+   "pair_ts": 1795193096000,
+   "created": 1795193096000,
+   "ath_seen": 4.86,
+   "updated": 1795276084312,
+   "boosts_active": 0,
+   "last_match": 1795276084312,
+   "ath": 4.86,
+   "ath_src": "radar",
+   "score": 3,
+   "momentum": 0.0,
+   "flags": [],
+   "dead": false,
+   "inactive": false,
+   "vh": [
+    {
+     "p": "65DsnhEFAKitTbgxm7EEGBfpTzNgAwnmcWUZdCYDbCkZ",
+     "c": 29919884,
+     "s": [
+      [
+       29920489,
+       2297,
+       310,
+       231
+      ],
+      [
+       29920812,
+       2297,
+       310,
+       231
+      ],
+      [
+       29920837,
+       2297,
+       310,
+       231
+      ],
+      [
+       29920947,
+       2297,
+       310,
+       231
+      ],
+      [
+       29920982,
+       2297,
+       310,
+       231
+      ],
+      [
+       29921261,
+       2297,
+       310,
+       231
+      ],
+      [
+       29921268,
+       2297,
+       310,
+       231
+      ]
+     ]
+    }
+   ],
+   "vw": {
+    "3": [
+     0,
+     0,
+     0,
+     180,
+     0
+    ],
+    "8": [
+     0,
+     0,
+     0,
+     480,
+     0
+    ]
+   },
+   "jup": {
+    "fees": 0.0755,
+    "vol": 2292.0,
+    "mc": 5.0,
+    "liq": 5.0,
+    "holders": 4,
+    "traders": 28,
+    "buys": 307,
+    "sells": 231,
+    "top10": 54.4,
+    "bot": 0.0,
+    "org": 0,
+    "dev_mints": 13,
+    "bundle": null,
+    "at": 1795276084312
+   },
+   "dex_paid": false,
+   "dex_status": null,
+   "boost_total": 0,
+   "dev_hot": false,
+   "dev_count": 0,
+   "dev_mass": false
+  },
+  "DL9FadSyDVQkFqL2KGHnqvLzxRruFuaTVTKQNCngpump": {
+   "ca": "DL9FadSyDVQkFqL2KGHnqvLzxRruFuaTVTKQNCngpump",
+   "first_seen": 1795210378776,
+   "reasons": [
+    {
+     "t": "kw_name",
+     "k": "kw_name:tiktok",
+     "d": "'tiktok' en nombre/ticker",
+     "w": 3,
+     "q": true
+    }
+   ],
+   "sources": [
+    "dexscreener_search"
+   ],
+   "links": {
+    "gmgn": "https://gmgn.ai/sol/token/DL9FadSyDVQkFqL2KGHnqvLzxRruFuaTVTKQNCngpump",
+    "dexscreener": "https://dexscreener.com/solana/DL9FadSyDVQkFqL2KGHnqvLzxRruFuaTVTKQNCngpump",
+    "pumpfun": "https://pump.fun/coin/DL9FadSyDVQkFqL2KGHnqvLzxRruFuaTVTKQNCngpump"
+   },
+   "metrics": {
+    "mc": 1887.51,
+    "fdv": 1887.51,
+    "liq": null,
+    "price": 1.887e-06,
+    "vol": {
+     "m5": null,
+     "h1": null,
+     "h6": null,
+     "h24": 12.38
+    },
+    "chg": {
+     "m5": null,
+     "h1": null,
+     "h6": null,
+     "h24": -2.01
+    },
+    "buys_h1": 0,
+    "sells_h1": 0,
+    "buys_h6": 0,
+    "sells_h6": 0,
+    "buys_h24": 6,
+    "sells_h24": 3
+   },
+   "name": "TikTok ",
+   "symbol": "TIKTOK",
+   "pair": "G5AFLD9n12G8UqyEDCq4B25wVuPzpgJFtJZ6vpmD3rSv",
+   "dex": "pumpfun",
+   "curve_seen": 1795210378776,
+   "pair_ts": 1795196992000,
+   "created": 1795196992000,
+   "ath_seen": 1887.51,
+   "updated": 1795276084312,
+   "boosts_active": 0,
+   "last_match": 1795276084312,
+   "ath": 1887.51,
+   "ath_src": "radar",
+   "score": 3,
+   "momentum": 0.0,
+   "flags": [],
+   "dead": false,
+   "inactive": true,
+   "vh": [
+    {
+     "p": "G5AFLD9n12G8UqyEDCq4B25wVuPzpgJFtJZ6vpmD3rSv",
+     "c": 29919949,
+     "s": [
+      [
+       29920489,
+       12,
+       6,
+       3
+      ],
+      [
+       29920812,
+       12,
+       6,
+       3
+      ],
+      [
+       29920837,
+       12,
+       6,
+       3
+      ],
+      [
+       29920947,
+       12,
+       6,
+       3
+      ],
+      [
+       29920982,
+       12,
+       6,
+       3
+      ],
+      [
+       29921261,
+       12,
+       6,
+       3
+      ],
+      [
+       29921268,
+       12,
+       6,
+       3
+      ]
+     ]
+    }
+   ],
+   "vw": {
+    "3": [
+     0,
+     0,
+     0,
+     180,
+     0
+    ],
+    "8": [
+     0,
+     0,
+     0,
+     480,
+     0
+    ]
+   },
+   "jup": {
+    "fees": 0.0004,
+    "vol": 12.0,
+    "mc": 1886.0,
+    "liq": 2023.0,
+    "holders": 1,
+    "traders": 3,
+    "buys": 6,
+    "sells": 3,
+    "top10": 0.0,
+    "bot": null,
+    "org": 0,
+    "dev_mints": 4,
+    "bundle": null,
+    "at": 1795276084312
+   },
+   "dex_paid": false,
+   "dex_status": null,
+   "boost_total": 0,
+   "dev_hot": false,
+   "dev_count": 0,
+   "dev_mass": false
+  },
+  "7CQx6HdDjowjcDUiNs1EfYqK5bp1hAR87CRsyLg8pump": {
+   "ca": "7CQx6HdDjowjcDUiNs1EfYqK5bp1hAR87CRsyLg8pump",
+   "first_seen": 1795229360468,
+   "reasons": [
+    {
+     "t": "kw_name",
+     "k": "kw_name:tiktok",
+     "d": "'tiktok' en nombre/ticker",
+     "w": 3,
+     "q": true
+    },
+    {
+     "t": "link_tiktok",
+     "d": "Link de TikTok en sus redes/descripción",
+     "w": 3,
+     "q": true
+    }
+   ],
+   "sources": [
+    "dexscreener_search",
+    "dexscreener_profiles"
+   ],
+   "links": {
+    "tiktok": [
+     "https://www.tiktok.com/@robdamaster"
+    ],
+    "gmgn": "https://gmgn.ai/sol/token/7CQx6HdDjowjcDUiNs1EfYqK5bp1hAR87CRsyLg8pump",
+    "dexscreener": "https://dexscreener.com/solana/7CQx6HdDjowjcDUiNs1EfYqK5bp1hAR87CRsyLg8pump",
+    "pumpfun": "https://pump.fun/coin/7CQx6HdDjowjcDUiNs1EfYqK5bp1hAR87CRsyLg8pump"
+   },
+   "metrics": {
+    "mc": 2015.35,
+    "fdv": 2015.35,
+    "liq": null,
+    "price": 2.015e-06,
+    "vol": {
+     "m5": null,
+     "h1": null,
+     "h6": 5.78,
+     "h24": 72575.44
+    },
+    "chg": {
+     "m5": null,
+     "h1": null,
+     "h6": 4.85,
+     "h24": -14.06
+    },
+    "buys_h1": 0,
+    "sells_h1": 0,
+    "buys_h6": 0,
+    "sells_h6": 5,
+    "buys_h24": 1514,
+    "sells_h24": 1403
+   },
+   "name": "TikTok Coin",
+   "symbol": "TikTok",
+   "image": "https://cdn.dexscreener.com/cms/images/-UeR6KZxmDhaXmsH?width=800&height=800&quality=95&format=auto",
+   "pair": "GYWwYFvHevMJoZnBft59bEZ8egKnfmWQ5ozGyy69P14y",
+   "dex": "pumpfun",
+   "pair_ts": 1795221839000,
+   "created": 1795221839000,
+   "ath_seen": 8292.0,
+   "updated": 1795276084312,
+   "boosts_active": 0,
+   "last_match": 1795276084312,
+   "curve_seen": 1795229360468,
+   "ath": 8292.0,
+   "ath_src": "radar",
+   "score": 6,
+   "momentum": 0.0,
+   "flags": [],
+   "dead": false,
+   "inactive": false,
+   "vh": [
+    {
+     "p": "GYWwYFvHevMJoZnBft59bEZ8egKnfmWQ5ozGyy69P14y",
+     "c": 29920363,
+     "s": [
+      [
+       29920489,
+       72533,
+       1512,
+       1392
+      ],
+      [
+       29920812,
+       72570,
+       1514,
+       1398
+      ],
+      [
+       29920837,
+       72570,
+       1514,
+       1398
+      ],
+      [
+       29920947,
+       72570,
+       1514,
+       1398
+      ],
+      [
+       29920982,
+       72570,
+       1514,
+       1399
+      ],
+      [
+       29921261,
+       72575,
+       1514,
+       1403
+      ],
+      [
+       29921268,
+       72575,
+       1514,
+       1403
+      ]
+     ]
+    }
+   ],
+   "vw": {
+    "3": [
+     3,
+     0,
+     2,
+     180,
+     0
+    ],
+    "8": [
+     8,
+     0,
+     5,
+     480,
+     0
+    ]
+   },
+   "jup": {
+    "fees": 5.0642,
+    "vol": 64921.0,
+    "mc": 2018.0,
+    "liq": 2126.0,
+    "holders": 37,
+    "traders": 570,
+    "buys": 1300,
+    "sells": 1405,
+    "top10": 1.7,
+    "bot": 0.2,
+    "org": 0,
+    "dev_mints": 8,
+    "bundle": 36.299,
+    "at": 1795276084312
+   },
+   "dex_paid": true,
+   "dex_status": "approved",
+   "dex_paid_at": 1795229360468,
+   "dex_fresh_at": 1795229360468,
+   "boost_total": 0,
+   "dev_hot": false,
+   "dev_count": 0,
+   "dev_mass": false
+  },
+  "HyZej1r416GTUcUKjhGp7W7WwD64f2tjh5KUAAQAehX2": {
+   "ca": "HyZej1r416GTUcUKjhGp7W7WwD64f2tjh5KUAAQAehX2",
+   "first_seen": 1795229360468,
+   "reasons": [
+    {
+     "t": "kw_name",
+     "k": "kw_name:tiktok",
+     "d": "'tiktok' en nombre/ticker",
+     "w": 3,
+     "q": true
+    }
+   ],
+   "sources": [
+    "dexscreener_search"
+   ],
+   "links": {
+    "gmgn": "https://gmgn.ai/sol/token/HyZej1r416GTUcUKjhGp7W7WwD64f2tjh5KUAAQAehX2",
+    "dexscreener": "https://dexscreener.com/solana/HyZej1r416GTUcUKjhGp7W7WwD64f2tjh5KUAAQAehX2",
+    "pumpfun": "https://pump.fun/coin/HyZej1r416GTUcUKjhGp7W7WwD64f2tjh5KUAAQAehX2"
+   },
+   "metrics": {
+    "mc": 1926.37,
+    "fdv": 1926.37,
+    "liq": null,
+    "price": 1.926e-06,
+    "vol": {
+     "m5": null,
+     "h1": null,
+     "h6": null,
+     "h24": 40.83
+    },
+    "chg": {
+     "m5": null,
+     "h1": null,
+     "h6": null,
+     "h24": -1.97
+    },
+    "buys_h1": 0,
+    "sells_h1": 0,
+    "buys_h6": 0,
+    "sells_h6": 0,
+    "buys_h24": 1,
+    "sells_h24": 1
+   },
+   "name": "TikTok Coin by clonepump.fun",
+   "symbol": "TikTok",
+   "pair": "4kyUJBoogSFjfJpkwgQfCGkGMn8SkEZeUJ1ZRrQY1R99",
+   "dex": "pumpfun",
+   "curve_seen": 1795229360468,
+   "pair_ts": 1795222416000,
+   "created": 1795222416000,
+   "ath_seen": 1926.37,
+   "updated": 1795276084312,
+   "boosts_active": 0,
+   "last_match": 1795276084312,
+   "ath": 1926.37,
+   "ath_src": "radar",
+   "score": 3,
+   "momentum": 0.0,
+   "flags": [],
+   "dead": false,
+   "inactive": true,
+   "vh": [
+    {
+     "p": "4kyUJBoogSFjfJpkwgQfCGkGMn8SkEZeUJ1ZRrQY1R99",
+     "c": 29920373,
+     "s": [
+      [
+       29920489,
+       41,
+       1,
+       1
+      ],
+      [
+       29920812,
+       41,
+       1,
+       1
+      ],
+      [
+       29920837,
+       41,
+       1,
+       1
+      ],
+      [
+       29920947,
+       41,
+       1,
+       1
+      ],
+      [
+       29920982,
+       41,
+       1,
+       1
+      ],
+      [
+       29921261,
+       41,
+       1,
+       1
+      ],
+      [
+       29921268,
+       41,
+       1,
+       1
+      ]
+     ]
+    }
+   ],
+   "vw": {
+    "3": [
+     0,
+     0,
+     0,
+     180,
+     0
+    ],
+    "8": [
+     0,
+     0,
+     0,
+     480,
+     0
+    ]
+   },
+   "jup": {
+    "fees": 0.0015,
+    "vol": 41.0,
+    "mc": 1946.0,
+    "liq": 2067.0,
+    "holders": 1,
+    "traders": 1,
+    "buys": 1,
+    "sells": 1,
+    "top10": 1.0,
+    "bot": null,
+    "org": 0,
+    "dev_mints": 141,
+    "bundle": null,
+    "at": 1795276084312
+   },
+   "dex_paid": false,
+   "dex_status": null,
+   "boost_total": 0,
+   "dev_hot": false,
+   "dev_count": 0,
+   "dev_mass": false
+  },
+  "5kaNnmASo7DJLMoXN5X4bPWBG6LZND6ajdd5Q8HBpump": {
+   "ca": "5kaNnmASo7DJLMoXN5X4bPWBG6LZND6ajdd5Q8HBpump",
+   "first_seen": 1795229360468,
+   "reasons": [
+    {
+     "t": "kw_name",
+     "k": "kw_name:tiktok",
+     "d": "'tiktok' en nombre/ticker",
+     "w": 3,
+     "q": true
+    }
+   ],
+   "sources": [
+    "dexscreener_search"
+   ],
+   "links": {
+    "gmgn": "https://gmgn.ai/sol/token/5kaNnmASo7DJLMoXN5X4bPWBG6LZND6ajdd5Q8HBpump",
+    "dexscreener": "https://dexscreener.com/solana/5kaNnmASo7DJLMoXN5X4bPWBG6LZND6ajdd5Q8HBpump",
+    "pumpfun": "https://pump.fun/coin/5kaNnmASo7DJLMoXN5X4bPWBG6LZND6ajdd5Q8HBpump"
+   },
+   "metrics": {
+    "mc": 4000.0,
+    "fdv": 4000.0,
+    "liq": null,
+    "price": 4e-06,
+    "vol": {
+     "m5": null,
+     "h1": null,
+     "h6": null,
+     "h24": 12.1
+    },
+    "chg": {
+     "m5": null,
+     "h1": null,
+     "h6": null,
+     "h24": -0.21
+    },
+    "buys_h1": 0,
+    "sells_h1": 0,
+    "buys_h6": 0,
+    "sells_h6": 0,
+    "buys_h24": 2,
+    "sells_h24": 1
+   },
+   "name": "TikTok Coin",
+   "symbol": "TikTok",
+   "pair": "HU8ZKtaq8Q3abByd8VCecCJzCMwqGqm2kknmAFWiY3Lb",
+   "dex": "pumpfun",
+   "curve_seen": 1795229360468,
+   "pair_ts": 1795222271000,
+   "created": 1795222271000,
+   "ath_seen": 4000.0,
+   "updated": 1795276084312,
+   "boosts_active": 0,
+   "last_match": 1795276084312,
+   "ath": 4000.0,
+   "ath_src": "radar",
+   "score": 3,
+   "momentum": 0.0,
+   "flags": [],
+   "dead": false,
+   "inactive": true,
+   "vh": [
+    {
+     "p": "HU8ZKtaq8Q3abByd8VCecCJzCMwqGqm2kknmAFWiY3Lb",
+     "c": 29920371,
+     "s": [
+      [
+       29920489,
+       12,
+       2,
+       1
+      ],
+      [
+       29920812,
+       12,
+       2,
+       1
+      ],
+      [
+       29920837,
+       12,
+       2,
+       1
+      ],
+      [
+       29920947,
+       12,
+       2,
+       1
+      ],
+      [
+       29920982,
+       12,
+       2,
+       1
+      ],
+      [
+       29921261,
+       12,
+       2,
+       1
+      ],
+      [
+       29921268,
+       12,
+       2,
+       1
+      ]
+     ]
+    }
+   ],
+   "vw": {
+    "3": [
+     0,
+     0,
+     0,
+     180,
+     0
+    ],
+    "8": [
+     0,
+     0,
+     0,
+     480,
+     0
+    ]
+   },
+   "jup": {
+    "fees": 0.0002,
+    "vol": 12.0,
+    "mc": 4002.0,
+    "liq": 4289.0,
+    "holders": 1,
+    "traders": 2,
+    "buys": 2,
+    "sells": 1,
+    "top10": 0.2,
+    "bot": null,
+    "org": 0,
+    "dev_mints": 643,
+    "bundle": null,
+    "at": 1795276084312
+   },
+   "dex_paid": false,
+   "dex_status": null,
+   "boost_total": 0,
+   "dev_hot": false,
+   "dev_count": 0,
+   "dev_mass": false
+  },
+  "68V2zcH22ZK2TZG7UrZ4DhkpRYvVVxmWuVGKZRGTjeaP": {
+   "ca": "68V2zcH22ZK2TZG7UrZ4DhkpRYvVVxmWuVGKZRGTjeaP",
+   "first_seen": 1795248731304,
+   "reasons": [
+    {
+     "t": "kw_name",
+     "k": "kw_name:tiktok",
+     "d": "'tiktok' en nombre/ticker",
+     "w": 3,
+     "q": true
+    }
+   ],
+   "sources": [
+    "dexscreener_search"
+   ],
+   "links": {
+    "gmgn": "https://gmgn.ai/sol/token/68V2zcH22ZK2TZG7UrZ4DhkpRYvVVxmWuVGKZRGTjeaP",
+    "dexscreener": "https://dexscreener.com/solana/68V2zcH22ZK2TZG7UrZ4DhkpRYvVVxmWuVGKZRGTjeaP",
+    "pumpfun": "https://pump.fun/coin/68V2zcH22ZK2TZG7UrZ4DhkpRYvVVxmWuVGKZRGTjeaP"
+   },
+   "metrics": {
+    "mc": 14444.0,
+    "fdv": 14444.0,
+    "liq": 0.0,
+    "price": 1.444e-05,
+    "vol": {
+     "m5": null,
+     "h1": null,
+     "h6": null,
+     "h24": 977748.67
+    },
+    "chg": {
+     "m5": null,
+     "h1": null,
+     "h6": null,
+     "h24": 9.15
+    },
+    "buys_h1": 0,
+    "sells_h1": 0,
+    "buys_h6": 0,
+    "sells_h6": 0,
+    "buys_h24": 3343,
+    "sells_h24": 1525
+   },
+   "name": "TikTok Tv Shows",
+   "symbol": "TikTok",
+   "pair": "6SHuxgB1hQRiVU5ehAsx3y2TdUfdfxXPDq61e3mpZQAx",
+   "dex": "pumpswap",
+   "pair_ts": 1795233313000,
+   "created": 1795233313000,
+   "ath_seen": 14444.0,
+   "updated": 1795276084312,
+   "boosts_active": 0,
+   "last_match": 1795276084312,
+   "ath": 14444.0,
+   "ath_src": "radar",
+   "score": 3,
+   "momentum": 0.0,
+   "flags": [],
+   "dead": false,
+   "inactive": false,
+   "vh": [
+    {
+     "p": "6SHuxgB1hQRiVU5ehAsx3y2TdUfdfxXPDq61e3mpZQAx",
+     "c": 29920555,
+     "s": [
+      [
+       29920812,
+       977749,
+       3343,
+       1525
+      ],
+      [
+       29920837,
+       977749,
+       3343,
+       1525
+      ],
+      [
+       29920947,
+       977749,
+       3343,
+       1525
+      ],
+      [
+       29920982,
+       977749,
+       3343,
+       1525
+      ],
+      [
+       29921261,
+       977749,
+       3343,
+       1525
+      ],
+      [
+       29921268,
+       977749,
+       3343,
+       1525
+      ]
+     ]
+    }
+   ],
+   "vw": {
+    "3": [
+     0,
+     0,
+     0,
+     180,
+     0
+    ],
+    "8": [
+     0,
+     0,
+     0,
+     456,
+     1
+    ]
+   },
+   "jup": {
+    "fees": 0.0359,
+    "vol": 979252.0,
+    "mc": null,
+    "liq": 0.0,
+    "holders": 24,
+    "traders": 1816,
+    "buys": 3343,
+    "sells": 1525,
+    "top10": 21.8,
+    "bot": null,
+    "org": 0,
+    "dev_mints": 2,
+    "bundle": 10.553,
+    "at": 1795276084312
+   },
+   "rf_since": 1795248731304,
+   "rf": [
+    "fake_chart",
+    "wash"
+   ],
+   "dex_paid": false,
+   "dex_status": null,
+   "boost_total": 0,
+   "dev_hot": false,
+   "dev_count": 0,
+   "dev_mass": false
+  },
+  "6hvs6yMz32JsNwof7pQige8aivr6jtd7JVYKkANJpump": {
+   "ca": "6hvs6yMz32JsNwof7pQige8aivr6jtd7JVYKkANJpump",
+   "first_seen": 1795248731304,
+   "reasons": [
+    {
+     "t": "kw_name",
+     "k": "kw_name:tiktok",
+     "d": "'tiktok' en nombre/ticker",
+     "w": 3,
+     "q": true
+    },
+    {
+     "t": "link_tiktok",
+     "d": "Link de TikTok en sus redes/descripción",
+     "w": 3,
+     "q": true
+    }
+   ],
+   "sources": [
+    "dexscreener_search"
+   ],
+   "links": {
+    "x": "https://x.com/codewordcrazy?s=11",
+    "tiktok": [
+     "https://www.tiktok.com/@codewordcrazy"
+    ],
+    "gmgn": "https://gmgn.ai/sol/token/6hvs6yMz32JsNwof7pQige8aivr6jtd7JVYKkANJpump",
+    "dexscreener": "https://dexscreener.com/solana/6hvs6yMz32JsNwof7pQige8aivr6jtd7JVYKkANJpump",
+    "pumpfun": "https://pump.fun/coin/6hvs6yMz32JsNwof7pQige8aivr6jtd7JVYKkANJpump"
+   },
+   "metrics": {
+    "mc": 10208.0,
+    "fdv": 10208.0,
+    "liq": 3778.75,
+    "price": 1.067e-05,
+    "vol": {
+     "m5": null,
+     "h1": null,
+     "h6": null,
+     "h24": 1.98
+    },
+    "chg": {
+     "m5": null,
+     "h1": null,
+     "h6": null,
+     "h24": -3.72
+    },
+    "buys_h1": 0,
+    "sells_h1": 0,
+    "buys_h6": 0,
+    "sells_h6": 0,
+    "buys_h24": 0,
+    "sells_h24": 6
+   },
+   "name": "CODEWORD CRAZY ON TIKTOK ",
+   "symbol": "CODEWORD",
+   "image": "https://cdn.dexscreener.com/cms/images/QkTRuaJypvq5vRqO?width=800&height=800&quality=95&format=auto",
+   "pair": "A39BRTAQDZVwRBbF8S6pkvyKJtm51p69MwjXUzRwB1YJ",
+   "dex": "pumpswap",
+   "pair_ts": 1795217013000,
+   "created": 1795217013000,
+   "ath_seen": 10883.0,
+   "updated": 1795276084312,
+   "boosts_active": 0,
+   "last_match": 1795276084312,
+   "ath": 10883.0,
+   "ath_src": "radar",
+   "score": 6,
+   "momentum": 0.0,
+   "flags": [],
+   "dead": false,
+   "inactive": false,
+   "vh": [
+    {
+     "p": "A39BRTAQDZVwRBbF8S6pkvyKJtm51p69MwjXUzRwB1YJ",
+     "c": 29920283,
+     "s": [
+      [
+       29920812,
+       1,
+       0,
+       3
+      ],
+      [
+       29920837,
+       2,
+       0,
+       4
+      ],
+      [
+       29920947,
+       2,
+       0,
+       6
+      ],
+      [
+       29920982,
+       2,
+       0,
+       6
+      ],
+      [
+       29921261,
+       2,
+       0,
+       6
+      ],
+      [
+       29921268,
+       2,
+       0,
+       6
+      ]
+     ]
+    }
+   ],
+   "vw": {
+    "3": [
+     0,
+     0,
+     0,
+     180,
+     0
+    ],
+    "8": [
+     1,
+     0,
+     3,
+     456,
+     1
+    ]
+   },
+   "jup": {
+    "fees": 0.0717,
+    "vol": 15.0,
+    "mc": 10561.0,
+    "liq": 2750.0,
+    "holders": 170,
+    "traders": 5,
+    "buys": 1,
+    "sells": 7,
+    "top10": 72.6,
+    "bot": null,
+    "org": 0,
+    "dev_mints": 36,
+    "bundle": null,
+    "at": 1795276084312
+   },
+   "rf_since": 1795248731304,
+   "rf": [
+    "fake_chart"
+   ],
+   "dex_paid": true,
+   "dex_status": "approved",
+   "dex_paid_at": 1792558492656,
+   "dex_fresh_at": 1792558492656,
+   "boost_total": 40,
+   "dev_hot": false,
+   "dev_count": 0,
+   "dev_mass": false
+  },
+  "9Eu7WS2WqzQ4jvW4zXH7PaxDH8rpNDUrLuHKrUbbpump": {
+   "ca": "9Eu7WS2WqzQ4jvW4zXH7PaxDH8rpNDUrLuHKrUbbpump",
+   "first_seen": 1795248731304,
+   "reasons": [
+    {
+     "t": "kw_desc",
+     "k": "kw_desc:tiktok",
+     "d": "Menciona 'tiktok' en la descripción",
+     "w": 2,
+     "q": true
+    },
+    {
+     "t": "link_tiktok",
+     "d": "Link de TikTok en sus redes/descripción",
+     "w": 3,
+     "q": true
+    }
+   ],
+   "sources": [
+    "dexscreener_profiles"
+   ],
+   "links": {
+    "x": "https://x.com/i/communities/2032629509690736721",
+    "website": "https://viola.steede.app/",
+    "tiktok": [
+     "https://www.tiktok.com/@_violasnow?_r=1&_t=ZP-9Ba2DWngNyx"
+    ],
+    "gmgn": "https://gmgn.ai/sol/token/9Eu7WS2WqzQ4jvW4zXH7PaxDH8rpNDUrLuHKrUbbpump",
+    "dexscreener": "https://dexscreener.com/solana/9Eu7WS2WqzQ4jvW4zXH7PaxDH8rpNDUrLuHKrUbbpump",
+    "pumpfun": "https://pump.fun/coin/9Eu7WS2WqzQ4jvW4zXH7PaxDH8rpNDUrLuHKrUbbpump"
+   },
+   "metrics": {
+    "mc": 4828.48,
+    "fdv": 4828.48,
+    "liq": null,
+    "price": 4.828e-06,
+    "vol": {
+     "m5": 86.5,
+     "h1": 3019.76,
+     "h6": 16141.05,
+     "h24": 120998.44
+    },
+    "chg": {
+     "m5": -3.73,
+     "h1": -22.32,
+     "h6": -62.57,
+     "h24": 132.0
+    },
+    "buys_h1": 58,
+    "sells_h1": 80,
+    "buys_h6": 306,
+    "sells_h6": 300,
+    "buys_h24": 1856,
+    "sells_h24": 1468
+   },
+   "name": "Viola Snow ",
+   "symbol": "VIOLA",
+   "image": "https://cdn.dexscreener.com/cms/images/fFPxR9xuSmxA_Q0D?width=800&height=800&quality=95&format=auto",
+   "desc": "What if I told you, I have the most beautiful dog ❤️🥀 6.5M Followers on IG: _violasnow \n4.4M Tik tok : _violasnow",
+   "pair": "BYT11J2JPQmUv7xqMWZCsNQesdfuuwsVL2uyuwhxBAyx",
+   "dex": "pumpfun",
+   "curve_seen": 1795248731304,
+   "pair_ts": 1795229463000,
+   "created": 1795229463000,
+   "ath_seen": 15528.16,
+   "updated": 1795276084312,
+   "boosts_active": 20,
+   "last_match": 1795276084312,
+   "ath": 15528.16,
+   "ath_src": "radar",
+   "score": 5,
+   "momentum": 55.84,
+   "flags": [],
+   "dead": false,
+   "inactive": false,
+   "vh": [
+    {
+     "p": "BYT11J2JPQmUv7xqMWZCsNQesdfuuwsVL2uyuwhxBAyx",
+     "c": 29920491,
+     "s": [
+      [
+       29920812,
+       99191,
+       1474,
+       1093
+      ],
+      [
+       29920837,
+       100066,
+       1488,
+       1109
+      ],
+      [
+       29920947,
+       106376,
+       1575,
+       1197
+      ],
+      [
+       29920982,
+       107337,
+       1599,
+       1217
+      ],
+      [
+       29921261,
+       120912,
+       1853,
+       1464
+      ],
+      [
+       29921268,
+       120998,
+       1856,
+       1468
+      ]
+     ]
+    }
+   ],
+   "vw": {
+    "3": [
+     8500,
+     160,
+     157,
+     180,
+     0
+    ],
+    "8": [
+     21807,
+     382,
+     375,
+     456,
+     1
+    ]
+   },
+   "jup": {
+    "fees": 4.8872,
+    "vol": 97800.0,
+    "mc": 4824.0,
+    "liq": 3311.0,
+    "holders": 135,
+    "traders": 640,
+    "buys": 1307,
+    "sells": 1468,
+    "top10": 19.4,
+    "bot": 3.6,
+    "org": 40.2,
+    "dev_mints": 6,
+    "bundle": 3.388,
+    "at": 1795276084312
+   },
+   "dex_paid": true,
+   "dex_status": "approved",
+   "dex_paid_at": 1795234009343,
+   "dex_fresh_at": 1795234009343,
+   "boost_total": 10,
+   "dev_hot": false,
+   "dev_count": 0,
+   "dev_mass": false
+  },
+  "NGK4MVhgG1Vtpri7vCoregDMd1xotEJMhsWRfg7pump": {
+   "ca": "NGK4MVhgG1Vtpri7vCoregDMd1xotEJMhsWRfg7pump",
+   "first_seen": 1795275681666,
+   "reasons": [
+    {
+     "t": "link_tiktok",
+     "d": "Link de TikTok en sus redes/descripción",
+     "w": 3,
+     "q": true
+    }
+   ],
+   "sources": [
+    "dexscreener_profiles"
+   ],
+   "links": {
+    "x": "https://x.com/imsheepsol/status/2124143018009641063",
+    "tiktok": [
+     "https://www.tiktok.com/@milkyverse99"
+    ],
+    "gmgn": "https://gmgn.ai/sol/token/NGK4MVhgG1Vtpri7vCoregDMd1xotEJMhsWRfg7pump",
+    "dexscreener": "https://dexscreener.com/solana/NGK4MVhgG1Vtpri7vCoregDMd1xotEJMhsWRfg7pump",
+    "pumpfun": "https://pump.fun/coin/NGK4MVhgG1Vtpri7vCoregDMd1xotEJMhsWRfg7pump"
+   },
+   "metrics": {
+    "mc": 2780.0,
+    "fdv": 2780.0,
+    "liq": 2605.19,
+    "price": 2.967e-06,
+    "vol": {
+     "m5": 71.59,
+     "h1": 1374.25,
+     "h6": 84633.65,
+     "h24": 84633.65
+    },
+    "chg": {
+     "m5": -7.09,
+     "h1": -9.06,
+     "h6": -89.59,
+     "h24": -89.59
+    },
+    "buys_h1": 82,
+    "sells_h1": 89,
+    "buys_h6": 2099,
+    "sells_h6": 1730,
+    "buys_h24": 2099,
+    "sells_h24": 1730
+   },
+   "name": "Milkyverse",
+   "symbol": "Milky",
+   "image": "https://cdn.dexscreener.com/cms/images/v4qVgLBhP0DWS68N?width=800&height=800&quality=95&format=auto",
+   "pair": "EefNiBggGEL49PBu3bwv1j6b6kPzs8wgnA47wqjYC2AY",
+   "dex": "pumpswap",
+   "pair_ts": 1795270545000,
+   "created": 1795270545000,
+   "ath_seen": 2992.0,
+   "updated": 1795276084312,
+   "boosts_active": 0,
+   "last_match": 1795276084312,
+   "ath": 2992.0,
+   "ath_src": "radar",
+   "score": 3,
+   "momentum": 46.72,
+   "flags": [],
+   "dead": false,
+   "inactive": false,
+   "vh": [
+    {
+     "p": "EefNiBggGEL49PBu3bwv1j6b6kPzs8wgnA47wqjYC2AY",
+     "c": 29921175,
+     "s": [
+      [
+       29921261,
+       84562,
+       2098,
+       1725
+      ],
+      [
+       29921268,
+       84634,
+       2099,
+       1730
+      ]
+     ]
+    }
+   ],
+   "vw": {
+    "3": [
+     84634,
+     2099,
+     1730,
+     92,
+     0
+    ],
+    "8": [
+     84634,
+     2099,
+     1730,
+     92,
+     0
+    ]
+   },
+   "jup": {
+    "fees": 10.6532,
+    "vol": 140845.0,
+    "mc": 2783.0,
+    "liq": 8772.0,
+    "holders": 149,
+    "traders": 1285,
+    "buys": 3110,
+    "sells": 2468,
+    "top10": 22.3,
+    "bot": 1.7,
+    "org": 42.0,
+    "dev_mints": 7160,
+    "bundle": 7.525,
+    "at": 1795276084312
+   },
+   "dex_paid": true,
+   "dex_status": "approved",
+   "dex_paid_at": 1795270469683,
+   "dex_fresh_at": 1795270469683,
+   "boost_total": 0,
+   "dev_hot": false,
+   "dev_count": 0,
+   "dev_mass": false
+  }
+ },
+ "trends_cache": {
+  "fetched": 1795275742326,
+  "items": [
+   {
+    "name": "marvelrivalss11",
+    "country": "US",
+    "countries": [
+     "US",
+     "GB"
+    ],
+    "period_days": 7,
+    "rank": 1,
+    "posts": 140387,
+    "views": 28648975,
+    "curve": [
+     92.0474511509635,
+     100.0,
+     91.91448511963648,
+     53.886712941677715,
+     18.723861466200827,
+     0,
+     5.283191283871613
+    ],
+    "creators": [
+     "jeffu_rivals",
+     "xdevoo",
+     "framebanger_"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/marvelrivalss11"
+   },
+   {
+    "name": "marvelrivalsdoomsday",
+    "country": "US",
+    "countries": [
+     "US",
+     "GB"
+    ],
+    "period_days": 7,
+    "rank": 2,
+    "posts": 134397,
+    "views": 28566188,
+    "curve": [
+     92.42103661579736,
+     100.0,
+     92.30633579384116,
+     56.26065302648513,
+     22.352650542067092,
+     0,
+     3.907602495361645
+    ],
+    "creators": [
+     "jeffu_rivals",
+     "xdevoo",
+     "framebanger_"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/marvelrivalsdoomsday"
+   },
+   {
+    "name": "faa",
+    "country": "US",
+    "countries": [
+     "US"
+    ],
+    "period_days": 7,
+    "rank": 3,
+    "posts": 23216,
+    "views": 238889894,
+    "curve": [
+     60.82876420254332,
+     100.0,
+     61.698599065180424,
+     48.63525277710218,
+     41.39821378041309,
+     20.749259621225285,
+     0
+    ],
+    "creators": [
+     "nbcchicago",
+     "engineeramber",
+     "im.here.cause.we.here"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/faa"
+   },
+   {
+    "name": "microsoft",
+    "country": "GB",
+    "countries": [
+     "GB"
+    ],
+    "period_days": 7,
+    "rank": 3,
+    "posts": 7152,
+    "views": 46457327,
+    "curve": [
+     100.0,
+     44.53505192155741,
+     20.83135376706671,
+     18.558137177653602,
+     6.427374382144918,
+     5.161119348386524,
+     0
+    ],
+    "creators": [
+     "dpsamuels",
+     "bbcnews",
+     "lianv6555"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/microsoft"
+   },
+   {
+    "name": "gta6",
+    "country": "ES",
+    "countries": [
+     "ES",
+     "FR",
+     "DE",
+     "IT",
+     "CA",
+     "AU",
+     "AR"
+    ],
+    "period_days": 7,
+    "rank": 1,
+    "posts": 81511,
+    "views": 465720706,
+    "curve": [
+     0,
+     4.343386202397519,
+     15.360334446643007,
+     25.683814201520967,
+     42.988749629110266,
+     87.14774760102341,
+     100.0
+    ],
+    "creators": [
+     "tamalikoo17",
+     "mastuerzosfamily",
+     "willycliips"
+    ],
+    "direction": "sube",
+    "tiktok_url": "https://www.tiktok.com/tag/gta6"
+   },
+   {
+    "name": "gtavi",
+    "country": "ES",
+    "countries": [
+     "ES",
+     "IT",
+     "AR"
+    ],
+    "period_days": 7,
+    "rank": 2,
+    "posts": 35124,
+    "views": 176159051,
+    "curve": [
+     0,
+     3.5883358575471433,
+     12.712215173522607,
+     26.55261026365284,
+     42.485718011748574,
+     88.18985196546346,
+     100.0
+    ],
+    "creators": [
+     "djmariioplus",
+     "cartanyaa",
+     "klipazo13"
+    ],
+    "direction": "sube",
+    "tiktok_url": "https://www.tiktok.com/tag/gtavi"
+   },
+   {
+    "name": "gta",
+    "country": "ES",
+    "countries": [
+     "ES",
+     "IT"
+    ],
+    "period_days": 7,
+    "rank": 3,
+    "posts": 33353,
+    "views": 217269273,
+    "curve": [
+     0,
+     3.837313955285651,
+     14.07253995264727,
+     23.866677022730144,
+     43.8423973801617,
+     87.7218913421327,
+     100.0
+    ],
+    "creators": [
+     "zyrpesland.2.0",
+     "3djuegos",
+     "fisperyt"
+    ],
+    "direction": "sube",
+    "tiktok_url": "https://www.tiktok.com/tag/gta"
+   },
+   {
+    "name": "diadelhombre",
+    "country": "MX",
+    "countries": [
+     "MX"
+    ],
+    "period_days": 7,
+    "rank": 1,
+    "posts": 7117,
+    "views": 32175674,
+    "curve": [
+     0,
+     4.329582797964644,
+     5.163811725738629,
+     5.85975186750355,
+     14.379100571187834,
+     37.341745175101025,
+     100.0
+    ],
+    "creators": [
+     "axelcast_171",
+     "frases_jesus0",
+     "alegria_unica_73"
+    ],
+    "direction": "sube",
+    "tiktok_url": "https://www.tiktok.com/tag/diadelhombre"
+   },
+   {
+    "name": "viernes13",
+    "country": "MX",
+    "countries": [
+     "MX"
+    ],
+    "period_days": 7,
+    "rank": 2,
+    "posts": 13605,
+    "views": 56080877,
+    "curve": [
+     100.0,
+     83.48206471361085,
+     33.763515231407986,
+     20.24988942856789,
+     11.93621469099398,
+     3.3599638751757226,
+     0
+    ],
+    "creators": [
+     "axelcast_171",
+     "capcut_lamonse",
+     "frases_jesus0"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/viernes13"
+   },
+   {
+    "name": "fig",
+    "country": "MX",
+    "countries": [
+     "MX"
+    ],
+    "period_days": 7,
+    "rank": 3,
+    "posts": 7258,
+    "views": 19345609,
+    "curve": [
+     11.806137662743946,
+     44.090552667184035,
+     78.63378087131511,
+     100.0,
+     63.255271623312915,
+     25.415418183073722,
+     0
+    ],
+    "creators": [
+     "pamgarsu",
+     "majo.gr20",
+     "eticketmx"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/fig"
+   },
+   {
+    "name": "alanzoka",
+    "country": "BR",
+    "countries": [
+     "BR"
+    ],
+    "period_days": 7,
+    "rank": 1,
+    "posts": 25668,
+    "views": 43678732,
+    "curve": [
+     5.068833109377929,
+     1.8259742323938084,
+     0,
+     14.639978113814209,
+     23.645798045949483,
+     100.0,
+     94.8507759282829
+    ],
+    "creators": [
+     "alanzoka",
+     "papagaiocortess",
+     "cortolegas"
+    ],
+    "direction": "estable",
+    "tiktok_url": "https://www.tiktok.com/tag/alanzoka"
+   },
+   {
+    "name": "thebody",
+    "country": "BR",
+    "countries": [
+     "BR"
+    ],
+    "period_days": 7,
+    "rank": 2,
+    "posts": 10135,
+    "views": 137056581,
+    "curve": [
+     0,
+     47.618299217433794,
+     73.52735493835763,
+     92.14873351710463,
+     99.60838390362257,
+     96.50648313042024,
+     100.0
+    ],
+    "creators": [
+     "netflixbrasil",
+     "jotaceditzbr",
+     "luuhfetos"
+    ],
+    "direction": "sube",
+    "tiktok_url": "https://www.tiktok.com/tag/thebody"
+   },
+   {
+    "name": "sextafeira13",
+    "country": "BR",
+    "countries": [
+     "BR"
+    ],
+    "period_days": 7,
+    "rank": 3,
+    "posts": 10925,
+    "views": 26932115,
+    "curve": [
+     100.0,
+     67.48652608851567,
+     24.073808044939586,
+     11.756132548851363,
+     7.899410762209648,
+     2.9721074618655328,
+     0
+    ],
+    "creators": [
+     "augustokoc",
+     "itz.bubly_",
+     "historiascomleo"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/sextafeira13"
+   },
+   {
+    "name": "marvelrivals",
+    "country": "FR",
+    "countries": [
+     "FR"
+    ],
+    "period_days": 7,
+    "rank": 1,
+    "posts": 53591,
+    "views": 21593385,
+    "curve": [
+     100.0,
+     46.64056677441581,
+     16.033233441358487,
+     3.0895755725600296,
+     0,
+     12.192046022102595,
+     16.27922341836576
+    ],
+    "creators": [
+     "astrae1l",
+     "littlestruggle0",
+     "khaksetri"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/marvelrivals"
+   },
+   {
+    "name": "lucia",
+    "country": "FR",
+    "countries": [
+     "FR"
+    ],
+    "period_days": 7,
+    "rank": 3,
+    "posts": 12053,
+    "views": 66314505,
+    "curve": [
+     0,
+     14.167367261545014,
+     27.11146687349465,
+     31.76858263370138,
+     41.68917907820486,
+     82.43756441604782,
+     100.0
+    ],
+    "creators": [
+     "gtanews.1",
+     "zenithogaming",
+     "fffff876838"
+    ],
+    "direction": "sube",
+    "tiktok_url": "https://www.tiktok.com/tag/lucia"
+   },
+   {
+    "name": "anya",
+    "country": "DE",
+    "countries": [
+     "DE"
+    ],
+    "period_days": 7,
+    "rank": 2,
+    "posts": 44077,
+    "views": 10042073,
+    "curve": [
+     87.84626130940502,
+     100.0,
+     45.9790489918152,
+     0,
+     22.032261569249904,
+     40.57917626797208,
+     50.14629801148548
+    ],
+    "creators": [
+     "anisaaxyy",
+     "mxxii_1",
+     "rrrrrg.mira"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/anya"
+   },
+   {
+    "name": "otaku",
+    "country": "DE",
+    "countries": [
+     "DE",
+     "CA"
+    ],
+    "period_days": 7,
+    "rank": 3,
+    "posts": 48642,
+    "views": 8093755,
+    "curve": [
+     88.80626590330242,
+     100.0,
+     48.62904929034869,
+     0,
+     13.05735324875012,
+     22.98969770303822,
+     43.322954701955766
+    ],
+    "creators": [
+     "thepathsofpainn",
+     "de021503",
+     "madiha30529"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/otaku"
+   },
+   {
+    "name": "attackontitan",
+    "country": "CA",
+    "countries": [
+     "CA"
+    ],
+    "period_days": 7,
+    "rank": 3,
+    "posts": 21402,
+    "views": 8626150,
+    "curve": [
+     79.60755876632366,
+     100.0,
+     48.7996187703728,
+     12.787778686206467,
+     0,
+     32.53116685347081,
+     24.441054842396596
+    ],
+    "creators": [
+     "crizzlive",
+     "ereneagerr",
+     "meowgicalgal"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/attackontitan"
+   },
+   {
+    "name": "luffy",
+    "country": "AU",
+    "countries": [
+     "AU"
+    ],
+    "period_days": 7,
+    "rank": 2,
+    "posts": 21174,
+    "views": 9677423,
+    "curve": [
+     78.043435634299,
+     100.0,
+     93.64441008097045,
+     12.020617573616759,
+     10.730422503930122,
+     0,
+     1.9654986780916168
+    ],
+    "creators": [
+     "wackofalltrades",
+     "coolay156",
+     "sudo.amvs"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/luffy"
+   },
+   {
+    "name": "chainsawman",
+    "country": "AU",
+    "countries": [
+     "AU"
+    ],
+    "period_days": 7,
+    "rank": 3,
+    "posts": 21248,
+    "views": 4741839,
+    "curve": [
+     76.36803576805069,
+     100.0,
+     93.88193358884558,
+     10.53465217814369,
+     4.470001119094702,
+     0,
+     1.3852236724347267
+    ],
+    "creators": [
+     "cbullyvfx",
+     "spiderlilyedit_s",
+     "aniromus"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/chainsawman"
+   },
+   {
+    "name": "fairytail",
+    "country": "PH",
+    "countries": [
+     "PH",
+     "ID"
+    ],
+    "period_days": 7,
+    "rank": 1,
+    "posts": 9295,
+    "views": 46022437,
+    "curve": [
+     1.0271314361670545,
+     0,
+     15.213845104453865,
+     98.84222189955041,
+     100.0,
+     91.01971484525494,
+     80.46703444908297
+    ],
+    "creators": [
+     "sss_shiruplays",
+     "bud4kk",
+     "choou_ml"
+    ],
+    "direction": "estable",
+    "tiktok_url": "https://www.tiktok.com/tag/fairytail"
+   },
+   {
+    "name": "notopaxsilica",
+    "country": "PH",
+    "countries": [
+     "PH"
+    ],
+    "period_days": 7,
+    "rank": 2,
+    "posts": 11920,
+    "views": 88389625,
+    "curve": [
+     0,
+     37.091883065793986,
+     53.34280248770701,
+     85.20454668312382,
+     100.0,
+     84.87361593260779,
+     49.65026894631704
+    ],
+    "creators": [
+     "prtzlx0",
+     "haron_alamada",
+     "chantzeco"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/notopaxsilica"
+   },
+   {
+    "name": "dragbike201m",
+    "country": "PH",
+    "countries": [
+     "PH",
+     "ID"
+    ],
+    "period_days": 7,
+    "rank": 3,
+    "posts": 233770,
+    "views": 247750494,
+    "curve": [
+     0,
+     79.33884933475306,
+     94.78631379849999,
+     89.29703834969976,
+     100.0,
+     85.34936807428349,
+     62.61713309382444
+    ],
+    "creators": [
+     ".rashgamer",
+     "mayypangks",
+     "ggerpssss"
+    ],
+    "direction": "estable",
+    "tiktok_url": "https://www.tiktok.com/tag/dragbike201m"
+   },
+   {
+    "name": "thegrandherofiesta",
+    "country": "ID",
+    "countries": [
+     "ID"
+    ],
+    "period_days": 7,
+    "rank": 1,
+    "posts": 58728,
+    "views": 45924629,
+    "curve": [
+     11.661060916547658,
+     5.737953059576864,
+     0,
+     75.86151723784883,
+     100.0,
+     91.28742542463326,
+     92.99752228963453
+    ],
+    "creators": [
+     "honorofkings.og.id",
+     "nafigamingreal",
+     "tukangcliper_1"
+    ],
+    "direction": "estable",
+    "tiktok_url": "https://www.tiktok.com/tag/thegrandherofiesta"
+   },
+   {
+    "name": "dilanmilea",
+    "country": "ID",
+    "countries": [
+     "ID"
+    ],
+    "period_days": 7,
+    "rank": 3,
+    "posts": 37537,
+    "views": 64051871,
+    "curve": [
+     0,
+     53.400226830494624,
+     72.92390404817924,
+     84.70182714754436,
+     100.0,
+     92.7112475482497,
+     76.48238298434154
+    ],
+    "creators": [
+     "okt4lle_lynnn",
+     "dendoootttt",
+     "abilaja499"
+    ],
+    "direction": "estable",
+    "tiktok_url": "https://www.tiktok.com/tag/dilanmilea"
+   },
+   {
+    "name": "movistararena",
+    "country": "AR",
+    "countries": [
+     "AR"
+    ],
+    "period_days": 7,
+    "rank": 3,
+    "posts": 7894,
+    "views": 28864325,
+    "curve": [
+     0,
+     91.29762832190355,
+     83.12179671911191,
+     100.0,
+     79.81109874233728,
+     96.94528935219275,
+     99.90837566438034
+    ],
+    "creators": [
+     "gabrielsotelo93",
+     "movistararenaar",
+     "iaaruuu__"
+    ],
+    "direction": "sube",
+    "tiktok_url": "https://www.tiktok.com/tag/movistararena"
+   },
+   {
+    "name": "musteatinmycity",
+    "country": "US",
+    "countries": [
+     "US",
+     "ID"
+    ],
+    "period_days": 30,
+    "rank": 1,
+    "posts": 3717384,
+    "views": 3664299932,
+    "curve": [
+     2.9325710569768235,
+     0,
+     38.297523180651694,
+     91.58920787022973,
+     96.5662533975738,
+     97.00842063816253,
+     97.71776615818189,
+     97.22895348356857,
+     97.46047574261726,
+     97.17909873569056,
+     97.08160319525565,
+     97.38021118107841,
+     98.1968903424232,
+     98.61934005340372,
+     97.85766633934823,
+     97.76346764041497,
+     98.38542640375509,
+     98.02068940469954,
+     98.19171610011475,
+     99.38310459310482,
+     100.0,
+     99.34200036372258,
+     99.29193746965886,
+     99.11344116965314,
+     98.95884349841
+    ],
+    "creators": [
+     "baddiesnfn",
+     "x.video2376",
+     "realturboo"
+    ],
+    "direction": "sube",
+    "tiktok_url": "https://www.tiktok.com/tag/musteatinmycity"
+   },
+   {
+    "name": "hairtok",
+    "country": "US",
+    "countries": [
+     "US",
+     "GB",
+     "ES"
+    ],
+    "period_days": 30,
+    "rank": 2,
+    "posts": 287343,
+    "views": 1776823410,
+    "curve": [
+     93.51162443524478,
+     100.0,
+     88.81287893304652,
+     87.30554791501265,
+     72.57523746880698,
+     75.70228050858051,
+     83.72624113257908,
+     76.86973656662941,
+     70.23535573259105,
+     64.37609699662266,
+     25.24140381152627,
+     0,
+     50.61377382201256,
+     56.279122350356744,
+     61.9299456586051,
+     67.15571829678937,
+     69.09476912968566,
+     70.33675384902615,
+     52.474326107688654,
+     64.7846462322834,
+     71.17344357990422,
+     64.89591782425522,
+     75.10045247866127,
+     78.16313737490916,
+     60.705623289032005,
+     53.194478668885466,
+     70.99632940450114,
+     70.244873123481,
+     71.60580937308482,
+     71.95441037179945
+    ],
+    "creators": [
+     "ecolchi264",
+     "katie.s.campbell",
+     "abigaillinnn"
+    ],
+    "direction": "estable",
+    "tiktok_url": "https://www.tiktok.com/tag/hairtok"
+   },
+   {
+    "name": "piratetoken",
+    "country": "US",
+    "countries": [
+     "US",
+     "GB",
+     "CA",
+     "AU"
+    ],
+    "period_days": 30,
+    "rank": 3,
+    "posts": 160949,
+    "views": 1066609842,
+    "curve": [
+     0,
+     0,
+     58.10759360776644,
+     78.94910348674794,
+     87.00899638294126,
+     89.40807179967749,
+     91.18465990571178,
+     92.04892309127794,
+     94.3719807084745,
+     98.23790794943238,
+     97.63669419640073,
+     97.38114674759692,
+     98.65845974600475,
+     97.44236971776067,
+     97.09319454352483,
+     98.92116092191753,
+     100.0,
+     98.49314782621124,
+     98.1778959775911,
+     96.86793292635932,
+     93.82325551659277
+    ],
+    "creators": [
+     "returnofmxnster",
+     "raven48480",
+     "fnprosclips"
+    ],
+    "direction": "estable",
+    "tiktok_url": "https://www.tiktok.com/tag/piratetoken"
+   },
+   {
+    "name": "livefest2026",
+    "country": "GB",
+    "countries": [
+     "GB",
+     "ES",
+     "MX",
+     "BR",
+     "FR",
+     "IT",
+     "AR"
+    ],
+    "period_days": 30,
+    "rank": 3,
+    "posts": 47297,
+    "views": 102021682,
+    "curve": [
+     6.701227231014261,
+     0,
+     3.4192518070166877,
+     4.217014648438284,
+     10.116238117300737,
+     11.11481445885673,
+     9.66268137911857,
+     8.527315711739881,
+     9.980451799338134,
+     21.593529218082104,
+     17.812242499693053,
+     8.960807844727114,
+     16.75940723212742,
+     11.549829447815924,
+     15.706821408092694,
+     36.00544648671933,
+     100.0,
+     95.04144423969832,
+     93.09544880401435,
+     91.0657890801049,
+     89.70565508851972,
+     87.50111982910113,
+     87.50231564240181,
+     86.63393839527923,
+     84.91295763844036,
+     86.29961020414122,
+     85.02584393061699,
+     87.4210726521996,
+     85.85360142524354,
+     88.34563936922954
+    ],
+    "creators": [
+     "sallayqurtz",
+     "tiktoklive_fr",
+     "tiktoklive_italy"
+    ],
+    "direction": "estable",
+    "tiktok_url": "https://www.tiktok.com/tag/livefest2026"
+   },
+   {
+    "name": "token",
+    "country": "ES",
+    "countries": [
+     "ES",
+     "DE",
+     "IT"
+    ],
+    "period_days": 30,
+    "rank": 2,
+    "posts": 18468,
+    "views": 100350175,
+    "curve": [
+     0,
+     41.28893384671436,
+     41.306216917166125,
+     43.44730285096023,
+     41.75358290498095,
+     0,
+     35.30682150434174,
+     37.89535901091202,
+     39.64030795474466,
+     0,
+     38.830606724115285,
+     55.230906751033416,
+     83.87963984870318,
+     90.3997540613975,
+     92.10483410538983,
+     91.96922508867893,
+     92.50521432887152,
+     96.40809294081163,
+     99.35982639882106,
+     97.7971954647336,
+     96.99383408339413,
+     100.0,
+     95.82154647113647,
+     94.45669645712434,
+     96.9625493651684,
+     97.9787497556502,
+     94.22994653150471,
+     91.13502945588003,
+     88.78189492517205,
+     85.42313483420794
+    ],
+    "creators": [
+     "mrkeroro10",
+     "vic007269",
+     "pirate.token22"
+    ],
+    "direction": "estable",
+    "tiktok_url": "https://www.tiktok.com/tag/token"
+   },
+   {
+    "name": "lamansionvip",
+    "country": "MX",
+    "countries": [
+     "MX"
+    ],
+    "period_days": 30,
+    "rank": 2,
+    "posts": 231476,
+    "views": 4648577612,
+    "curve": [
+     0,
+     40.80851498103792,
+     26.059602631327667,
+     17.388265068568863,
+     14.107135855413915,
+     45.69060116953627,
+     23.400304284679162,
+     40.60242922722387,
+     36.915877831790056,
+     36.879238771817676,
+     23.056635751539257,
+     16.75661915164019,
+     54.70157368188949,
+     49.674268982333516,
+     41.76832041465757,
+     45.12234490168742,
+     47.73005690446497,
+     47.87959986849854,
+     61.19622129302685,
+     97.61063398619358,
+     95.89051076155822,
+     95.85840379760086,
+     100.0,
+     95.70806768473015,
+     98.27667200206925,
+     97.66756954814483,
+     98.95726606579679,
+     94.68644981635535,
+     94.01300203351336,
+     92.51965304847852
+    ],
+    "creators": [
+     "keninis.sitio",
+     "la.cukiss",
+     "ami_clips3"
+    ],
+    "direction": "estable",
+    "tiktok_url": "https://www.tiktok.com/tag/lamansionvip"
+   },
+   {
+    "name": "mansionvip",
+    "country": "MX",
+    "countries": [
+     "MX"
+    ],
+    "period_days": 30,
+    "rank": 3,
+    "posts": 88004,
+    "views": 1695200786,
+    "curve": [
+     0,
+     33.64325946036642,
+     20.746674216711664,
+     17.300295242259146,
+     19.84307620872311,
+     39.580894254214456,
+     28.398581693012147,
+     40.12734613925622,
+     41.081150500605695,
+     40.999275785147674,
+     31.837095412788653,
+     25.063174272252642,
+     50.48447215565051,
+     43.728747623792344,
+     42.49569821166121,
+     43.84216477841028,
+     45.995971802029,
+     50.16320333588236,
+     65.13870043313325,
+     96.02349644798166,
+     93.8614985658752,
+     97.2048341021259,
+     100.0,
+     96.28464244934875,
+     97.3676009475095,
+     96.1081376761985,
+     97.7376618059251,
+     96.70934423443536,
+     93.90937014575415,
+     92.06178723960062
+    ],
+    "creators": [
+     "elrodcontreras",
+     "niki_2302",
+     "alexreyesmillan1"
+    ],
+    "direction": "estable",
+    "tiktok_url": "https://www.tiktok.com/tag/mansionvip"
+   },
+   {
+    "name": "tiktokshopbr1212",
+    "country": "BR",
+    "countries": [
+     "BR"
+    ],
+    "period_days": 30,
+    "rank": 1,
+    "posts": 1360008,
+    "views": 1416226366,
+    "curve": [
+     0,
+     9.5734516320183,
+     17.03344874410235,
+     20.179469516117646,
+     23.85969412991952,
+     28.49471247675166,
+     41.83607110703243,
+     45.5198399585926,
+     51.15365302494715,
+     53.57443256116796,
+     57.112112501243594,
+     61.866670290387184,
+     67.9780889153357,
+     70.25270155269627,
+     75.17874757719076,
+     75.94916566138934,
+     74.48508602766496,
+     76.45341038674218,
+     77.89993444706525,
+     81.38578493380975,
+     83.32767617990244,
+     86.04154900645501,
+     88.81519310935847,
+     91.14441183647102,
+     91.92354534680297,
+     93.43067286538825,
+     96.34665484753407,
+     98.63193768254628,
+     100.0,
+     99.56068826331239
+    ],
+    "creators": [
+     "pauli.oliveira",
+     "talitabalizaa",
+     "shopplau"
+    ],
+    "direction": "sube",
+    "tiktok_url": "https://www.tiktok.com/tag/tiktokshopbr1212"
+   },
+   {
+    "name": "tiktokshopbrblackfriday",
+    "country": "BR",
+    "countries": [
+     "BR"
+    ],
+    "period_days": 30,
+    "rank": 2,
+    "posts": 1599264,
+    "views": 1689053584,
+    "curve": [
+     0,
+     8.22229140528977,
+     14.411209772926073,
+     17.151793073423402,
+     19.726092758870067,
+     23.367152498577084,
+     36.33908520597686,
+     39.99830025672509,
+     44.884518561962174,
+     46.33752600483283,
+     49.611299588739236,
+     53.37995689543287,
+     58.29825491692677,
+     59.724665547308994,
+     64.7084334212609,
+     64.479571300155,
+     63.15267830997925,
+     64.65522401257319,
+     65.13095500484027,
+     67.86178645592584,
+     68.79052989684772,
+     69.51600999670012,
+     83.93728202784003,
+     90.75966887317698,
+     92.95879188119041,
+     94.65010160130822,
+     96.7151168692816,
+     99.16549617215533,
+     100.0,
+     99.20428196664919
+    ],
+    "creators": [
+     "mariffernandesdaily",
+     "engciviladrianovanjura",
+     "pauli.oliveira"
+    ],
+    "direction": "sube",
+    "tiktok_url": "https://www.tiktok.com/tag/tiktokshopbrblackfriday"
+   },
+   {
+    "name": "jeton",
+    "country": "FR",
+    "countries": [
+     "FR"
+    ],
+    "period_days": 30,
+    "rank": 1,
+    "posts": 48346,
+    "views": 220333750,
+    "curve": [
+     33.951174901963995,
+     41.35093126039844,
+     43.35041857095682,
+     42.4359327953035,
+     38.18022878305881,
+     0,
+     37.97210516179328,
+     39.17642803868219,
+     0,
+     37.290876106100676,
+     0,
+     71.70690140089687,
+     89.09314908663923,
+     91.92128025693324,
+     94.84093037948,
+     95.48924510350183,
+     95.51787209160948,
+     98.1271809905149,
+     100.0,
+     95.27655041842816,
+     93.9656513799742,
+     95.60833232305069,
+     91.66173298671885,
+     89.54110954264162,
+     91.54064104244901,
+     92.7433078238636,
+     88.0715195363814,
+     86.67798519929205,
+     85.46481065576084,
+     81.39783724342729
+    ],
+    "creators": [
+     "useresu65",
+     "rblx4664",
+     "veksy29"
+    ],
+    "direction": "estable",
+    "tiktok_url": "https://www.tiktok.com/tag/jeton"
+   },
+   {
+    "name": "mymoonmyman",
+    "country": "FR",
+    "countries": [
+     "FR",
+     "DE"
+    ],
+    "period_days": 30,
+    "rank": 3,
+    "posts": 13977,
+    "views": 30185441,
+    "curve": [
+     12.458054364479151,
+     9.365770288830017,
+     5.942889543313402,
+     5.967280613501808,
+     12.401542176789091,
+     20.942002668797755,
+     8.408456091960387,
+     0,
+     10.796128383712453,
+     21.99196077848045,
+     13.671627129220774,
+     14.56072174456795,
+     14.462141194811263,
+     16.968783634151645,
+     25.55243661657254,
+     21.581907451311444,
+     31.014374676571784,
+     30.385970432132904,
+     30.900132141740922,
+     44.586464039919214,
+     64.37188359838242,
+     74.44567631633596,
+     83.31264984440399,
+     88.12190238578374,
+     95.9067646658421,
+     100.0,
+     98.56871487415394,
+     96.65430446062399,
+     94.4955490625511,
+     92.8311371390296
+    ],
+    "creators": [
+     "aupiano.fr",
+     "mr.ego42",
+     "emratatouilllle"
+    ],
+    "direction": "estable",
+    "tiktok_url": "https://www.tiktok.com/tag/mymoonmyman"
+   },
+   {
+    "name": "tiktokwhattowatchhorrorcontest",
+    "country": "DE",
+    "countries": [
+     "DE"
+    ],
+    "period_days": 30,
+    "rank": 3,
+    "posts": 29735,
+    "views": 260920171,
+    "curve": [
+     0,
+     19.686482956219102,
+     28.727950286923758,
+     32.895449905041424,
+     55.89232744118557,
+     70.20477460809427,
+     83.93005538397638,
+     84.86355111068892,
+     85.57433503492369,
+     81.2480223599564,
+     89.00747763445811,
+     93.89824605656092,
+     95.50499278769689,
+     95.61342047419498,
+     98.61844280596243,
+     99.13633820292911,
+     93.54130935708602,
+     99.3254762972954,
+     100.0,
+     98.08997053346954,
+     95.83281112594634,
+     96.91047603683644,
+     93.91220147127335,
+     89.21667427842308,
+     94.93570420387626,
+     95.80877793772547,
+     95.96465933630324,
+     94.0560694143836
+    ],
+    "creators": [
+     "donausegen",
+     "schnucki6039",
+     "nonaim.ai3"
+    ],
+    "direction": "estable",
+    "tiktok_url": "https://www.tiktok.com/tag/tiktokwhattowatchhorrorcontest"
+   },
+   {
+    "name": "tiktokshopblackfriday",
+    "country": "IT",
+    "countries": [
+     "IT"
+    ],
+    "period_days": 30,
+    "rank": 3,
+    "posts": 162356,
+    "views": 971162107,
+    "curve": [
+     0,
+     5.692748070307785,
+     9.923670516355186,
+     13.032980280146662,
+     18.308677753697932,
+     15.973657557493182,
+     28.537600100325005,
+     24.53812734448116,
+     24.765096870891973,
+     28.80096748646463,
+     27.291506958349203,
+     28.400997438673425,
+     41.980198482636624,
+     42.4156777292305,
+     48.346669812519046,
+     55.80149305533734,
+     71.7569231435634,
+     71.51819223260378,
+     73.58251320247106,
+     76.51882414076869,
+     83.20050076401832,
+     95.31666334436089,
+     97.5572198396354,
+     100.0,
+     98.08758314368706,
+     99.07869685173306,
+     98.5083696950579,
+     97.94153869014632,
+     97.42166641121996,
+     97.4830712970462
+    ],
+    "creators": [
+     "sercola1999",
+     "coborto2.0",
+     "deariccio"
+    ],
+    "direction": "sube",
+    "tiktok_url": "https://www.tiktok.com/tag/tiktokshopblackfriday"
+   },
+   {
+    "name": "halloweekend",
+    "country": "CA",
+    "countries": [
+     "CA",
+     "AU"
+    ],
+    "period_days": 30,
+    "rank": 1,
+    "posts": 21226,
+    "views": 79805536,
+    "curve": [
+     28.880665320349863,
+     30.54554213399467,
+     37.496440206608604,
+     43.677046684465886,
+     49.30742864596513,
+     47.83621059300703,
+     53.03922556736782,
+     60.74178092634385,
+     67.36691892595817,
+     83.71808669897156,
+     96.82641312570829,
+     100.0,
+     82.9969380482435,
+     66.9535789827002,
+     55.057048814937225,
+     46.14059517617767,
+     41.59077252501029,
+     39.37120087852996,
+     34.50530394263506,
+     28.34728976595994,
+     24.307364081652196,
+     20.332047067618003,
+     23.510341181706707,
+     16.767260928994546,
+     12.293881209489331,
+     12.075206177183034,
+     8.978003747699454,
+     3.244050484029961,
+     0,
+     1.6750376319747133
+    ],
+    "creators": [
+     "shreksballz67",
+     "mrspilldatdrink",
+     "just_blossomn"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/halloweekend"
+   },
+   {
+    "name": "november",
+    "country": "CA",
+    "countries": [
+     "CA"
+    ],
+    "period_days": 30,
+    "rank": 2,
+    "posts": 12363,
+    "views": 40429493,
+    "curve": [
+     0,
+     9.780055428190042,
+     11.172182397729166,
+     9.318913738668513,
+     18.31556922304172,
+     18.23151050818327,
+     20.649102298178953,
+     23.89174725593891,
+     27.604936964465658,
+     30.14262342021198,
+     54.10367035148796,
+     100.0,
+     88.98542156208761,
+     77.47180624768716,
+     70.95330744071873,
+     66.38139156477466,
+     63.94861822704182,
+     65.66660209074172,
+     65.1366469320944,
+     62.75003502926854,
+     60.89362887596788,
+     63.81856665470424,
+     60.72952363730747,
+     57.48441070197426,
+     56.06419573709541,
+     59.09573982416719,
+     59.52805123700023,
+     61.61849612694198,
+     62.47464417691386,
+     57.44008331260899
+    ],
+    "creators": [
+     "mrmunch13",
+     ".whos_ivannn",
+     "sebassushi"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/november"
+   },
+   {
+    "name": "tihar",
+    "country": "AU",
+    "countries": [
+     "AU"
+    ],
+    "period_days": 30,
+    "rank": 1,
+    "posts": 10395,
+    "views": 17169492,
+    "curve": [
+     0,
+     5.650486501656026,
+     10.600311655032664,
+     7.376263921147987,
+     15.658578922724548,
+     13.266898756474632,
+     18.41898191552799,
+     20.275751271899342,
+     25.412591390970903,
+     28.079334534411753,
+     33.11468446203888,
+     26.92622980335312,
+     33.951134379975926,
+     37.422591099317046,
+     43.32709778305802,
+     44.69106796037145,
+     55.9700134387229,
+     66.11237163403446,
+     99.50198440816928,
+     91.34997655066117,
+     83.46385765598305,
+     100.0,
+     82.14977729015082,
+     64.53795598680358,
+     53.16042154919616,
+     46.04273333133882,
+     37.31394474190235,
+     32.145974472814345,
+     25.251553838696694,
+     23.312571592418475
+    ],
+    "creators": [
+     "sushantkc",
+     "21stnepal",
+     "sushmita_sushi"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/tihar"
+   },
+   {
+    "name": "jeolee",
+    "country": "PH",
+    "countries": [
+     "PH"
+    ],
+    "period_days": 30,
+    "rank": 1,
+    "posts": 367247,
+    "views": 5281609497,
+    "curve": [
+     89.6463344651292,
+     89.99718026779352,
+     89.89075884027919,
+     86.6626079364131,
+     88.47504981394064,
+     93.08817257847136,
+     83.81127040481779,
+     84.37729204183199,
+     65.80874742723843,
+     84.62841595381389,
+     91.74710520552567,
+     81.05156601788859,
+     38.78967344318837,
+     96.936292335885,
+     21.640377584447975,
+     0,
+     100.0,
+     85.89243515591338,
+     86.44554282624227,
+     87.95225956745298,
+     86.57992615467697,
+     74.30354950703084,
+     17.75604927950029,
+     91.92567974636108,
+     89.78843310160214,
+     89.74800197156105,
+     48.943899250013004
+    ],
+    "creators": [
+     "zeyriees",
+     "_jegeh",
+     "menu_offcial"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/jeolee"
+   },
+   {
+    "name": "gehlee",
+    "country": "PH",
+    "countries": [
+     "PH"
+    ],
+    "period_days": 30,
+    "rank": 3,
+    "posts": 403133,
+    "views": 7300577031,
+    "curve": [
+     3.5984107682963637,
+     0,
+     5.448681630166552,
+     56.192959420671265,
+     70.33171774288051,
+     66.64091896852804,
+     67.311439968262,
+     69.8737350446833,
+     77.73014526355641,
+     89.10385443102341,
+     93.4767365876802,
+     96.86161736437198,
+     96.10177276115314,
+     95.43946904155479,
+     100.0,
+     97.01960044981028,
+     95.08336680372204,
+     93.870163041401,
+     93.8949912827213,
+     91.29643791298663,
+     89.63899519020256,
+     86.58856123922864,
+     86.00155549369234,
+     86.22633043560546,
+     88.25540292962167,
+     92.00324454013976,
+     91.2706761884554,
+     90.31398446076382,
+     88.63465508264817,
+     88.58566720711171
+    ],
+    "creators": [
+     "menu_offcial",
+     "ohjellygehlee",
+     "alfaqs_"
+    ],
+    "direction": "estable",
+    "tiktok_url": "https://www.tiktok.com/tag/gehlee"
+   },
+   {
+    "name": "promomakan1111",
+    "country": "ID",
+    "countries": [
+     "ID"
+    ],
+    "period_days": 30,
+    "rank": 2,
+    "posts": 1087772,
+    "views": 1071828328,
+    "curve": [
+     3.626742411932402,
+     2.7804095662327453,
+     3.245752170414161,
+     2.5398984502713513,
+     2.51437699778746,
+     0.8415386733297066,
+     0,
+     2.3475496485657077,
+     1.998945477095996,
+     2.1352069772155606,
+     1.5281419923996094,
+     3.530572639641996,
+     3.5812964451626144,
+     3.8324883602269226,
+     8.310792853155036,
+     5.93137744442747,
+     8.638714323714499,
+     6.260795982194025,
+     7.199188606606327,
+     11.619308542642184,
+     58.99555993877597,
+     95.6337002582051,
+     97.17427366622506,
+     98.54851390107287,
+     99.76872322431281,
+     100.0,
+     82.87107126067058,
+     78.28609928518145,
+     75.04354301334492,
+     72.77909833532199
+    ],
+    "creators": [
+     "yesplusofficialshop",
+     "yogreks",
+     "sisilkhol"
+    ],
+    "direction": "estable",
+    "tiktok_url": "https://www.tiktok.com/tag/promomakan1111"
+   },
+   {
+    "name": "papaleonxiv",
+    "country": "AR",
+    "countries": [
+     "AR"
+    ],
+    "period_days": 30,
+    "rank": 2,
+    "posts": 19284,
+    "views": 177483845,
+    "curve": [
+     3.631225655077614,
+     12.196888878167279,
+     3.4503129796919345,
+     0,
+     10.896680794149193,
+     18.687355863600587,
+     24.911516936753937,
+     19.733011455267086,
+     18.95412798849972,
+     13.088252902693368,
+     17.99369370840399,
+     19.33095873535474,
+     26.355091737783454,
+     36.03000219687258,
+     41.171919534799365,
+     45.819413928770544,
+     53.185837084750034,
+     60.656924079572164,
+     71.25482233068675,
+     88.83999386921374,
+     92.9542817491273,
+     100.0,
+     89.12628966632656,
+     77.11962831617267,
+     68.00784220397681,
+     60.44592089104697,
+     59.952444879642364,
+     57.062594861518235,
+     49.87479139099351,
+     44.64021242442534
+    ],
+    "creators": [
+     "graciasportanto1",
+     "infobae",
+     "fe_en_la_vida_real"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/papaleonxiv"
+   },
+   {
+    "name": "noviembre",
+    "country": "AR",
+    "countries": [
+     "AR"
+    ],
+    "period_days": 30,
+    "rank": 3,
+    "posts": 14004,
+    "views": 61402026,
+    "curve": [
+     0,
+     6.048196493417277,
+     15.290677475536718,
+     14.994965687122258,
+     8.710967665845487,
+     21.33996268339081,
+     25.610008125140578,
+     29.04519857501036,
+     37.390644145232315,
+     43.95272606827982,
+     55.785761925551306,
+     100.0,
+     96.56370658028585,
+     84.60125515448158,
+     81.78056163692715,
+     74.35959142274754,
+     69.08989620392202,
+     61.81604760826483,
+     60.66143976393465,
+     67.16043752116066,
+     65.53021726543382,
+     69.14646054300705,
+     62.89641240007511,
+     58.24373146975614,
+     55.22970088056898,
+     55.27032263240277,
+     59.21209740764297,
+     56.62862508512381,
+     54.816858117735414,
+     54.16342072354671
+    ],
+    "creators": [
+     "marianogodoy03",
+     "kiiiiiaaa_00",
+     "diegodamiani"
+    ],
+    "direction": "baja",
+    "tiktok_url": "https://www.tiktok.com/tag/noviembre"
+   }
+  ]
+ },
+ "pump_last_created": 1791834848000,
+ "last_run": 1795276084312,
+ "last_trend_search": 1790937300757,
+ "dexpaid": {
+  "GWDHQFf5FyL1kJuWuZ9CmWmzvv1FWpGVp4ATzNi3XLt7": {
+   "checked": 1795028666583,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "CZGm8iyZUfsHayMJWXViFSaLdVwjoAc35CRw6WQ19ZQ5": {
+   "checked": 1795028666583,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "jpZCVFXtquth8YBwZR4wLfPh4a7Mz5VMviCcwQBN9qC": {
+   "checked": 1795028666583,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "9yhppuzNPWBUcCV2bdnCdSL8E5GZZURKK7f4h16gpump": {
+   "checked": 1795050591060,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "BydivRuQgRUJyLB9FtR1KhQdKnz9WqWs32wf4LmYpump": {
+   "checked": 1795028666583,
+   "paid": true,
+   "status": "approved",
+   "paid_at": 1795028666583,
+   "via": "profiles",
+   "boost_total": 0
+  },
+  "AUVacHHpTdGcp88C2p4VMFtbH6rG4AuLqXoLpRz3pump": {
+   "checked": 1795084574412,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "BvdyiGUTyiX3knHQnxdGWVZHB92bzE6uZm488hW4pump": {
+   "checked": 1795084574412,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "2kcs6mPpnMiq2sTR7zZtEv6idSb4puxiwXmasMnspump": {
+   "checked": 1795084574412,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "8fSh5FR2zaFSLfyFAKNPfoeE2Gr5i9whtgj72SN1pump": {
+   "checked": 1795084574412,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "HsMRjh6cSax1QxM3DNGX9WxjJkYpZA4SBjX7DQ4AWza8": {
+   "checked": 1795028666583,
+   "paid": true,
+   "status": "approved",
+   "paid_at": 1795004635222,
+   "boost_total": 30
+  },
+  "7FLVxmwpp2yNZHvDdZmPwopXqFD4ovjdWdnebrN9pump": {
+   "checked": 1795050591060,
+   "paid": true,
+   "status": "approved",
+   "paid_at": 1795050591060,
+   "via": "profiles",
+   "boost_total": 0
+  },
+  "2xCd5qHX5tW6pGUo7zfgHSSAnRjJwPA7Sz1Fu4fWcJjX": {
+   "checked": 1795050591060,
+   "paid": true,
+   "status": "approved",
+   "paid_at": 1795050591060,
+   "via": "profiles",
+   "boost_total": 0
+  },
+  "EAZS6E5JKT6MHsdt4DwGwCMT7xGcDR1PvZp8tHcsPB5Y": {
+   "checked": 1795084574412,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "DKt7R3Yy7nUefzHvbA4Ky5oqBhcY19783xGWiHHPpump": {
+   "checked": 1795084574412,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "HT1LyLNj1gfYczp96DJxd6f4Y94XjQTay6ts2fSfpump": {
+   "checked": 1795084574412,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "CyfdugHk3PT44hEUxpnU25CXAJsVQ9EdipKWCHEBKSdS": {
+   "checked": 1795050591060,
+   "paid": true,
+   "status": "approved",
+   "paid_at": 1795037489628,
+   "boost_total": 10
+  },
+  "YcdDVw6UteEmQn9DcEEcPNvWcr66jTYzD8MaNq9pump": {
+   "checked": 1795070055491,
+   "paid": true,
+   "status": "approved",
+   "paid_at": 1795064137958,
+   "boost_total": 0
+  },
+  "Db2s6iVvenVhJkj96P4UbZWEAYX4nUhgXhSVbQrwpump": {
+   "checked": 1795075999714,
+   "paid": true,
+   "status": "approved",
+   "paid_at": 1795075788976,
+   "boost_total": 0
+  },
+  "HVxUQh5WCemEQeR6BQK2wSFLhwBkzhkDitpQ2A8cabVD": {
+   "checked": 1795150394476,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "bVSZGsUj1PMZyhWLFKht8f59AshhN2rUCq4T5AT3NuU": {
+   "checked": 1795133870146,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "6RVZAFP23X2bwYBpNMTTf9Fm8dyZjzoqcTzgDF3zpump": {
+   "checked": 1795192584344,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "GbJYA5j49NcrxvKczCroaFDXUq8F6q9joMphaCi9pump": {
+   "checked": 1795210378776,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "GZeRydZotzC8nHuGE9DkQWx3wCmJL4cm4AQ5VhTBpump": {
+   "checked": 1795210378776,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "EZGRCRXnVQrSLmqB7VSuR7VPbVy12p7RqedBuimGpump": {
+   "checked": 1795210378776,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "BcJFo3pTqBmB7mjuFHaseH3YoD7PEtPvdudxQtPBpump": {
+   "checked": 1795210378776,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "r8DxjiaDgPc4zgHQSemzcdCWHjepgdwi6cdcZAWpump": {
+   "checked": 1795210378776,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "B79WQy1Jz8qFEKw8J9h8hWwVonzTvQdTJDns1wxkpump": {
+   "checked": 1795162588206,
+   "paid": true,
+   "status": "approved",
+   "paid_at": 1795162309118,
+   "boost_total": 0
+  },
+  "31i9uRd9HMJhbgrVRLccZ9kiewxLgoA5mn1CfGAJpump": {
+   "checked": 1795162823625,
+   "paid": true,
+   "status": "approved",
+   "paid_at": 1795162588206,
+   "via": "profiles",
+   "boost_total": 0
+  },
+  "GvcfEhUUvjrRSiNHQNV5a6Er2oXbQGgNt2aAdXpapump": {
+   "checked": 1795229360468,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "BfNcetwXyxFJjsnmMboPpHqpZg19ez1ueQGPGE9upump": {
+   "checked": 1795192075777,
+   "paid": true,
+   "status": "approved",
+   "paid_at": 1795189894882,
+   "boost_total": 0
+  },
+  "J6vWYq5UDTNrv5ufPPes2iD8kRAtMRBqwiJdYFQZpump": {
+   "checked": 1795192075777,
+   "paid": true,
+   "status": "approved",
+   "paid_at": 1795185058656,
+   "boost_total": 0
+  },
+  "BjCRkoV3Ksd6bukFUyuF9pdPWTAoeAizFXXZ8qDJpump": {
+   "checked": 1795172660172,
+   "paid": true,
+   "status": "approved",
+   "paid_at": 1795192075777,
+   "via": "profiles",
+   "boost_total": 0
+  },
+  "2bAtKT3s3RpSzzEfmsb4EecsJeMhV7ThF6wXbuJpxyVi": {
+   "checked": 1795258925745,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "Fw9GvFYDrLmENSPEQ88q2Z86c5WJFVYrzveuurhiD7N4": {
+   "checked": 1795250249416,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "7qGSNKA31KHGfTezVyoQvCYXSEdHU5mPigKNHiy7pump": {
+   "checked": 1795275681666,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "DL9FadSyDVQkFqL2KGHnqvLzxRruFuaTVTKQNCngpump": {
+   "checked": 1795275681666,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "7CQx6HdDjowjcDUiNs1EfYqK5bp1hAR87CRsyLg8pump": {
+   "checked": 1795229360468,
+   "paid": true,
+   "status": "approved",
+   "paid_at": 1795229360468,
+   "via": "profiles",
+   "boost_total": 0
+  },
+  "HyZej1r416GTUcUKjhGp7W7WwD64f2tjh5KUAAQAehX2": {
+   "checked": 1795275681666,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "5kaNnmASo7DJLMoXN5X4bPWBG6LZND6ajdd5Q8HBpump": {
+   "checked": 1795275681666,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "9Eu7WS2WqzQ4jvW4zXH7PaxDH8rpNDUrLuHKrUbbpump": {
+   "checked": 1795242581918,
+   "paid": true,
+   "status": "approved",
+   "paid_at": 1795234009343,
+   "boost_total": 10
+  },
+  "68V2zcH22ZK2TZG7UrZ4DhkpRYvVVxmWuVGKZRGTjeaP": {
+   "checked": 1795275681666,
+   "paid": false,
+   "status": null,
+   "boost_total": 0
+  },
+  "6hvs6yMz32JsNwof7pQige8aivr6jtd7JVYKkANJpump": {
+   "checked": 1795248731304,
+   "paid": true,
+   "status": "approved",
+   "paid_at": 1792558492656,
+   "boost_total": 40
+  },
+  "NGK4MVhgG1Vtpri7vCoregDMd1xotEJMhsWRfg7pump": {
+   "checked": 1795275660150,
+   "paid": true,
+   "status": "approved",
+   "paid_at": 1795270469683,
+   "boost_total": 0
+  }
+ },
+ "feedback_cache": {
+  "v": 1,
+  "updated": 0,
+  "marks": {},
+  "rules_off": [],
+  "log": []
+ },
+ "dev_lookup": {
+  "7FLVxmwpp2yNZHvDdZmPwopXqFD4ovjdWdnebrN9pump": {
+   "dev": null,
+   "checked": 1795132100506
+  },
+  "HVxUQh5WCemEQeR6BQK2wSFLhwBkzhkDitpQ2A8cabVD": {
+   "dev": null,
+   "checked": 1795150394476
+  },
+  "Db2s6iVvenVhJkj96P4UbZWEAYX4nUhgXhSVbQrwpump": {
+   "dev": null,
+   "checked": 1795150394476
+  },
+  "YcdDVw6UteEmQn9DcEEcPNvWcr66jTYzD8MaNq9pump": {
+   "dev": null,
+   "checked": 1795132100506
+  },
+  "bVSZGsUj1PMZyhWLFKht8f59AshhN2rUCq4T5AT3NuU": {
+   "dev": null,
+   "checked": 1795132100506
+  },
+  "6RVZAFP23X2bwYBpNMTTf9Fm8dyZjzoqcTzgDF3zpump": {
+   "dev": null,
+   "checked": 1795192584344
+  },
+  "GbJYA5j49NcrxvKczCroaFDXUq8F6q9joMphaCi9pump": {
+   "dev": null,
+   "checked": 1795210378776
+  },
+  "GZeRydZotzC8nHuGE9DkQWx3wCmJL4cm4AQ5VhTBpump": {
+   "dev": null,
+   "checked": 1795210378776
+  },
+  "r8DxjiaDgPc4zgHQSemzcdCWHjepgdwi6cdcZAWpump": {
+   "dev": null,
+   "checked": 1795210378776
+  },
+  "EZGRCRXnVQrSLmqB7VSuR7VPbVy12p7RqedBuimGpump": {
+   "dev": null,
+   "checked": 1795210378776
+  },
+  "BcJFo3pTqBmB7mjuFHaseH3YoD7PEtPvdudxQtPBpump": {
+   "dev": null,
+   "checked": 1795210378776
+  },
+  "B79WQy1Jz8qFEKw8J9h8hWwVonzTvQdTJDns1wxkpump": {
+   "dev": null,
+   "checked": 1795229360468
+  },
+  "GvcfEhUUvjrRSiNHQNV5a6Er2oXbQGgNt2aAdXpapump": {
+   "dev": null,
+   "checked": 1795229360468
+  },
+  "31i9uRd9HMJhbgrVRLccZ9kiewxLgoA5mn1CfGAJpump": {
+   "dev": null,
+   "checked": 1795229360468
+  },
+  "BfNcetwXyxFJjsnmMboPpHqpZg19ez1ueQGPGE9upump": {
+   "dev": null,
+   "checked": 1795275681666
+  },
+  "BjCRkoV3Ksd6bukFUyuF9pdPWTAoeAizFXXZ8qDJpump": {
+   "dev": null,
+   "checked": 1795248731304
+  },
+  "J6vWYq5UDTNrv5ufPPes2iD8kRAtMRBqwiJdYFQZpump": {
+   "dev": null,
+   "checked": 1795248731304
+  },
+  "2bAtKT3s3RpSzzEfmsb4EecsJeMhV7ThF6wXbuJpxyVi": {
+   "dev": null,
+   "checked": 1795248731304
+  },
+  "Fw9GvFYDrLmENSPEQ88q2Z86c5WJFVYrzveuurhiD7N4": {
+   "dev": null,
+   "checked": 1795248731304
+  },
+  "DL9FadSyDVQkFqL2KGHnqvLzxRruFuaTVTKQNCngpump": {
+   "dev": null,
+   "checked": 1795275681666
+  },
+  "7qGSNKA31KHGfTezVyoQvCYXSEdHU5mPigKNHiy7pump": {
+   "dev": null,
+   "checked": 1795275681666
+  },
+  "HyZej1r416GTUcUKjhGp7W7WwD64f2tjh5KUAAQAehX2": {
+   "dev": null,
+   "checked": 1795275681666
+  },
+  "5kaNnmASo7DJLMoXN5X4bPWBG6LZND6ajdd5Q8HBpump": {
+   "dev": null,
+   "checked": 1795275681666
+  },
+  "7CQx6HdDjowjcDUiNs1EfYqK5bp1hAR87CRsyLg8pump": {
+   "dev": null,
+   "checked": 1795275681666
+  },
+  "68V2zcH22ZK2TZG7UrZ4DhkpRYvVVxmWuVGKZRGTjeaP": {
+   "dev": null,
+   "checked": 1795275681666
+  },
+  "9Eu7WS2WqzQ4jvW4zXH7PaxDH8rpNDUrLuHKrUbbpump": {
+   "dev": null,
+   "checked": 1795275681666
+  },
+  "6hvs6yMz32JsNwof7pQige8aivr6jtd7JVYKkANJpump": {
+   "dev": null,
+   "checked": 1795275681666
+  },
+  "NGK4MVhgG1Vtpri7vCoregDMd1xotEJMhsWRfg7pump": {
+   "dev": null,
+   "checked": 1795275681666
+  }
+ },
+ "dev_history": {},
+ "ath_lookup": {
+  "7FLVxmwpp2yNZHvDdZmPwopXqFD4ovjdWdnebrN9pump": {
+   "checked": 1795132100506,
+   "nopump": true
+  },
+  "HVxUQh5WCemEQeR6BQK2wSFLhwBkzhkDitpQ2A8cabVD": {
+   "checked": 1795210378776,
+   "nopump": true
+  },
+  "bVSZGsUj1PMZyhWLFKht8f59AshhN2rUCq4T5AT3NuU": {
+   "checked": 1795132100506,
+   "nopump": true
+  },
+  "Db2s6iVvenVhJkj96P4UbZWEAYX4nUhgXhSVbQrwpump": {
+   "checked": 1795132100506,
+   "nopump": true
+  },
+  "YcdDVw6UteEmQn9DcEEcPNvWcr66jTYzD8MaNq9pump": {
+   "checked": 1795132100506,
+   "nopump": true
+  },
+  "6RVZAFP23X2bwYBpNMTTf9Fm8dyZjzoqcTzgDF3zpump": {
+   "checked": 1795192584344,
+   "nopump": true
+  },
+  "GbJYA5j49NcrxvKczCroaFDXUq8F6q9joMphaCi9pump": {
+   "checked": 1795192584344,
+   "nopump": true
+  },
+  "GZeRydZotzC8nHuGE9DkQWx3wCmJL4cm4AQ5VhTBpump": {
+   "checked": 1795192584344,
+   "nopump": true
+  },
+  "EZGRCRXnVQrSLmqB7VSuR7VPbVy12p7RqedBuimGpump": {
+   "checked": 1795192584344,
+   "nopump": true
+  },
+  "BcJFo3pTqBmB7mjuFHaseH3YoD7PEtPvdudxQtPBpump": {
+   "checked": 1795192584344,
+   "nopump": true
+  },
+  "r8DxjiaDgPc4zgHQSemzcdCWHjepgdwi6cdcZAWpump": {
+   "checked": 1795192584344,
+   "nopump": true
+  },
+  "GvcfEhUUvjrRSiNHQNV5a6Er2oXbQGgNt2aAdXpapump": {
+   "checked": 1795229360468,
+   "nopump": true
+  },
+  "B79WQy1Jz8qFEKw8J9h8hWwVonzTvQdTJDns1wxkpump": {
+   "checked": 1795229360468,
+   "nopump": true
+  },
+  "31i9uRd9HMJhbgrVRLccZ9kiewxLgoA5mn1CfGAJpump": {
+   "checked": 1795229360468,
+   "nopump": true
+  },
+  "2bAtKT3s3RpSzzEfmsb4EecsJeMhV7ThF6wXbuJpxyVi": {
+   "checked": 1795248731304,
+   "nopump": true
+  },
+  "Fw9GvFYDrLmENSPEQ88q2Z86c5WJFVYrzveuurhiD7N4": {
+   "checked": 1795248731304,
+   "nopump": true
+  },
+  "BfNcetwXyxFJjsnmMboPpHqpZg19ez1ueQGPGE9upump": {
+   "checked": 1795275681666,
+   "nopump": true
+  },
+  "BjCRkoV3Ksd6bukFUyuF9pdPWTAoeAizFXXZ8qDJpump": {
+   "checked": 1795248731304,
+   "nopump": true
+  },
+  "J6vWYq5UDTNrv5ufPPes2iD8kRAtMRBqwiJdYFQZpump": {
+   "checked": 1795248731304,
+   "nopump": true
+  },
+  "7qGSNKA31KHGfTezVyoQvCYXSEdHU5mPigKNHiy7pump": {
+   "checked": 1795275681666,
+   "nopump": true
+  },
+  "DL9FadSyDVQkFqL2KGHnqvLzxRruFuaTVTKQNCngpump": {
+   "checked": 1795275681666,
+   "nopump": true
+  },
+  "7CQx6HdDjowjcDUiNs1EfYqK5bp1hAR87CRsyLg8pump": {
+   "checked": 1795256835744,
+   "nopump": true
+  },
+  "HyZej1r416GTUcUKjhGp7W7WwD64f2tjh5KUAAQAehX2": {
+   "checked": 1795256835744,
+   "nopump": true
+  },
+  "5kaNnmASo7DJLMoXN5X4bPWBG6LZND6ajdd5Q8HBpump": {
+   "checked": 1795256835744,
+   "nopump": true
+  },
+  "68V2zcH22ZK2TZG7UrZ4DhkpRYvVVxmWuVGKZRGTjeaP": {
+   "checked": 1795275681666,
+   "nopump": true
+  },
+  "6hvs6yMz32JsNwof7pQige8aivr6jtd7JVYKkANJpump": {
+   "checked": 1795275681666,
+   "nopump": true
+  },
+  "9Eu7WS2WqzQ4jvW4zXH7PaxDH8rpNDUrLuHKrUbbpump": {
+   "checked": 1795275681666,
+   "nopump": true
+  },
+  "NGK4MVhgG1Vtpri7vCoregDMd1xotEJMhsWRfg7pump": {
+   "checked": 1795275681666,
+   "nopump": true
+  }
+ },
+ "dev_profile": {},
+ "sol_usd": [
+  70.36028447150419,
+  1795276084312
+ ],
+ "antirug_log": [
+  {
+   "ca": "99MyMk7gwzvZekKntq3jTEDpENT2nNtWhafbkrbhpump",
+   "name": "CornyOnTheBob",
+   "symbol": "CORNYBOB",
+   "at": 1791458925839,
+   "why": [
+    "rug"
+   ],
+   "mc": 3428.0,
+   "ath": 80653.50560277875,
+   "fees": 18.0881,
+   "vol": 332549.0,
+   "jupiter": true
+  },
+  {
+   "ca": "GPtY3WV6oyCXrBctwSLLbSKqT5tdMfNSwQjKbpv9pump",
+   "name": "High IQ Wojak",
+   "symbol": "HIGHIQ",
+   "at": 1791458925839,
+   "why": [
+    "wash"
+   ],
+   "mc": 3279.08,
+   "ath": 8073.923184097167,
+   "fees": 0.2696,
+   "vol": 10210.0,
+   "jupiter": true
+  },
+  {
+   "ca": "6bCPKJKAexQogkRhefUsPjzKtynGWHSrjto9pMhNW8Wb",
+   "name": "Tiktokers",
+   "symbol": "TIKTOKERS",
+   "at": 1791458925839,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 176502.83,
+   "ath": 197076.0,
+   "fees": 0.0023,
+   "vol": 6.0,
+   "jupiter": true
+  },
+  {
+   "ca": "5wRNycheAbuqufLjpYWaTUHqcKFK6jHXjEeBmNLppump",
+   "name": "Hama",
+   "symbol": "Hama",
+   "at": 1791458925839,
+   "why": [
+    "rug"
+   ],
+   "mc": 2523.0,
+   "ath": 113168.98730988434,
+   "fees": 19.1131,
+   "vol": 310998.0,
+   "jupiter": true
+  },
+  {
+   "ca": "5ugTbTrE2Nc1uqX1pLkCJQACDwvz1QykAC3ySsApygqH",
+   "name": "TikTok",
+   "symbol": "抖音🔥",
+   "at": 1791458925839,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 52019.74,
+   "ath": 76183.76992140744,
+   "fees": 0.0198,
+   "vol": 27711.0,
+   "jupiter": true
+  },
+  {
+   "ca": "G5nvGoboMq1D4pdxfCymZBmLRNyQuAoWndvmVXVrUCbf",
+   "name": "TikTok Coin",
+   "symbol": "TikTok",
+   "at": 1791458925839,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 2093.0,
+   "ath": 534824.6733159513,
+   "fees": 0.9703,
+   "vol": 71694.0,
+   "jupiter": true
+  },
+  {
+   "ca": "8fCjaqUYKDQFvjfFA4UvJ7Ymm6wNzFqhi8VJS3qor9Fh",
+   "name": "The King of Comedy",
+   "symbol": "Mr. Bean",
+   "at": 1791458925839,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 2080.0,
+   "ath": 398692.11189697013,
+   "fees": 0.9257,
+   "vol": 69987.0,
+   "jupiter": true
+  },
+  {
+   "ca": "4PkokfEGUzxh1kmpunfdR75XkRCi67Bo9PKuuFAhecnL",
+   "name": "TikTok",
+   "symbol": "TikTok",
+   "at": 1791458925839,
+   "why": [
+    "rug"
+   ],
+   "mc": 0.05,
+   "ath": 149285.0,
+   "fees": 0.0609,
+   "vol": 4603.0,
+   "jupiter": true
+  },
+  {
+   "ca": "HTBcSg9xXvmhkx7Vesh53yiFGvvq8YGUJVRmtzYGM7Mq",
+   "name": "The Meme King",
+   "symbol": "Haaland",
+   "at": 1791458925839,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 2054.0,
+   "ath": 536550.1382109431,
+   "fees": 1.2228,
+   "vol": 75540.0,
+   "jupiter": true
+  },
+  {
+   "ca": "CNACis7BuYkoWzbiKrNPykeJqz1VAMHCyXVH7yGPx8QJ",
+   "name": "TikTok",
+   "symbol": "TikTok",
+   "at": 1791458925839,
+   "why": [
+    "rug"
+   ],
+   "mc": 0.05,
+   "ath": 217702.0,
+   "fees": 0.0632,
+   "vol": 4245.0,
+   "jupiter": true
+  },
+  {
+   "ca": "Ee6n87m4apnipHmegZB9TkcYERTXmX86xsjMKo6Npump",
+   "name": "State Property Cat",
+   "symbol": "SPC",
+   "at": 1791458925839,
+   "why": [
+    "rug"
+   ],
+   "mc": 3217.98,
+   "ath": 44106.647938339935,
+   "fees": 9.2816,
+   "vol": 144893.0,
+   "jupiter": true
+  },
+  {
+   "ca": "DEARPip9NTe8Udx1iC4HGnesUYvbAUzM3TDqKJ6Hpump",
+   "name": "human",
+   "symbol": "human",
+   "at": 1791458925839,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 2116.0,
+   "ath": 121840.76521501108,
+   "fees": 1.3656,
+   "vol": 102330.0,
+   "jupiter": true
+  },
+  {
+   "ca": "HGqeZWR9QMZDAsPyU8ixMURrb7d7ZqzDJ7ocK4r4qwU",
+   "name": "TikTok",
+   "symbol": "TikTok",
+   "at": 1791458925839,
+   "why": [
+    "rug"
+   ],
+   "mc": 0.05,
+   "ath": 406835.0,
+   "fees": 0.0604,
+   "vol": 4154.0,
+   "jupiter": true
+  },
+  {
+   "ca": "HgskM93yBCQ3Xqqa1VjsGMcW5SieFwYwzJs5CP4p7JMA",
+   "name": "TikTok",
+   "symbol": "TikTok",
+   "at": 1791458925839,
+   "why": [
+    "rug"
+   ],
+   "mc": 0.05,
+   "ath": 145360.0,
+   "fees": 0.0589,
+   "vol": 4333.0,
+   "jupiter": true
+  },
+  {
+   "ca": "BSY1RWTqn9B5Mys9ogNdZ5ap2T62M3hkKFDeAiWpump",
+   "name": "Andrew Cate",
+   "symbol": "CATE",
+   "at": 1791458925839,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 3232.9,
+   "ath": 46169.60424635303,
+   "fees": 0.5021,
+   "vol": 19424.0,
+   "jupiter": true
+  },
+  {
+   "ca": "CL3v8ptJCnNRkgsoYspTkuZ78BFmmLbzSC9AmJZFywiP",
+   "name": "The Meme King",
+   "symbol": "Haaland",
+   "at": 1791458925839,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 2055.0,
+   "ath": 898538.1726897504,
+   "fees": 1.0702,
+   "vol": 116266.0,
+   "jupiter": true
+  },
+  {
+   "ca": "7tweTogdr5K4Pp34CRfqPgU9x6MJgnAQcMGmF4ZYpump",
+   "name": "Oso",
+   "symbol": "Oso",
+   "at": 1791458925839,
+   "why": [
+    "rug"
+   ],
+   "mc": 2212.0,
+   "ath": 77980.38512143941,
+   "fees": 11.6542,
+   "vol": 232382.0,
+   "jupiter": true
+  },
+  {
+   "ca": "FgCsrkx7Jy8QbxK1j25u8ajPft51QcZTV8VdiAzRpump",
+   "name": "Bikini Bottom",
+   "symbol": "BiBottom",
+   "at": 1791458925839,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 13868.27,
+   "ath": 16081.643246718406,
+   "fees": 0.0016,
+   "vol": 295.0,
+   "jupiter": true
+  },
+  {
+   "ca": "ZpmYmsQadhPYAWu1ygRx9KmgPzBHC4ssnLZ7m5vpump",
+   "name": "chronically on web ",
+   "symbol": "cow ",
+   "at": 1791458925839,
+   "why": [
+    "rug"
+   ],
+   "mc": 2530.0,
+   "ath": 49178.32279491018,
+   "fees": 11.347,
+   "vol": 192762.0,
+   "jupiter": true
+  },
+  {
+   "ca": "3p4CpjEePpEdgmp3SSwBcJjuaGBt1wu29Zx3sw4WAD5N",
+   "name": "Jean Philanthrope Spirit Costume",
+   "symbol": "JEANSPIRIT",
+   "at": 1791458925839,
+   "why": [
+    "wash"
+   ],
+   "mc": 3251.92,
+   "ath": 8314.2,
+   "fees": 0.1623,
+   "vol": 6494.0,
+   "jupiter": true
+  },
+  {
+   "ca": "k7dUWCVU938uRmnddhd9YMqaCJyf6XUcso44ncSpump",
+   "name": "AUGENT",
+   "symbol": "AUGENT",
+   "at": 1791458925839,
+   "why": [
+    "rug"
+   ],
+   "mc": 2383.0,
+   "ath": 52166.152550431114,
+   "fees": 14.1568,
+   "vol": 237016.0,
+   "jupiter": true
+  },
+  {
+   "ca": "ph7P1omjdwmPAwSTN8qVJXYPum7Bb5uLHh57xjdpump",
+   "name": "AUGUNT",
+   "symbol": "Augent",
+   "at": 1791458925839,
+   "why": [
+    "wash"
+   ],
+   "mc": 3251.4,
+   "ath": 7056.190861386721,
+   "fees": 0.124,
+   "vol": 5430.0,
+   "jupiter": true
+  },
+  {
+   "ca": "Eautwcs1pKP3Q1kQj3LAQy57D7Ev9EYwd1VpRgRKspfB",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1791458925839,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 120001.01,
+   "ath": 121449.89002102418,
+   "fees": 0.0044,
+   "vol": 1263.0,
+   "jupiter": true
+  },
+  {
+   "ca": "13UdHTBWQY9uDXTy4zcCAvg1sxvzsNLswQqoMByYpump",
+   "name": "Meowww",
+   "symbol": "Meowww",
+   "at": 1791458925839,
+   "why": [
+    "wash"
+   ],
+   "mc": 3262.3,
+   "ath": 20775.421689624018,
+   "fees": 0.2344,
+   "vol": 15496.0,
+   "jupiter": true
+  },
+  {
+   "ca": "D85765XoEPaTzqwSrmiJA7TGGpp3Lx86xRPgqbJpump",
+   "name": "TikTok Coin",
+   "symbol": "TikTok",
+   "at": 1791458925839,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 2070.0,
+   "ath": 376821.40412738424,
+   "fees": 1.0707,
+   "vol": 56904.0,
+   "jupiter": true
+  },
+  {
+   "ca": "9mZPp3WkvSZCibMW25i5HMD1wENspR8NyaJ6UJ3nBAGS",
+   "name": "TikTok Coin",
+   "symbol": "TIKTOK",
+   "at": 1791458925839,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 34494.42,
+   "ath": 34494.42,
+   "fees": 0.0,
+   "vol": 1.0,
+   "jupiter": true
+  },
+  {
+   "ca": "bosRwqU4LhgCrmGVW1EY531expAtjpbhGtqG1bNpump",
+   "name": "FakeCat",
+   "symbol": "FakeCat",
+   "at": 1791458925839,
+   "why": [
+    "wash"
+   ],
+   "mc": 3214.45,
+   "ath": 12856.356809708988,
+   "fees": 0.3144,
+   "vol": 17673.0,
+   "jupiter": true
+  },
+  {
+   "ca": "4SebowjnWyHmsgVWKRi3wjynxtoVa7rsbYJDXgXN7bgt",
+   "name": "TikTok Coin",
+   "symbol": "TikTok",
+   "at": 1791458925839,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 2043.0,
+   "ath": 1115964.0,
+   "fees": 1.1063,
+   "vol": 127660.0,
+   "jupiter": true
+  },
+  {
+   "ca": "6YnMT5Y9ND8CTC3kptrvqVCrNohoAhwyXZJUpz2MBAGS",
+   "name": "TikTok Coin",
+   "symbol": "TIKTOK",
+   "at": 1791458925839,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 34491.41,
+   "ath": 34494.80783193503,
+   "fees": 0.0,
+   "vol": 1.0,
+   "jupiter": true
+  },
+  {
+   "ca": "bi2n8JRnMYh61RQNDiSCNyxv4NdypwpCZcLvBnEpump",
+   "name": "girls",
+   "symbol": "girls",
+   "at": 1791458925839,
+   "why": [
+    "wash"
+   ],
+   "mc": 3213.58,
+   "ath": 13104.661580044773,
+   "fees": 0.3583,
+   "vol": 19630.0,
+   "jupiter": true
+  },
+  {
+   "ca": "Wn4eyqchSDzPzhfZHU5cajB5GDzUsfE3LV3yoTMpump",
+   "name": "echoes of creation",
+   "symbol": "eoc",
+   "at": 1791458925839,
+   "why": [
+    "wash"
+   ],
+   "mc": 3210.81,
+   "ath": 10045.491331899708,
+   "fees": 0.135,
+   "vol": 5867.0,
+   "jupiter": true
+  },
+  {
+   "ca": "HPoU7MP3GkNouZnyieqjWqN8oYUKSiBPHjqiNCbppump",
+   "name": "MrFlex",
+   "symbol": "MrFlex",
+   "at": 1791458925839,
+   "why": [
+    "wash"
+   ],
+   "mc": 3212.77,
+   "ath": 9164.836837325234,
+   "fees": 0.1436,
+   "vol": 5486.0,
+   "jupiter": true
+  },
+  {
+   "ca": "2oNoraZ4nA7BqB9bXew46ppaJWvQqUv8APZvPeivdeW1",
+   "name": "Haaland The Meme King",
+   "symbol": "Haaland",
+   "at": 1791458925839,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 2065.0,
+   "ath": 670551.4953557823,
+   "fees": 1.1249,
+   "vol": 101910.0,
+   "jupiter": true
+  },
+  {
+   "ca": "3Zr3pTWfxiDt8hpHiPpsxp7v8KdPPpqLTSPHtkMzpump",
+   "name": "Gary The Goose",
+   "symbol": "GARY",
+   "at": 1791459794194,
+   "why": [
+    "wash"
+   ],
+   "mc": 3164.72,
+   "ath": 6821.224375008792,
+   "fees": 0.1471,
+   "vol": 5573.0,
+   "jupiter": true
+  },
+  {
+   "ca": "6oe8kXqVi5SNUwfqNE1YSURg8DyboWRqtU5PwXUN3qjm",
+   "name": "Tiktok",
+   "symbol": "Tiktok",
+   "at": 1791467015334,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 56905.75,
+   "ath": 226248.3208327912,
+   "fees": 0.0146,
+   "vol": 36812.0,
+   "jupiter": true
+  },
+  {
+   "ca": "7N8oGW2PjcS22SvggbUua7qguoB5ZZTrYxaCVr8PhFuA",
+   "name": "The Meme King",
+   "symbol": "Haaland",
+   "at": 1791469461325,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 235362.0,
+   "ath": 357350.74828750035,
+   "fees": 0.856,
+   "vol": 32149.0,
+   "jupiter": true
+  },
+  {
+   "ca": "kSRaNEnegwrYeaKFXZjofFYjnbqdwqLFLqmeEXEpump",
+   "name": "Ethans Clubhouse",
+   "symbol": "Clubhouse",
+   "at": 1791475675310,
+   "why": [
+    "wash"
+   ],
+   "mc": 3257.5,
+   "ath": 6505.333636982597,
+   "fees": 0.1945,
+   "vol": 7039.0,
+   "jupiter": true
+  },
+  {
+   "ca": "kSRaNEnegwrYeaKFXZjofFYjnbqdwqLFLqmeEXEpump",
+   "name": "Ethans Clubhouse",
+   "symbol": "Clubhouse",
+   "at": 1791478007720,
+   "why": [
+    "wash"
+   ],
+   "mc": 3257.5,
+   "ath": 6505.333636982597,
+   "fees": 0.1945,
+   "vol": 7039.0,
+   "jupiter": true
+  },
+  {
+   "ca": "9bAyGmSUgnpH3akqyNptTX3UPQoVA6Rx2MhJ83yspump",
+   "name": "Grand Theft Israel 6",
+   "symbol": "GTI 6",
+   "at": 1791478007720,
+   "why": [
+    "wash"
+   ],
+   "mc": 16062.65,
+   "ath": 16544.705253655404,
+   "fees": 0.6354,
+   "vol": 26304.0,
+   "jupiter": true
+  },
+  {
+   "ca": "78RC2amNZmxdQu1uXMdpCvcquW7AnrKaLXHAWoepump",
+   "name": "Goy Theft Auto 6",
+   "symbol": "GTA6",
+   "at": 1791479348134,
+   "why": [
+    "wash"
+   ],
+   "mc": 5742.36,
+   "ath": 7002.330924439489,
+   "fees": 0.1774,
+   "vol": 6801.0,
+   "jupiter": true
+  },
+  {
+   "ca": "FkkBSxghejgPhfjDALCd8bkJ1fJ43Xmt3Cqfix7bpump",
+   "name": "State Property Cat",
+   "symbol": "SPC",
+   "at": 1791480240718,
+   "why": [
+    "wash"
+   ],
+   "mc": 3250.23,
+   "ath": 10504.899434547155,
+   "fees": 0.1706,
+   "vol": 6039.0,
+   "jupiter": true
+  },
+  {
+   "ca": "FkkBSxghejgPhfjDALCd8bkJ1fJ43Xmt3Cqfix7bpump",
+   "name": "State Property Cat",
+   "symbol": "SPC",
+   "at": 1791481642148,
+   "why": [
+    "wash"
+   ],
+   "mc": 3250.23,
+   "ath": 10504.899434547155,
+   "fees": 0.1706,
+   "vol": 6039.0,
+   "jupiter": true
+  },
+  {
+   "ca": "FkkBSxghejgPhfjDALCd8bkJ1fJ43Xmt3Cqfix7bpump",
+   "name": "State Property Cat",
+   "symbol": "SPC",
+   "at": 1791482977988,
+   "why": [
+    "wash"
+   ],
+   "mc": 3250.23,
+   "ath": 10504.899434547155,
+   "fees": 0.1706,
+   "vol": 6039.0,
+   "jupiter": true
+  },
+  {
+   "ca": "5EnBum1QT6oL5QygiEyonXt2FFhcrdCdZoc9UPcnpump",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791485696017,
+   "why": [
+    "rug"
+   ],
+   "mc": 2.2330361273739412e-10,
+   "ath": 83204.0,
+   "fees": 0.0029,
+   "vol": 138.0,
+   "jupiter": true
+  },
+  {
+   "ca": "CXzA2Eynd6JqKxpNhgoXhTmFAHA9uz7FuMJBQGvtEdsN",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791486604790,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 20745.0,
+   "ath": 20745.0,
+   "fees": 0.0098,
+   "vol": 78716.0,
+   "jupiter": true
+  },
+  {
+   "ca": "8akrSdRWLwhRHNNLW3Bk1D1eXPtURxJkgrXHD37Nb1VP",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791486604790,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 11685.0,
+   "ath": 11685.0,
+   "fees": 0.0008,
+   "vol": 1154.0,
+   "jupiter": true
+  },
+  {
+   "ca": "37CBDD7Qj3ANk3zyRabqC17tkWbksyJgR6YPFE1ChF2V",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791487494454,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 24720.0,
+   "ath": 24720.0,
+   "fees": 0.0048,
+   "vol": 199962.0,
+   "jupiter": true
+  },
+  {
+   "ca": "2UWoxvRrgsQxyrF3PFfNaTaMSGyKn1D3Su7DUzeuH9sE",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791487494454,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 48818.4,
+   "ath": 97314.4280435205,
+   "fees": 0.0138,
+   "vol": 19931.0,
+   "jupiter": true
+  },
+  {
+   "ca": "D1L7pxTtoWeReEYEpmesfd6toUGJAi4LuZLprtyqpump",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791487494454,
+   "why": [
+    "rug"
+   ],
+   "mc": 2.2492816375083484e-10,
+   "ath": 84360.0,
+   "fees": 0.0027,
+   "vol": 161.0,
+   "jupiter": true
+  },
+  {
+   "ca": "2e8ZJBkzbrNevUyDKdTczQYveJxbf4fuJsYAuY4Gmoon",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791487494454,
+   "why": [
+    "rug"
+   ],
+   "mc": 2.2468618723939556e-10,
+   "ath": 86458.0,
+   "fees": 0.0041,
+   "vol": 323.0,
+   "jupiter": true
+  },
+  {
+   "ca": "6zEBsGGaPm5y6cQMKUDy5LuyG9J4tGpNKU8MhYvCiu2q",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791487967917,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 48741.06,
+   "ath": 51831.345576411026,
+   "fees": 0.005,
+   "vol": 7936.0,
+   "jupiter": true
+  },
+  {
+   "ca": "FHrwGANtWcuNt1ApoWcJatR27WmBKHQY8aC4QruiLoz8",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791487967917,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 48752.46,
+   "ath": 166186.9281520956,
+   "fees": 0.0248,
+   "vol": 33219.0,
+   "jupiter": true
+  },
+  {
+   "ca": "9bSoLFQANL5GURxdsZi1YYeeRbroHVei5DnPS7AZpump",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791487967917,
+   "why": [
+    "rug"
+   ],
+   "mc": 2.248362815727179e-10,
+   "ath": 44257.0,
+   "fees": 0.0059,
+   "vol": 569.0,
+   "jupiter": true
+  },
+  {
+   "ca": "ANrpgQtMStF9f3hjD89XREMXHYXCgcjrDUXyWgSu9P6y",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791487967917,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 49005.84,
+   "ath": 81765.87070570841,
+   "fees": 0.0133,
+   "vol": 17697.0,
+   "jupiter": true
+  },
+  {
+   "ca": "4vGQ9VjfSoA48LjbZ3u6UuFxESyTqjaYuhKcKPWqQdTY",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791487967917,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 49002.82,
+   "ath": 61597.21217290249,
+   "fees": 0.0073,
+   "vol": 7930.0,
+   "jupiter": true
+  },
+  {
+   "ca": "2o6YcsRtLnFwHWqMdzyKyMWRZyk5X76NnswYQraYh1uA",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791487967917,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 20516.0,
+   "ath": 20516.0,
+   "fees": 0.0088,
+   "vol": 241929.0,
+   "jupiter": true
+  },
+  {
+   "ca": "6GoyXyEKWeaydV5jTfexNfTiJ4C7WoN1arX4PkKXh2ty",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791487967917,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 39414.37,
+   "ath": 41492.78,
+   "fees": 0.0045,
+   "vol": 6018.0,
+   "jupiter": true
+  },
+  {
+   "ca": "FctLadAqRRq2tpMYyiRY86KvoN3LARjXTCdMU156aUe1",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791487967917,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 48505.05,
+   "ath": 48505.05,
+   "fees": 0.004,
+   "vol": 4986.0,
+   "jupiter": true
+  },
+  {
+   "ca": "4DMdaaAm5NSQrdykpHLm2mE7ZQ6QV3C3fUF1ZRFC36HR",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791488425071,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 1673068.0,
+   "ath": 1673068.0,
+   "fees": 0.0099,
+   "vol": 401018.0,
+   "jupiter": true
+  },
+  {
+   "ca": "Hsf4r2rGizoUgBY4Kp2Nukp6XnGVTHZX3tPQv5TAPia3",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791488425071,
+   "why": [
+    "rug"
+   ],
+   "mc": 2.0628429358163595e-10,
+   "ath": 86686.0,
+   "fees": 0.0096,
+   "vol": 2393.0,
+   "jupiter": true
+  },
+  {
+   "ca": "AkZ95nYoTriG7scFGAHtc1UMmPRUQq3aqDPoZ9yuBAGS",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791488425071,
+   "why": [
+    "rug"
+   ],
+   "mc": 2.2581322571332787e-10,
+   "ath": 43225.0,
+   "fees": 0.0035,
+   "vol": 189.0,
+   "jupiter": true
+  },
+  {
+   "ca": "71n7wyZjcdjRF3tSmYYG2fH1T2vdCEKx2pdEz2oM4EAc",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791488425071,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 48415.73,
+   "ath": 48415.73,
+   "fees": 0.006,
+   "vol": 6332.0,
+   "jupiter": true
+  },
+  {
+   "ca": "EXA8DX97Z6mtbaWFnYdKbioAsv9ZB6XcpHTLdciNBVH9",
+   "name": "1000x Coin",
+   "symbol": "1000x",
+   "at": 1791488425071,
+   "why": [
+    "wash"
+   ],
+   "mc": 3207.51408113397,
+   "ath": 12101.85254839941,
+   "fees": 0.0469,
+   "vol": 6011.0,
+   "jupiter": true
+  },
+  {
+   "ca": "EGgwZU3SEgT3ggdceMnksFBymRibCtv2owi3RD7fbJGG",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791488881596,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 4476593.0,
+   "ath": 4742123.0,
+   "fees": 0.0174,
+   "vol": 739016.0,
+   "jupiter": true
+  },
+  {
+   "ca": "D4R1bGWUeXfvcd1HjX9Fpicw8yc9jgdpho26zFr6pump",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791488881596,
+   "why": [
+    "rug"
+   ],
+   "mc": null,
+   "ath": 88863.0,
+   "fees": 0.0091,
+   "vol": 812.0,
+   "jupiter": true
+  },
+  {
+   "ca": "FBQLJmNFkrh2KquR99Hd6ynQAAkFXztsViFCWbxKWyAW",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791488881596,
+   "why": [
+    "rug"
+   ],
+   "mc": null,
+   "ath": 52041.0,
+   "fees": 0.014,
+   "vol": 1308.0,
+   "jupiter": true
+  },
+  {
+   "ca": "CvR3rpjydxzdAZHFffZviPCbDMbhqMBhRsnHTAWa5msi",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791488881596,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 37263.0,
+   "ath": 37263.0,
+   "fees": 0.002,
+   "vol": 21448.0,
+   "jupiter": true
+  },
+  {
+   "ca": "H9fNwQs49pB9DPRx7AkhQhykAKPxNs9FFPYWNAFqMSG",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791488881596,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 75227.0,
+   "ath": 75227.0,
+   "fees": 0.0151,
+   "vol": 775738.0,
+   "jupiter": true
+  },
+  {
+   "ca": "65Zgm1qLuTbp3rRSrU9URH8WPTdeoWR5SiYymV7tpump",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791488881596,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 2406.4715977980272,
+   "ath": 5170.159184490942,
+   "fees": 0.1729,
+   "vol": 21119.0,
+   "jupiter": true
+  },
+  {
+   "ca": "FY65bBrb1sJGCHLdbDGfYxjhatLmZ7WQ6FRSdY7Jpump",
+   "name": "TikTok Cat",
+   "symbol": "CAT",
+   "at": 1791489388339,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 386.17132546979957,
+   "ath": 3301.7768382461286,
+   "fees": 0.0231,
+   "vol": 1131.0,
+   "jupiter": true
+  },
+  {
+   "ca": "rSJmvv93cJawQkhkqhKnvKQMFUVm4Z9bekP8SiLpump",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791489388339,
+   "why": [
+    "rug"
+   ],
+   "mc": null,
+   "ath": 87783.0,
+   "fees": 0.0072,
+   "vol": 813.0,
+   "jupiter": true
+  },
+  {
+   "ca": "4MBxi8rXz5eVu4nc16B4NwRUstW864Ztf3iD56Wi1LEk",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791489388339,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 1674893.0,
+   "ath": 1674893.0,
+   "fees": 0.0065,
+   "vol": 303065.0,
+   "jupiter": true
+  },
+  {
+   "ca": "H33EFjVPMWQqYpbV4gr2Cqn6D3YAaSzGDRtCCb5fpump",
+   "name": "Clapping Cat",
+   "symbol": "ClapCat",
+   "at": 1791489844498,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 3987.849486673336,
+   "ath": 4876.804311069253,
+   "fees": 0.3512,
+   "vol": 7773.0,
+   "jupiter": true
+  },
+  {
+   "ca": "H3rivCoMTiWbD1MzqJ4XhxgTT3EEAVbjiKcAQap8pump",
+   "name": "Tiktok Tako",
+   "symbol": "Tako",
+   "at": 1791490298734,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 11203.837270880658,
+   "ath": 11203.837270880658,
+   "fees": 0.1353,
+   "vol": 4328.0,
+   "jupiter": true
+  },
+  {
+   "ca": "H33EFjVPMWQqYpbV4gr2Cqn6D3YAaSzGDRtCCb5fpump",
+   "name": "Clapping Cat",
+   "symbol": "ClapCat",
+   "at": 1791490745690,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 3987.849486673336,
+   "ath": 4876.804311069253,
+   "fees": 0.3584,
+   "vol": 9774.0,
+   "jupiter": true
+  },
+  {
+   "ca": "9LCo4gPyM7ELz8BFZH7z2sKrNgvx37cVqmEuvXsWNXwT",
+   "name": "Tiktok Made Me Buy It",
+   "symbol": "BUY",
+   "at": 1791490745690,
+   "why": [
+    "wash"
+   ],
+   "mc": 41576.15063264931,
+   "ath": 64203.34170113417,
+   "fees": 2.8373,
+   "vol": 103756.0,
+   "jupiter": true
+  },
+  {
+   "ca": "H3rivCoMTiWbD1MzqJ4XhxgTT3EEAVbjiKcAQap8pump",
+   "name": "Tiktok Tako",
+   "symbol": "Tako",
+   "at": 1791492092702,
+   "why": [
+    "wash"
+   ],
+   "mc": 11203.837270880658,
+   "ath": 11203.837270880658,
+   "fees": 0.1713,
+   "vol": 6606.0,
+   "jupiter": true
+  },
+  {
+   "ca": "2fLeop6ANo5gmszHzqVNeAx8CNckWsHp76s6zZWLpump",
+   "name": "Clockwork Orange",
+   "symbol": "Orange",
+   "at": 1791492543342,
+   "why": [
+    "wash"
+   ],
+   "mc": 3064.86,
+   "ath": 5546.157229240612,
+   "fees": 0.3413,
+   "vol": 13280.0,
+   "jupiter": true
+  },
+  {
+   "ca": "Cp1hr6dc9Zkp9KKuD8yG9kretudDrVtneLfkRb7o7kBj",
+   "name": "#CRYPTO",
+   "symbol": "#CRYPTO",
+   "at": 1791493055696,
+   "why": [
+    "wash"
+   ],
+   "mc": 4875.401846013791,
+   "ath": 7481.017748070149,
+   "fees": 0.1375,
+   "vol": 5053.0,
+   "jupiter": true
+  },
+  {
+   "ca": "57xu971ktW6Phw8USFxBUrcZpSgWhq7HC21URr5gpump",
+   "name": "Jean Phil",
+   "symbol": "JEANPHIL",
+   "at": 1791494390925,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 24309.66410230908,
+   "ath": 25569.820391003774,
+   "fees": 0.5644,
+   "vol": 17525.0,
+   "jupiter": true
+  },
+  {
+   "ca": "AUxWEUsfEaQYecBWNEwchvd3rC7gDcvRR4CrZirGpump",
+   "name": "Kangaroo Tok",
+   "symbol": "KANGAROO",
+   "at": 1791494390925,
+   "why": [
+    "wash"
+   ],
+   "mc": 3073.25,
+   "ath": 5780.544535766533,
+   "fees": 0.1359,
+   "vol": 5358.0,
+   "jupiter": true
+  },
+  {
+   "ca": "FNVpZVEh9hMKgFtyyEw981riddrkg1NkKBmdjyoJ6SKQ",
+   "name": "The Meme King",
+   "symbol": "Haaland",
+   "at": 1791497119364,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 372937.0,
+   "ath": 380291.3930160043,
+   "fees": 0.921,
+   "vol": 26116.0,
+   "jupiter": true
+  },
+  {
+   "ca": "B82Ro3D3rNwYRHVNyVZF7ALPbXyvA4ZpA9kA8dLHFJTq",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791499848480,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 43087.84,
+   "ath": 45312.547692678236,
+   "fees": 0.004,
+   "vol": 2941.0,
+   "jupiter": true
+  },
+  {
+   "ca": "2fRNsk65Gzx5hMNQDvuGYSxbVygdZiAe2UwmkwnVpump",
+   "name": "TikTok dog",
+   "symbol": "tok",
+   "at": 1791500796845,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 143250.0,
+   "ath": 153380.75427791875,
+   "fees": 0.0771,
+   "vol": 136664.0,
+   "jupiter": true
+  },
+  {
+   "ca": "AnK7YockCdD2HRYjCoRJ86ypd3niRfzU1kLV7kGtpump",
+   "name": "TIKTOK GALAXY",
+   "symbol": "GALAXY",
+   "at": 1791501237666,
+   "why": [
+    "wash"
+   ],
+   "mc": 3044.46,
+   "ath": 9163.188907455233,
+   "fees": 0.1113,
+   "vol": 5102.0,
+   "jupiter": true
+  },
+  {
+   "ca": "HZuFyF6GeropRDRkb7q1FosUijumPpLh3sDLYaL1M5Qf",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791503459166,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 54137.44,
+   "ath": 54875.39170650338,
+   "fees": 0.0046,
+   "vol": 7640.0,
+   "jupiter": true
+  },
+  {
+   "ca": "8gKuqP5BadKAnZLyxdBfyetvHrVvwfrVpsHfDjSpwnwg",
+   "name": "Lucky Leaf",
+   "symbol": "Leaf",
+   "at": 1791503459166,
+   "why": [
+    "wash"
+   ],
+   "mc": 5600.73,
+   "ath": 5870.4993205613455,
+   "fees": 0.1185,
+   "vol": 5431.0,
+   "jupiter": true
+  },
+  {
+   "ca": "9LCo4gPyM7ELz8BFZH7z2sKrNgvx37cVqmEuvXsWNXwT",
+   "name": "Tiktok Made Me Buy It",
+   "symbol": "BUY",
+   "at": 1791542884891,
+   "why": [
+    "wash"
+   ],
+   "mc": 9168.802785168626,
+   "ath": 64203.34170113417,
+   "fees": 3.5894,
+   "vol": 131119.0,
+   "jupiter": true
+  },
+  {
+   "ca": "58AjqoVv6i3V5T2R9BRe9uNzA4hXRtnUCJAtpmb895Ma",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1791542884891,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 118196.23,
+   "ath": 121044.30165844232,
+   "fees": 0.0074,
+   "vol": 1213.0,
+   "jupiter": true
+  },
+  {
+   "ca": "9LCo4gPyM7ELz8BFZH7z2sKrNgvx37cVqmEuvXsWNXwT",
+   "name": "Tiktok Made Me Buy It",
+   "symbol": "BUY",
+   "at": 1791543790535,
+   "why": [
+    "wash"
+   ],
+   "mc": 9168.802785168626,
+   "ath": 64203.34170113417,
+   "fees": 3.5901,
+   "vol": 131307.0,
+   "jupiter": true
+  },
+  {
+   "ca": "38Ezc9mbrqmpbK8za8q4KpGhqDGd3xMfXzwfCuPTpump",
+   "name": "CAT CLAP",
+   "symbol": "CATCLAP",
+   "at": 1791543790535,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 3481.0,
+   "ath": 136742.83450658203,
+   "fees": 2.1206,
+   "vol": 103322.0,
+   "jupiter": true
+  },
+  {
+   "ca": "FDo84QyBpr57wSDLGxXUFYAmjK6Zd9MXw5QkKaZX2q6n",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1791547653787,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 117191.26,
+   "ath": 117191.26,
+   "fees": 0.0227,
+   "vol": 1200.0,
+   "jupiter": true
+  },
+  {
+   "ca": "HJgCbJ2rUDUpd3WPhrno8KdT7DZ392G75oomHjYpump",
+   "name": "Reserve Currency of Socialcom",
+   "symbol": "RCSC",
+   "at": 1791550614590,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 1010208.0,
+   "ath": 1012860.1423003294,
+   "fees": 0.4259,
+   "vol": 55900.0,
+   "jupiter": true
+  },
+  {
+   "ca": "9LCo4gPyM7ELz8BFZH7z2sKrNgvx37cVqmEuvXsWNXwT",
+   "name": "Tiktok Made Me Buy It",
+   "symbol": "BUY",
+   "at": 1791552806917,
+   "why": [
+    "wash"
+   ],
+   "mc": 2100.1631888958314,
+   "ath": 64203.34170113417,
+   "fees": 3.592,
+   "vol": 131639.0,
+   "jupiter": true
+  },
+  {
+   "ca": "7pAzSwxR1ok1iWN4E1LoCnwnQxmWzm3PSiP4nxcUpump",
+   "name": "TikTok Coin",
+   "symbol": "TIKTOK",
+   "at": 1791553226300,
+   "why": [
+    "wash"
+   ],
+   "mc": 3111.087034490627,
+   "ath": 11541.81128342848,
+   "fees": 0.0698,
+   "vol": 6082.0,
+   "jupiter": true
+  },
+  {
+   "ca": "Avcqb9cbyoPZVHz7dk6SRkq5NdgR8FmHST35r7cgpump",
+   "name": "DramaWave",
+   "symbol": "DRAMA",
+   "at": 1791553671556,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 15759.01,
+   "ath": 30746.061124892385,
+   "fees": 0.0073,
+   "vol": 1176.0,
+   "jupiter": true
+  },
+  {
+   "ca": "Dmi3tC2WQJPsMMMXHLdyYnZqebbXoFFrzJdKRj3Npump",
+   "name": "SQUISHY",
+   "symbol": "SQUISHY",
+   "at": 1791554095494,
+   "why": [
+    "wash"
+   ],
+   "mc": 943.44,
+   "ath": 5420.994742062219,
+   "fees": 0.0467,
+   "vol": 6686.0,
+   "jupiter": true
+  },
+  {
+   "ca": "Avcqb9cbyoPZVHz7dk6SRkq5NdgR8FmHST35r7cgpump",
+   "name": "DramaWave",
+   "symbol": "DRAMA",
+   "at": 1791554530462,
+   "why": [
+    "rug"
+   ],
+   "mc": 1077.64,
+   "ath": 30746.061124892385,
+   "fees": 0.0127,
+   "vol": 1747.0,
+   "jupiter": true
+  },
+  {
+   "ca": "9LCo4gPyM7ELz8BFZH7z2sKrNgvx37cVqmEuvXsWNXwT",
+   "name": "Tiktok Made Me Buy It",
+   "symbol": "BUY",
+   "at": 1791556700626,
+   "why": [
+    "wash"
+   ],
+   "mc": 2100.1631888958314,
+   "ath": 64203.34170113417,
+   "fees": 3.5966,
+   "vol": 132157.0,
+   "jupiter": true
+  },
+  {
+   "ca": "DqPL3Dm99XW12pQb7tQVJUngzzzkGS2wNPR1WPTibbkk",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791556700626,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 408701.0,
+   "ath": 410363.30012809223,
+   "fees": 0.8586,
+   "vol": 27634.0,
+   "jupiter": true
+  },
+  {
+   "ca": "8duEr3NNBxb7xpXZmF84Cir9M4maLzcdjzEyzvwG7ymo",
+   "name": "GopherCoin",
+   "symbol": "GOPHER",
+   "at": 1791557135187,
+   "why": [
+    "wash"
+   ],
+   "mc": 3394.04,
+   "ath": 8135.029836663361,
+   "fees": 0.0935,
+   "vol": 6552.0,
+   "jupiter": true
+  },
+  {
+   "ca": "J8N7hjkw5nm8gfs1Poy5y4PGsxw9UhEn3naLVpj2pump",
+   "name": "MuskratCoin",
+   "symbol": "Muskrat",
+   "at": 1791557135187,
+   "why": [
+    "wash"
+   ],
+   "mc": 3080.36,
+   "ath": 10977.56328370365,
+   "fees": 0.296,
+   "vol": 10977.0,
+   "jupiter": true
+  },
+  {
+   "ca": "U3yTgdSF6ViYJWvGxcAYaWoK3qAwdKF6RPQgTBvpump",
+   "name": "Beavercoin",
+   "symbol": "BEAVER",
+   "at": 1791557979787,
+   "why": [
+    "wash"
+   ],
+   "mc": 3082.36,
+   "ath": 9425.00302116882,
+   "fees": 0.4217,
+   "vol": 15455.0,
+   "jupiter": true
+  },
+  {
+   "ca": "BSdNVzdJNNVLvxQnnquLpGaC25vkoofMzMBS7WDw4zJs",
+   "name": "The Meme King",
+   "symbol": "Haaland",
+   "at": 1791558889380,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 360275.0,
+   "ath": 398851.9153240938,
+   "fees": 0.8635,
+   "vol": 29356.0,
+   "jupiter": true
+  },
+  {
+   "ca": "8Ay16b69QA4vRoGry4sG6HvgnkZfAPBsLPkEEEkppump",
+   "name": "JADE ORLHABIT ",
+   "symbol": "JADE",
+   "at": 1791561023482,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 19369.669559733145,
+   "ath": 22063.459872763855,
+   "fees": 0.0785,
+   "vol": 9662.0,
+   "jupiter": true
+  },
+  {
+   "ca": "7LyFe93dTQbmC9P54S4xSbs5W27mobbmZG5FBMDCpump",
+   "name": "NexFundAI",
+   "symbol": "NEXF",
+   "at": 1791562341393,
+   "why": [
+    "wash"
+   ],
+   "mc": 3070.85,
+   "ath": 12203.378366230394,
+   "fees": 0.3067,
+   "vol": 13703.0,
+   "jupiter": true
+  },
+  {
+   "ca": "8DRXUB8gJnLzwUoQYX1hJwuWaqws3zK9yq5pTBdHpump",
+   "name": "TikTok Coin",
+   "symbol": "TIKTOK",
+   "at": 1791568037633,
+   "why": [
+    "wash"
+   ],
+   "mc": 3073.95,
+   "ath": 20401.867374820707,
+   "fees": 0.0969,
+   "vol": 9590.0,
+   "jupiter": true
+  },
+  {
+   "ca": "7VoqK5UbhBc4tDVMgt13aHJU4HiVdu2RaXXuGCoWniUN",
+   "name": "Starlink Memeboard",
+   "symbol": "Memeboard",
+   "at": 1791568458661,
+   "why": [
+    "wash"
+   ],
+   "mc": 3407.4470017785247,
+   "ath": 6725.594231537958,
+   "fees": 0.1271,
+   "vol": 6762.0,
+   "jupiter": true
+  },
+  {
+   "ca": "HQwXnmXScN7aP1kuJtgFist4Qgcj7hMKdzxx2ATp72Fq",
+   "name": "Lucky Duck",
+   "symbol": "DUCK",
+   "at": 1791568889089,
+   "why": [
+    "wash"
+   ],
+   "mc": 3363.07,
+   "ath": 7542.63151878345,
+   "fees": 0.062,
+   "vol": 5129.0,
+   "jupiter": true
+  },
+  {
+   "ca": "GDHtDjQBa9LADaTauSWBLEcCkPd9wkvmxNfvDDYkpump",
+   "name": "MuskratCoin",
+   "symbol": "Muskrat",
+   "at": 1791570166135,
+   "why": [
+    "wash"
+   ],
+   "mc": 3109.22,
+   "ath": 5030.227673058818,
+   "fees": 0.3184,
+   "vol": 16746.0,
+   "jupiter": true
+  },
+  {
+   "ca": "JBy2HcHLpwReDDUrVNU2XRBpw71iUZKRBC42GBCr45Lb",
+   "name": "The Meme King",
+   "symbol": "Haaland",
+   "at": 1791570166135,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 395484.0,
+   "ath": 401877.44398228667,
+   "fees": 0.8589,
+   "vol": 27457.0,
+   "jupiter": true
+  },
+  {
+   "ca": "HucmmrMZjbheehuZgw7spCb6gMj8ovxhCBfGtTQapump",
+   "name": "Starlink Beaver",
+   "symbol": "BEAVER",
+   "at": 1791572317393,
+   "why": [
+    "wash"
+   ],
+   "mc": 3175.64,
+   "ath": 24172.39955905791,
+   "fees": 0.2418,
+   "vol": 15001.0,
+   "jupiter": true
+  },
+  {
+   "ca": "AY48kQrqHWD8U6n2FvAAngQ3SbZtHBznoYzszZKnpump",
+   "name": "Starlink Beaver",
+   "symbol": "BEAVER",
+   "at": 1791572317393,
+   "why": [
+    "wash"
+   ],
+   "mc": 3353.61,
+   "ath": 24815.34792413935,
+   "fees": 0.1585,
+   "vol": 8806.0,
+   "jupiter": true
+  },
+  {
+   "ca": "1GFxFCqMuNDtSRSkho5dv2aM51Woyxt3BtFjvRdpump",
+   "name": "Tiktok Coin",
+   "symbol": "TIKTOK",
+   "at": 1791572740720,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 12291.24,
+   "ath": 16316.403690579145,
+   "fees": 0.2996,
+   "vol": 7367.0,
+   "jupiter": true
+  },
+  {
+   "ca": "Cenm9xYRdVXXjLUbUkqwWDYMLh4dtB4J5Ttjh6W9pump",
+   "name": "Starlink Beaver",
+   "symbol": "BEAVER",
+   "at": 1791572740720,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 24513.42,
+   "ath": 41412.94003075516,
+   "fees": 0.1558,
+   "vol": 11159.0,
+   "jupiter": true
+  },
+  {
+   "ca": "ZZgxAwhU82TVWDgqFqVRNCBaqtseKX3SSX6eQaFpump",
+   "name": "Mr Lean",
+   "symbol": "MRLEAN",
+   "at": 1791574028429,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 277086.0,
+   "ath": 287476.4951257592,
+   "fees": 0.4043,
+   "vol": 22846.0,
+   "jupiter": true
+  },
+  {
+   "ca": "arpap2g1esVbZmndRBktvsm9215gjeEoSiWk8ohpump",
+   "name": "Mr Lean",
+   "symbol": "MRLEAN",
+   "at": 1791574028429,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 215247.0,
+   "ath": 310193.40923508967,
+   "fees": 0.5222,
+   "vol": 29803.0,
+   "jupiter": true
+  },
+  {
+   "ca": "5EEYt7uHDbxoSwdMn3r7HUa8zwbo8EW1T4qhnRRgSxFn",
+   "name": "tiktok.lol",
+   "symbol": "TIKTOKPAD",
+   "at": 1791577895882,
+   "why": [
+    "wash"
+   ],
+   "mc": 1035.34,
+   "ath": 15660.052098502261,
+   "fees": 0.0096,
+   "vol": 15541.0,
+   "jupiter": true
+  },
+  {
+   "ca": "6JWxdxZy4LwQYKzsvbDXDKTWEUzEYCgJBUqWaAQGZGEB",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791577895882,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 150641.0,
+   "ath": 150641.0,
+   "fees": 0.2064,
+   "vol": 18659598.0,
+   "jupiter": true
+  },
+  {
+   "ca": "QN1VRDtvGzhXVeUFQAkMd3TvNt6Fmd83NZ2zu9EMZyX",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791577895882,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 804128.0,
+   "ath": 804128.0,
+   "fees": 0.0003,
+   "vol": 3024.0,
+   "jupiter": true
+  },
+  {
+   "ca": "J72RRSpUr18QseQuWqKi5tahANBUYD439Kun3GPvpump",
+   "name": "Tiktok Coin",
+   "symbol": "Tiktok",
+   "at": 1791578339673,
+   "why": [
+    "wash"
+   ],
+   "mc": 3062.07,
+   "ath": 36686.203475486785,
+   "fees": 1.3364,
+   "vol": 50164.0,
+   "jupiter": true
+  },
+  {
+   "ca": "7Rv5RYuHjDXE6PTH9NGJ1NyXiRtXiyjmysKEbK4d9onr",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791578761915,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 2603662.0,
+   "ath": 2603662.0,
+   "fees": 0.0226,
+   "vol": 1013692.0,
+   "jupiter": true
+  },
+  {
+   "ca": "52wQ7ymuAQSEFcFG7bH3F19TTE2MYsy1YdJnDdxSpump",
+   "name": "Bill-Smith-Prince",
+   "symbol": "BILLSMITH",
+   "at": 1791579199310,
+   "why": [
+    "wash"
+   ],
+   "mc": 194534.0,
+   "ath": 196982.4106965404,
+   "fees": 9.8316,
+   "vol": 357526.0,
+   "jupiter": true
+  },
+  {
+   "ca": "4MBh1MmUqEjKHM6R3cKdQKd99ohZXfWttZb13LLYKr2M",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791580049250,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 2779685.0,
+   "ath": 2779685.0,
+   "fees": 0.0202,
+   "vol": 994332.0,
+   "jupiter": true
+  },
+  {
+   "ca": "J8MstGtUGLWUYJiXgJHPJGxER22GNgMJV5V2y3AinihJ",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791580049250,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 2963505.0,
+   "ath": 2963505.0,
+   "fees": 0.0127,
+   "vol": 632628.0,
+   "jupiter": true
+  },
+  {
+   "ca": "8SieNfFoq6UfHAuuBzzLVkJzk5tSMRtRg6KbA62n1dAA",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791582188665,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 423082.0,
+   "ath": 427833.49297527346,
+   "fees": 0.8659,
+   "vol": 27651.0,
+   "jupiter": true
+  },
+  {
+   "ca": "GXaGYvgWufVBZ1DTibpoxpd2CTiXryZ5TebkckB5pump",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791582188665,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 1992.0,
+   "ath": 3510780.1425319333,
+   "fees": 1.443,
+   "vol": 246453.0,
+   "jupiter": true
+  },
+  {
+   "ca": "6YpLYWJa93VXd4SSFoRSViHAb98J15Qdz9jgVde3pump",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791582188665,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 1961.0,
+   "ath": 1466525.2410546083,
+   "fees": 1.2117,
+   "vol": 139484.0,
+   "jupiter": true
+  },
+  {
+   "ca": "DgmjkKBVypVYefvHH8Uf9qEwu4GYx7pEEF6ZXdJ9dFF6",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791583041833,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 1980.0,
+   "ath": 797429.3659310284,
+   "fees": 1.1735,
+   "vol": 99605.0,
+   "jupiter": true
+  },
+  {
+   "ca": "52wQ7ymuAQSEFcFG7bH3F19TTE2MYsy1YdJnDdxSpump",
+   "name": "Bill-Smith-Prince",
+   "symbol": "BILLSMITH",
+   "at": 1791583464686,
+   "why": [
+    "wash"
+   ],
+   "mc": 19930.0,
+   "ath": 213009.56482611422,
+   "fees": 11.4003,
+   "vol": 423024.0,
+   "jupiter": true
+  },
+  {
+   "ca": "s2vPe7krwXtrtZTiDBx246mrtEwiByUWhbGSX3upump",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791583464686,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 2019.0,
+   "ath": 367358.37860243395,
+   "fees": 1.0862,
+   "vol": 61947.0,
+   "jupiter": true
+  },
+  {
+   "ca": "9YwxcdBFPeQzYnsuoefZooAgu1zH9t7izQ4tSruf5TPH",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791585577935,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 1933.0,
+   "ath": 504351.6394901567,
+   "fees": 1.0812,
+   "vol": 62176.0,
+   "jupiter": true
+  },
+  {
+   "ca": "DZ6Q25aaSMouxURPHr1zfffHwkDEHPsnCcLPhu2Cpump",
+   "name": "Swimothy The Crocodile",
+   "symbol": "SWIMOTHY",
+   "at": 1791586018453,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 10641.790935731986,
+   "ath": 10641.790935731986,
+   "fees": 0.0472,
+   "vol": 2628.0,
+   "jupiter": true
+  },
+  {
+   "ca": "2Z8EnniueJHJ5CcKuFzVVTQ5KxEtjNxUGefDFTbrpump",
+   "name": "Cao Zhen",
+   "symbol": "CZ",
+   "at": 1791586018453,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 372275.0,
+   "ath": 395333.96880694205,
+   "fees": 0.8954,
+   "vol": 36793.0,
+   "jupiter": true
+  },
+  {
+   "ca": "ETWSKDohJ4qAJ48przXX5zFoRtaTEcyhyjmL6qJXWwqH",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791586441325,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 2020.0,
+   "ath": 402920.6534610869,
+   "fees": 1.0475,
+   "vol": 81927.0,
+   "jupiter": true
+  },
+  {
+   "ca": "DZ6Q25aaSMouxURPHr1zfffHwkDEHPsnCcLPhu2Cpump",
+   "name": "Swimothy The Crocodile",
+   "symbol": "SWIMOTHY",
+   "at": 1791589032462,
+   "why": [
+    "wash"
+   ],
+   "mc": 10610.12685209415,
+   "ath": 20478.670216639646,
+   "fees": 0.6104,
+   "vol": 22219.0,
+   "jupiter": true
+  },
+  {
+   "ca": "8gw5Sq38CHUFQeJCo2C7jdWEuzw9sWyiDHtHgpHQpump",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791594085512,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 9801.0,
+   "ath": 549050.383440629,
+   "fees": 0.9892,
+   "vol": 77879.0,
+   "jupiter": true
+  },
+  {
+   "ca": "3d91843KdiYsEB79paGrkQUVmDY66sQbtNzR3bn4pump",
+   "name": "BeatboxCat",
+   "symbol": "BeatboxCat",
+   "at": 1791597330358,
+   "why": [
+    "wash"
+   ],
+   "mc": 3059.27,
+   "ath": 8896.674267720517,
+   "fees": 0.1357,
+   "vol": 5003.0,
+   "jupiter": true
+  },
+  {
+   "ca": "xGh6YJmn8ygahpNArKrFA72nzSNEaX4qyYHJexYpump",
+   "name": "CLAPPING CAT",
+   "symbol": "CCAT",
+   "at": 1791599152625,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 52955.0,
+   "ath": 64437.00380748295,
+   "fees": 1.1239,
+   "vol": 46147.0,
+   "jupiter": true
+  },
+  {
+   "ca": "3aTDysXH38ufrgtbHBZkZsKJPfdS7YvTzzQqvWXmpump",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791600886354,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 1950.0,
+   "ath": 468229.1056645404,
+   "fees": 1.0095,
+   "vol": 71790.0,
+   "jupiter": true
+  },
+  {
+   "ca": "PS88MitFtGtaaj2RbeCvUSgcwvV2KDkB5P39w6ppump",
+   "name": "Disc dog",
+   "symbol": "DiscDog",
+   "at": 1791602777955,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 45057.12,
+   "ath": 80304.14672738784,
+   "fees": 1.2656,
+   "vol": 64867.0,
+   "jupiter": true
+  },
+  {
+   "ca": "yrxWGtPwb2BXJTYiQZYidZwPw14QEBGocqnnyp4pump",
+   "name": "Huggy Wuggy",
+   "symbol": "Huggy",
+   "at": 1791608232360,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 32549.3,
+   "ath": 53567.743786550396,
+   "fees": 1.3235,
+   "vol": 52192.0,
+   "jupiter": true
+  },
+  {
+   "ca": "Hbn6z1L9bbJGmNs9E17MpZ4zVeuMQ3sqTCCN4vxPQE3T",
+   "name": "The King of Comedy",
+   "symbol": "Mr. Bean",
+   "at": 1791608232360,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 90721.0,
+   "ath": 442971.0315876055,
+   "fees": 0.9361,
+   "vol": 94709.0,
+   "jupiter": true
+  },
+  {
+   "ca": "DZ6Q25aaSMouxURPHr1zfffHwkDEHPsnCcLPhu2Cpump",
+   "name": "Swimothy The Crocodile",
+   "symbol": "SWIMOTHY",
+   "at": 1791611144550,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 10610.12685209415,
+   "ath": 20478.670216639646,
+   "fees": 0.8617,
+   "vol": 32800.0,
+   "jupiter": true
+  },
+  {
+   "ca": "U3yTgdSF6ViYJWvGxcAYaWoK3qAwdKF6RPQgTBvpump",
+   "name": "Beavercoin",
+   "symbol": "BEAVER",
+   "at": 1791612078278,
+   "why": [
+    "wash"
+   ],
+   "mc": 3063.08,
+   "ath": 9425.00302116882,
+   "fees": 0.4217,
+   "vol": 15456.0,
+   "jupiter": true
+  },
+  {
+   "ca": "896UhWBoT3wBmvL2mjNg7K1sE8rFoC5T6pgHrCRJw7M9",
+   "name": "Harold Puddington",
+   "symbol": "HAROLD",
+   "at": 1791619111994,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 75027.4733498964,
+   "ath": 129822.11568366962,
+   "fees": 0.9632,
+   "vol": 22394.0,
+   "jupiter": true
+  },
+  {
+   "ca": "NVGMjmiPgc39yv7JoMDW4BCsWdrCVBVD5d5Mwyjpump",
+   "name": "Freddy",
+   "symbol": "Freddy",
+   "at": 1791619111994,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 153810.0,
+   "ath": 1103126.3215847048,
+   "fees": 3.2149,
+   "vol": 956032.0,
+   "jupiter": true
+  },
+  {
+   "ca": "U3yTgdSF6ViYJWvGxcAYaWoK3qAwdKF6RPQgTBvpump",
+   "name": "Beavercoin",
+   "symbol": "BEAVER",
+   "at": 1791620301236,
+   "why": [
+    "wash"
+   ],
+   "mc": 3071.2,
+   "ath": 9425.00302116882,
+   "fees": 0.4218,
+   "vol": 15456.0,
+   "jupiter": true
+  },
+  {
+   "ca": "66wS9H8sfVhw83MkVq4kobWL43CU9ome9weFWHqpump",
+   "name": "Brockodile",
+   "symbol": "Brockodile",
+   "at": 1791623608560,
+   "why": [
+    "wash"
+   ],
+   "mc": 3118.14,
+   "ath": 22917.59450253087,
+   "fees": 0.4015,
+   "vol": 23427.0,
+   "jupiter": true
+  },
+  {
+   "ca": "uiXLsoqmWaw7JbNZNSMjMWxT4jP4DxHw1zWLXf6pump",
+   "name": "Brockodile",
+   "symbol": "Brockodile",
+   "at": 1791623608560,
+   "why": [
+    "wash"
+   ],
+   "mc": 3098.5,
+   "ath": 14995.204483096859,
+   "fees": 0.2794,
+   "vol": 13699.0,
+   "jupiter": true
+  },
+  {
+   "ca": "6eBZPEeUFEGn6wbqzpCoKH3SRGf57PHLjG2qWjFppump",
+   "name": "TikTok US",
+   "symbol": "TikTok",
+   "at": 1791624725478,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 527882.0,
+   "ath": 535850.6607532548,
+   "fees": 1.0233,
+   "vol": 39542.0,
+   "jupiter": true
+  },
+  {
+   "ca": "U3yTgdSF6ViYJWvGxcAYaWoK3qAwdKF6RPQgTBvpump",
+   "name": "Beavercoin",
+   "symbol": "BEAVER",
+   "at": 1791625704169,
+   "why": [
+    "wash"
+   ],
+   "mc": 3071.2,
+   "ath": 9425.00302116882,
+   "fees": 0.4218,
+   "vol": 15456.0,
+   "jupiter": true
+  },
+  {
+   "ca": "3gFLhhJiuma8Ly3zNJMahekjXDgF5T2aiLNTtqcGPRV1",
+   "name": "TikTok US",
+   "symbol": "TikTok",
+   "at": 1791627968327,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 20108.0,
+   "ath": 20108.0,
+   "fees": 0.0139,
+   "vol": 104180.0,
+   "jupiter": true
+  },
+  {
+   "ca": "896UhWBoT3wBmvL2mjNg7K1sE8rFoC5T6pgHrCRJw7M9",
+   "name": "Harold Puddington",
+   "symbol": "HAROLD",
+   "at": 1791636813395,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 75027.4733498964,
+   "ath": 129822.11568366962,
+   "fees": 1.0945,
+   "vol": 25974.0,
+   "jupiter": true
+  },
+  {
+   "ca": "6fZACorUbnJy3nhM1wEdkB3hVoajzA795o3Z5GYMoNvB",
+   "name": "FYPAD",
+   "symbol": "FYP",
+   "at": 1791645871960,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 16527.0,
+   "ath": 16527.0,
+   "fees": 0.0059,
+   "vol": 106381.0,
+   "jupiter": true
+  },
+  {
+   "ca": "896UhWBoT3wBmvL2mjNg7K1sE8rFoC5T6pgHrCRJw7M9",
+   "name": "Harold Puddington",
+   "symbol": "HAROLD",
+   "at": 1791649487090,
+   "why": [
+    "rug"
+   ],
+   "mc": 75027.4733498964,
+   "ath": 129822.11568366962,
+   "fees": 1.1079,
+   "vol": 27370.0,
+   "jupiter": true
+  },
+  {
+   "ca": "6NCuQ7v1smgvRTR3ygsrou1q3WbFQPq1vruohJnxNWPq",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791653720638,
+   "why": [
+    "rug"
+   ],
+   "mc": 2.26089956e-10,
+   "ath": 82189.0,
+   "fees": 0.0301,
+   "vol": 3530.0,
+   "jupiter": true
+  },
+  {
+   "ca": "3oiWnws5pDtbmDzfpqEmNA4mV91jXRjo1oPob4Bap2qP",
+   "name": "SOLANITE",
+   "symbol": "SLNT",
+   "at": 1791654814442,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 10638.0,
+   "ath": 12657.0,
+   "fees": 0.1525,
+   "vol": 2433.0,
+   "jupiter": true
+  },
+  {
+   "ca": "5w3mp4oZuuAnWQhe5aeNA5VSi9MAfbtCndzQXrEser5D",
+   "name": "TikTok",
+   "symbol": "TikTok",
+   "at": 1791657600645,
+   "why": [
+    "rug"
+   ],
+   "mc": 0.05,
+   "ath": 101836.0,
+   "fees": 0.0146,
+   "vol": 977.0,
+   "jupiter": true
+  },
+  {
+   "ca": "3HthKjcGd94fNKE8NZqgN6vr974ihsyQBB5ByP5ghtQt",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791657600645,
+   "why": [
+    "rug"
+   ],
+   "mc": 0.01,
+   "ath": 68033.0,
+   "fees": 0.0217,
+   "vol": 2356.0,
+   "jupiter": true
+  },
+  {
+   "ca": "5TxhZwELx6WwUDG6yLPL1XmSBrLyw2rGuyTkX4dDyZRN",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791657600645,
+   "why": [
+    "rug"
+   ],
+   "mc": 2.26736352e-10,
+   "ath": 64404.0,
+   "fees": 0.0189,
+   "vol": 2058.0,
+   "jupiter": true
+  },
+  {
+   "ca": "BkfkX5QDyikJ23z14Wikc9rwC4ex6YpbK7J9QQqfpump",
+   "name": "Air Strike 1s",
+   "symbol": "AS1",
+   "at": 1791658438998,
+   "why": [
+    "wash"
+   ],
+   "mc": 3067.14,
+   "ath": 7009.065522966081,
+   "fees": 0.0755,
+   "vol": 5122.0,
+   "jupiter": true
+  },
+  {
+   "ca": "FV8fzQvgDM2jxL8mzmneFAC24rDhzPR5W8ZFydeXpump",
+   "name": "Jean phil's wife",
+   "symbol": "brigitte",
+   "at": 1791658438998,
+   "why": [
+    "wash"
+   ],
+   "mc": 45394.04,
+   "ath": 76345.13941839684,
+   "fees": 9.6984,
+   "vol": 357478.0,
+   "jupiter": true
+  },
+  {
+   "ca": "GgJJK6cJG55hQuRQmpeFz522zSrQGAt4m5xf9vLU1Tcs",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1791662613521,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 115612.59,
+   "ath": 115612.59,
+   "fees": 0.0005,
+   "vol": 1185.0,
+   "jupiter": true
+  },
+  {
+   "ca": "E4Bjx7iproJmfFpteKKh6qKnUgXC4dHd5ry81czVmC8X",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791668343496,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 198258.0,
+   "ath": 774548.9241661547,
+   "fees": 0.9455,
+   "vol": 92920.0,
+   "jupiter": true
+  },
+  {
+   "ca": "2CqsgKY9VQP1TbhT56Cz1PykjZj11qFrhB58RQ4Epump",
+   "name": "Tiktok Coin",
+   "symbol": "TIKTOK",
+   "at": 1791670045181,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 10678.0,
+   "ath": 286134.3135887318,
+   "fees": 0.0562,
+   "vol": 647.0,
+   "jupiter": true
+  },
+  {
+   "ca": "88KCRYrEBe2yELuc7FaNUofExvinZzjfQoTmUxotVjAB",
+   "name": "The Meme King",
+   "symbol": "Haaland",
+   "at": 1791696147725,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 407690.0,
+   "ath": 409461.3034939059,
+   "fees": 0.8661,
+   "vol": 27546.0,
+   "jupiter": true
+  },
+  {
+   "ca": "E3K1dqLN4q9ZfmHH6JwRCKSZND48AuesbmPWKvEDpump",
+   "name": "The Smol Kangaroo",
+   "symbol": "JOEY",
+   "at": 1791696147725,
+   "why": [
+    "wash"
+   ],
+   "mc": 3188.21,
+   "ath": 23715.267846320898,
+   "fees": 0.9219,
+   "vol": 73296.0,
+   "jupiter": true
+  },
+  {
+   "ca": "4tJVeSNVfCZ5EwiCWLPSP3kNLAak1Ey6uwExZ188pump",
+   "name": "Just a Bebeh",
+   "symbol": "Bebeh",
+   "at": 1791700269682,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 3062.74,
+   "ath": 44917.220646890564,
+   "fees": 0.1059,
+   "vol": 19250.0,
+   "jupiter": true
+  },
+  {
+   "ca": "3EHqkZCsWKFDaTy4kpHuU54STXekt9NKmMu66Asv9GPB",
+   "name": "TIKTOK AI",
+   "symbol": "TIKTOK AI",
+   "at": 1791701888206,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 29292.0,
+   "ath": 29292.0,
+   "fees": 0.0029,
+   "vol": 22511.0,
+   "jupiter": true
+  },
+  {
+   "ca": "51fxM3zAjfjmKQqbupDjrumtN66mJ26KcRQNQ4tiyUJZ",
+   "name": "TIKTOK AI",
+   "symbol": "TIKTOK AI",
+   "at": 1791703204304,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 32678.0,
+   "ath": 32678.0,
+   "fees": 0.0082,
+   "vol": 50388.0,
+   "jupiter": true
+  },
+  {
+   "ca": "BRd7FX1ou92W4gcPTRn1qpqKHz1i7gfkemG4QSMzVnGT",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791704603095,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 2019.0,
+   "ath": 820747.9433962217,
+   "fees": 1.0793,
+   "vol": 86711.0,
+   "jupiter": true
+  },
+  {
+   "ca": "GV1ECFBu1DzgC4pqefRFRy3c1GjaJZZiaKjfyX9V8CVK",
+   "name": "TIKTOK AI",
+   "symbol": "TIKTOK AI",
+   "at": 1791704603095,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 30227.0,
+   "ath": 30227.0,
+   "fees": 0.006,
+   "vol": 36385.0,
+   "jupiter": true
+  },
+  {
+   "ca": "4qcYeBPXaCUHuKJdxiU7GzdfXaqvLg4hJW6n4wmPC3WB",
+   "name": "TIKTOK AI",
+   "symbol": "TIKTOK AI",
+   "at": 1791708952818,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 44522.0,
+   "ath": 45454.0,
+   "fees": 0.0139,
+   "vol": 122590.0,
+   "jupiter": true
+  },
+  {
+   "ca": "3aJ8kpAPkXEKtBtAyLFSSw2VFeekhhGRsZPyaRufGo5P",
+   "name": "dog in heels",
+   "symbol": "dih",
+   "at": 1791714971719,
+   "why": [
+    "wash"
+   ],
+   "mc": 3060.67,
+   "ath": 6418.3274910840055,
+   "fees": 0.1537,
+   "vol": 6256.0,
+   "jupiter": true
+  },
+  {
+   "ca": "C942Qcjf68zKX8EhWtWFsKp9XHUXpQxxa9A2buUgJUta",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791730338782,
+   "why": [
+    "rug"
+   ],
+   "mc": 2.2652146680951846e-10,
+   "ath": 55367.0,
+   "fees": 0.0121,
+   "vol": 1237.0,
+   "jupiter": true
+  },
+  {
+   "ca": "3FrDsYrH196W4i6F7m7dy3X3AsNMWKJx2gByNdHFpump",
+   "name": "Sapijiju",
+   "symbol": "SAPIJIJU",
+   "at": 1791730338782,
+   "why": [
+    "wash"
+   ],
+   "mc": 21533.38,
+   "ath": 31657.594626583483,
+   "fees": 2.9198,
+   "vol": 109534.0,
+   "jupiter": true
+  },
+  {
+   "ca": "GFGnyNAHKwnrTJ9kA4qYcagUTugfmDMmxcuAZpXv34gs",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1791735088897,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 55213.64,
+   "ath": 215109.3833387742,
+   "fees": 0.0396,
+   "vol": 33889.0,
+   "jupiter": true
+  },
+  {
+   "ca": "Kf7Hyyn8yDbn7hGfESSsV4pCUJqFLYmBtM4FVDFpump",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791737190253,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 411159.0,
+   "ath": 418355.46930914104,
+   "fees": 0.7076,
+   "vol": 28552.0,
+   "jupiter": true
+  },
+  {
+   "ca": "GyedZxgKySNPFCGvM7jhNgbbhzfwBUKWAtvngazqpump",
+   "name": "calling",
+   "symbol": "calling",
+   "at": 1791747672159,
+   "why": [
+    "wash"
+   ],
+   "mc": 3477.09,
+   "ath": 6952.879624186795,
+   "fees": 0.1937,
+   "vol": 9155.0,
+   "jupiter": true
+  },
+  {
+   "ca": "3qMx2ZFFxFBjYPrwCyngGXNizeAFnNBrimhPQZcjpump",
+   "name": "Wednesday Adams",
+   "symbol": "WEDNESDAY",
+   "at": 1791750215774,
+   "why": [
+    "wash"
+   ],
+   "mc": 69202.0,
+   "ath": 94894.45178134878,
+   "fees": 7.7007,
+   "vol": 362442.0,
+   "jupiter": true
+  },
+  {
+   "ca": "6QMR27fjVRGKiVnHhbyBeGqsp9S9C2jQzHKtC8ebDH4c",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1791785411019,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 119038.59,
+   "ath": 119224.49298799077,
+   "fees": 0.0006,
+   "vol": 1218.0,
+   "jupiter": true
+  },
+  {
+   "ca": "LpyuRZC6vZPyRxVMhiSW3gnokUSvv7cr3NN77K3qgU9",
+   "name": "Douyin Reggie",
+   "symbol": "REGGIE",
+   "at": 1791785411019,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 111147.7161585,
+   "ath": 111147.7161585,
+   "fees": 0.0166,
+   "vol": 3740.0,
+   "jupiter": true
+  },
+  {
+   "ca": "B8FuBQy2YigYWej7pKzqxisDsxCoJvf6Xrie3uvmVMtA",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791785411019,
+   "why": [
+    "rug"
+   ],
+   "mc": 0.01,
+   "ath": 50868.0,
+   "fees": 0.0074,
+   "vol": 756.0,
+   "jupiter": true
+  },
+  {
+   "ca": "A8JUiZLzjGAsKxE74evdspHcuW4hvhPbvryDhaDZpump",
+   "name": "Token Battles",
+   "symbol": "FIGHT",
+   "at": 1791785411019,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 183285.0,
+   "ath": 252955.08880336213,
+   "fees": 1.3022,
+   "vol": 441216.0,
+   "jupiter": true
+  },
+  {
+   "ca": "GtcZuRzgp8U4qCkF2sBeihrnTsfYUrQiJUs3E81pump",
+   "name": "MissBean",
+   "symbol": "MissBean",
+   "at": 1791785411019,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 205645.0,
+   "ath": 259416.33259007536,
+   "fees": 1.5123,
+   "vol": 209439.0,
+   "jupiter": true
+  },
+  {
+   "ca": "8uiaG5STVzPBL5knEnkfEDbD2icrQDhDgZX6SmUjpump",
+   "name": "fomo",
+   "symbol": "FOMO",
+   "at": 1791787035164,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 550879.0,
+   "ath": 578300.1507097833,
+   "fees": 0.9591,
+   "vol": 36333.0,
+   "jupiter": true
+  },
+  {
+   "ca": "RkjcLPAtjbKUXSi7Ln9RpaCr2qyzD8rFv9jiNEMpump",
+   "name": "Green Chonk",
+   "symbol": "CHONK",
+   "at": 1791788823634,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 46129.52,
+   "ath": 98753.30573887931,
+   "fees": 1.3555,
+   "vol": 100687.0,
+   "jupiter": true
+  },
+  {
+   "ca": "BNzJbTeqgwkg9EfS47BECPLt32phCekGNNyh4yhpump",
+   "name": "Rick sanchez",
+   "symbol": "Rick",
+   "at": 1791791845633,
+   "why": [
+    "wash"
+   ],
+   "mc": 3179.8,
+   "ath": 20684.731053590825,
+   "fees": 0.1917,
+   "vol": 14720.0,
+   "jupiter": true
+  },
+  {
+   "ca": "CRdg1EdMfgtXdSPMbnti1cte4SFaMfUEujNzr2eqpump",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1791794774612,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 2013.0,
+   "ath": 566238.8332848499,
+   "fees": 1.2137,
+   "vol": 76297.0,
+   "jupiter": true
+  },
+  {
+   "ca": "1cHoNM4gdFs1gh4oEV1drFkLsUEXjYo4msGuemBpump",
+   "name": "Knight Cat",
+   "symbol": "KCat",
+   "at": 1791796972249,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 18629.57,
+   "ath": 33656.329980286246,
+   "fees": 0.6891,
+   "vol": 33646.0,
+   "jupiter": true
+  },
+  {
+   "ca": "qwTdLaYXmwMwVTKZQ1dSpDxW5P7EMXbJhjX7xnMpump",
+   "name": "Knight Cat",
+   "symbol": "KCat",
+   "at": 1791796972249,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 45919.97,
+   "ath": 66945.45645047225,
+   "fees": 1.0765,
+   "vol": 80888.0,
+   "jupiter": true
+  },
+  {
+   "ca": "4cCFmHDtM3LYqR6xudAU63NPUYGxktCGjJSsLcd4pump",
+   "name": "Starlink Beaver",
+   "symbol": "BEAVER",
+   "at": 1791809323805,
+   "why": [
+    "wash"
+   ],
+   "mc": 3098.87,
+   "ath": 24153.928015115092,
+   "fees": 0.1521,
+   "vol": 15326.0,
+   "jupiter": true
+  },
+  {
+   "ca": "6VoxmtxKr74qrtiAWzsgUNCzrXeECKHd3knymDTRpump",
+   "name": "Nun Cat",
+   "symbol": "NUNCAT",
+   "at": 1791812448368,
+   "why": [
+    "wash"
+   ],
+   "mc": 26676.14,
+   "ath": 27571.584400478696,
+   "fees": 0.2543,
+   "vol": 12206.0,
+   "jupiter": true
+  },
+  {
+   "ca": "toLYpXF56evBEfvGDBifojLYnwjz97eDronr2TXaD2Z",
+   "name": "anatoly tiptoenko",
+   "symbol": "TOLY",
+   "at": 1791813954781,
+   "why": [
+    "wash"
+   ],
+   "mc": 4057.395788276672,
+   "ath": 8143.674623821922,
+   "fees": 0.0175,
+   "vol": 5656.0,
+   "jupiter": true
+  },
+  {
+   "ca": "1337yLr5eHXLL3WfW4bdNcMMhif3PrAw2cn6JDiDpump",
+   "name": "The King of Comedy",
+   "symbol": "Mr. Bean",
+   "at": 1791815365493,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 421110.0,
+   "ath": 424528.9188214184,
+   "fees": 0.8961,
+   "vol": 27741.0,
+   "jupiter": true
+  },
+  {
+   "ca": "FdLQ7UbpfVkS1apKcooZSAmdod4ByR8RPtVxAh7Zpump",
+   "name": "Nun Cat",
+   "symbol": "NUNCAT",
+   "at": 1791816774387,
+   "why": [
+    "wash"
+   ],
+   "mc": 12660.55,
+   "ath": 13048.311853467596,
+   "fees": 0.0433,
+   "vol": 6751.0,
+   "jupiter": true
+  },
+  {
+   "ca": "FxjRmZRGVomjuct67w2HUh8qBqf7EesWF5TupYhJpump",
+   "name": "The Goblin Pr6spr",
+   "symbol": "Ethan",
+   "at": 1791817651738,
+   "why": [
+    "wash"
+   ],
+   "mc": 3699.96,
+   "ath": 6271.080167925697,
+   "fees": 0.1026,
+   "vol": 8159.0,
+   "jupiter": true
+  },
+  {
+   "ca": "GDRLMeDUMVgg7NYVNRTj9oKFjmgRyUAY4bnvx48Kpump",
+   "name": "Bean against AI",
+   "symbol": "Bean",
+   "at": 1791829806745,
+   "why": [
+    "wash"
+   ],
+   "mc": 3013.42,
+   "ath": 17269.55062260102,
+   "fees": 0.0671,
+   "vol": 7436.0,
+   "jupiter": true
+  },
+  {
+   "ca": "3txyVzhyMwopsARdwPX1zzQzhSsxUtQJv2mfqE4NPWvt",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1794744757078,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 77435.27,
+   "ath": 77435.27,
+   "fees": 0.0048,
+   "vol": 778.0,
+   "jupiter": true
+  },
+  {
+   "ca": "Aa2Jc3KYYEi11XvKZGBYMi8PKkwXiYV1BSSfRGtvpump",
+   "name": "TikTok ",
+   "symbol": "TIKTOK",
+   "at": 1794744757078,
+   "why": [
+    "wash"
+   ],
+   "mc": 1203.14,
+   "ath": 1203.14,
+   "fees": 0.0093,
+   "vol": 5341.0,
+   "jupiter": true
+  },
+  {
+   "ca": "AFbuTNQg2iAEJ5YdJfJi44v9fj2tjXE1b48XUomQV64b",
+   "name": "TIKTOK",
+   "symbol": "TikTok",
+   "at": 1794744757078,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 153674.38,
+   "ath": 153674.38,
+   "fees": 0.036,
+   "vol": 217643.0,
+   "jupiter": true
+  },
+  {
+   "ca": "67aSPUnetUXbv1wsJdS1yypbufEoFj5GpCN1Y6Ngi5Au",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1794744757078,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 74516.37,
+   "ath": 74516.37,
+   "fees": 0.2154,
+   "vol": 1066.0,
+   "jupiter": true
+  },
+  {
+   "ca": "ZGW9B644VgfmmKtBTv1xjWGarkjEhFrcUrQEaqepump",
+   "name": "GET A JOB",
+   "symbol": "GETAJOB",
+   "at": 1794744757078,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 694155.0,
+   "ath": 694155.0,
+   "fees": 0.7009,
+   "vol": 912222.0,
+   "jupiter": true
+  },
+  {
+   "ca": "32hkfp3tDtFhHY65RZJEPXi6LLi2SxA7iLsjFoDAqv6Q",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1794765007848,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 75253.83,
+   "ath": 75253.83,
+   "fees": 0.0005,
+   "vol": 770.0,
+   "jupiter": true
+  },
+  {
+   "ca": "5okf63jUHuvvDcHiDKCySGpcGSt2N5Sqgykzg4a5BKXB",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1794770596786,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 75129.95,
+   "ath": 75129.95,
+   "fees": 0.0006,
+   "vol": 768.0,
+   "jupiter": true
+  },
+  {
+   "ca": "27vgsyVfKwhZh6MTCFaksFNUn8P6MefDqv4Y1M8vpump",
+   "name": "TikTok Coin",
+   "symbol": "TikTok",
+   "at": 1794770596786,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 64545.91,
+   "ath": 64545.91,
+   "fees": 0.0458,
+   "vol": 2449.0,
+   "jupiter": true
+  },
+  {
+   "ca": "DLTjPZ7XgA8TVZckFKvwBSC8R7DMWocYerxFhV3guPDo",
+   "name": "TikTok Coin",
+   "symbol": "TIKTOK",
+   "at": 1794770596786,
+   "why": [
+    "wash"
+   ],
+   "mc": 0.03,
+   "ath": 19867.0,
+   "fees": 0.0166,
+   "vol": 59467.0,
+   "jupiter": true
+  },
+  {
+   "ca": "Dnf9rUWLpcupniYZEh1stWZybHDfTSdwUag6pak6AChT",
+   "name": "TikTok Coin",
+   "symbol": "TikTok",
+   "at": 1794770596786,
+   "why": [
+    "wash"
+   ],
+   "mc": 139.0,
+   "ath": 139.0,
+   "fees": 0.0355,
+   "vol": 210107.0,
+   "jupiter": true
+  },
+  {
+   "ca": "FjrwGUSzZHJX1vzXL1XjyStJCVoN7cRD3UurQCJxJEPk",
+   "name": "Tiktok Coin",
+   "symbol": "TikTok",
+   "at": 1794843635761,
+   "why": [
+    "rug"
+   ],
+   "mc": null,
+   "ath": 423081350.0,
+   "fees": 0.0016,
+   "vol": 52.0,
+   "jupiter": true
+  },
+  {
+   "ca": "6AHkAaYqSnw3Wsn2zqkkZ2WkVwnTJhBDk3XGqMETGsEd",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1794903322567,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 77038.08,
+   "ath": 77038.08,
+   "fees": 0.001,
+   "vol": 798.0,
+   "jupiter": true
+  },
+  {
+   "ca": "B6QaCeRXtiLZ2DY3JwCdwKLhEbPXTFUU2dd84RGtr3bC",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1794903322567,
+   "why": [
+    "wash",
+    "rug"
+   ],
+   "mc": 0.03,
+   "ath": 314697.0,
+   "fees": 0.0569,
+   "vol": 2091336.0,
+   "jupiter": true
+  },
+  {
+   "ca": "2ZSbrKy9Eqkp9jPftDdw3DozdpBN8hQaxT6WVv8G8888",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1794903322567,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 11886.06,
+   "ath": 11886.06,
+   "fees": 0.0034,
+   "vol": 2191.0,
+   "jupiter": true
+  },
+  {
+   "ca": "4HePbdXuZG7wLue1LAZnxCd3rS1yzXd91dhGmY59pump",
+   "name": "CONTACT MISSIONS",
+   "symbol": "CM",
+   "at": 1794914642921,
+   "why": [
+    "wash"
+   ],
+   "mc": 4897.78,
+   "ath": 6562.14,
+   "fees": 0.087,
+   "vol": 5125.0,
+   "jupiter": true
+  },
+  {
+   "ca": "GWDHQFf5FyL1kJuWuZ9CmWmzvv1FWpGVp4ATzNi3XLt7",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1794969644142,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 79363.39,
+   "ath": 79363.39,
+   "fees": 0.0006,
+   "vol": 829.0,
+   "jupiter": true
+  },
+  {
+   "ca": "EPDAWuU84YJhKFd5of3q4HAfLEQKGZxdg9DohoSJv888",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1794969644142,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 30274.39,
+   "ath": 30274.39,
+   "fees": 0.0283,
+   "vol": 21440.0,
+   "jupiter": true
+  },
+  {
+   "ca": "CZGm8iyZUfsHayMJWXViFSaLdVwjoAc35CRw6WQ19ZQ5",
+   "name": "TikTok US",
+   "symbol": "TIKTOK",
+   "at": 1794969644142,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 168599.98,
+   "ath": 168599.98,
+   "fees": 0.0094,
+   "vol": 58511.0,
+   "jupiter": true
+  },
+  {
+   "ca": "jpZCVFXtquth8YBwZR4wLfPh4a7Mz5VMviCcwQBN9qC",
+   "name": "TikTok US",
+   "symbol": "TIKTOK",
+   "at": 1794969644142,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 170229.46,
+   "ath": 170229.46,
+   "fees": 0.0138,
+   "vol": 63076.0,
+   "jupiter": true
+  },
+  {
+   "ca": "6z9zZnrS5EwpiZfJPKqzhQhd9hkiQuyy9EW9ZcfBpump",
+   "name": "TrendTrader Pro",
+   "symbol": "TTP",
+   "at": 1794969644142,
+   "why": [
+    "wash"
+   ],
+   "mc": 22106.41,
+   "ath": 22106.41,
+   "fees": 0.9651,
+   "vol": 30076.0,
+   "jupiter": true
+  },
+  {
+   "ca": "AYfuRfhDGPP5DKeNNp2oVPDjrYZtZttS1FMKS3jpump",
+   "name": "GET A JOB",
+   "symbol": "GETAJOB",
+   "at": 1794986000068,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 534486.0,
+   "ath": 534486.0,
+   "fees": 0.3021,
+   "vol": 587539.0,
+   "jupiter": true
+  },
+  {
+   "ca": "BydivRuQgRUJyLB9FtR1KhQdKnz9WqWs32wf4LmYpump",
+   "name": "Audacity Ammo",
+   "symbol": "AMMO",
+   "at": 1795028666583,
+   "why": [
+    "wash"
+   ],
+   "mc": 3317.03,
+   "ath": 3317.03,
+   "fees": 0.2266,
+   "vol": 8086.0,
+   "jupiter": true
+  },
+  {
+   "ca": "EAZS6E5JKT6MHsdt4DwGwCMT7xGcDR1PvZp8tHcsPB5Y",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1795050591060,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 80058.64,
+   "ath": 80058.64,
+   "fees": 0.0062,
+   "vol": 803.0,
+   "jupiter": true
+  },
+  {
+   "ca": "2xCd5qHX5tW6pGUo7zfgHSSAnRjJwPA7Sz1Fu4fWcJjX",
+   "name": "Mandy",
+   "symbol": "Mandy",
+   "at": 1795050591060,
+   "why": [
+    "wash"
+   ],
+   "mc": 95740.0,
+   "ath": 98082.0,
+   "fees": 34.1057,
+   "vol": 896341.0,
+   "jupiter": true
+  },
+  {
+   "ca": "HVxUQh5WCemEQeR6BQK2wSFLhwBkzhkDitpQ2A8cabVD",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1795076530923,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 78611.98,
+   "ath": 78611.98,
+   "fees": 0.0011,
+   "vol": 809.0,
+   "jupiter": true
+  },
+  {
+   "ca": "bVSZGsUj1PMZyhWLFKht8f59AshhN2rUCq4T5AT3NuU",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1795076530923,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 81931.91,
+   "ath": 81931.91,
+   "fees": 0.0076,
+   "vol": 970.0,
+   "jupiter": true
+  },
+  {
+   "ca": "Db2s6iVvenVhJkj96P4UbZWEAYX4nUhgXhSVbQrwpump",
+   "name": "After GTA 6",
+   "symbol": "After",
+   "at": 1795076530923,
+   "why": [
+    "wash"
+   ],
+   "mc": 44485.0,
+   "ath": 44485.0,
+   "fees": 36.1043,
+   "vol": 896086.0,
+   "jupiter": true
+  },
+  {
+   "ca": "2bAtKT3s3RpSzzEfmsb4EecsJeMhV7ThF6wXbuJpxyVi",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1795172660172,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 73291.35,
+   "ath": 73291.35,
+   "fees": 0.0008,
+   "vol": 772.0,
+   "jupiter": true
+  },
+  {
+   "ca": "Fw9GvFYDrLmENSPEQ88q2Z86c5WJFVYrzveuurhiD7N4",
+   "name": "TikTok",
+   "symbol": "TIKTOK",
+   "at": 1795172660172,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 76782.95,
+   "ath": 76782.95,
+   "fees": 0.0037,
+   "vol": 943.0,
+   "jupiter": true
+  },
+  {
+   "ca": "BfNcetwXyxFJjsnmMboPpHqpZg19ez1ueQGPGE9upump",
+   "name": "Móm Mủm Mĩm",
+   "symbol": "Móm",
+   "at": 1795210378776,
+   "why": [
+    "wash"
+   ],
+   "mc": 3269.0,
+   "ath": 81206.0,
+   "fees": 15.672,
+   "vol": 442836.0,
+   "jupiter": true
+  },
+  {
+   "ca": "68V2zcH22ZK2TZG7UrZ4DhkpRYvVVxmWuVGKZRGTjeaP",
+   "name": "TikTok Tv Shows",
+   "symbol": "TikTok",
+   "at": 1795248731304,
+   "why": [
+    "fake_chart",
+    "wash"
+   ],
+   "mc": 14444.0,
+   "ath": 14444.0,
+   "fees": 0.0359,
+   "vol": 979252.0,
+   "jupiter": true
+  },
+  {
+   "ca": "6hvs6yMz32JsNwof7pQige8aivr6jtd7JVYKkANJpump",
+   "name": "CODEWORD CRAZY ON TIKTOK ",
+   "symbol": "CODEWORD",
+   "at": 1795248731304,
+   "why": [
+    "fake_chart"
+   ],
+   "mc": 10883.0,
+   "ath": 10883.0,
+   "fees": 0.0716,
+   "vol": 15.0,
+   "jupiter": true
+  }
+ ],
+ "antirug_last": {
+  "at": 1795276084312,
+  "filtered": 3,
+  "by_rule": {
+   "wash": 2,
+   "fake_chart": 2
+  },
+  "jupiter_coins": 10,
+  "jupiter_failed_calls": 0,
+  "fallback_coins": 0,
+  "sol_usd": 70.36028447150419
+ }
+}
